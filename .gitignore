@@ -1,0 +1,5 @@
+database.sqlite3
+likewise/fixtures/*
+wikiexport/fixtures/*
+*.sql
+*.pyc

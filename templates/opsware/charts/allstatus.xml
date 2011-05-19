@@ -1,0 +1,18 @@
+
+<graph
+  animation="0"
+  caption="Deployed Pecentage Total"
+  shownames="1"
+  showvalues="1" 
+  decimalprecision="0" 
+  pieslicedepth="25"
+  numbersuffix="%25"
+  showpercentagevalues="1"
+  showpercentageinlabel="1"
+>
+
+  {% for object in status.items %}
+    <set name='{{object.1.name}}' hovertext='{{object.1.name}}' value='{{object.1.count}}' />
+  {% endfor %}
+  
+</graph> 

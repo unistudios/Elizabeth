@@ -1,0 +1,5 @@
+{% spaceless %}
+{% if object_list %}{% for obj in object_list %}{% if obj.fqdn and not nameonly %}{{ obj.fqdn }}
+{% else %}{{obj.name}}
+{% endif %}{% endfor %}{% endif %}
+{% endspaceless %}

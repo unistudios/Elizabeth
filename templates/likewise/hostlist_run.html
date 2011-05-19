@@ -1,0 +1,29 @@
+{% if object_list %}
+    <h2> Total Installations {{ object_list.count }}</h2>
+    <h3>as of {{ dToday }}</h3>
+    <table border=1>
+        <tr>
+            <th>Date</th>
+            <th>Server</th>
+			<th>Installed</th>
+            <th>Delayed</th>
+			<th>Keys</th>
+			<th>Comment</th>
+        </tr>
+        {% for obj in object_list %}
+        <tr>
+			<td>
+				{% ifchanged obj.hostsetting.installdate %}
+					<b>{{obj.hostsetting.installdate}}</b>
+				{% endifchanged %}
+			</td>
+			<td> {{obj.name}} </td>
+			<td> {{obj.hostsetting.installed}} </td>
+			<td> {{obj.hostsetting.delayed}} </td>
+			<td> {{obj.hostsetting.sshkeys}} </td>
+			<td> {{ obj.comment }} </td>
+		</tr>
+		{% endfor %}
+    </table>
+
+{% endif %}

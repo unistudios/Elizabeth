@@ -1,0 +1,27 @@
+{% if object_list %}
+{section}
+	{column:width=50%}
+		{center}
+		{chart:title= Server installs }
+		|| Total || Completed || Remaining || Scheduled ||
+		|| | {{ nInstalled }} | {{ nNotInstalled }} || {{ nScheduled }}
+		{chart} 
+		{center}
+	{column}
+	{column:width=50%}
+		{center}
+		{chart:title= Users }
+		||  || Enabled || Disabled ||
+		|| | {{ nUserEnabled }} | {{ nUserDisabled }}||
+		{chart} 
+		{center}
+	{column}
+{section}
+{align:right}As of {{ dToday }}{align}
+
+{section}
+	|| Application || Server || Level || Install Date || Installed || Disable Delayed ||
+	{% for obj in object_list %}| {% ifchanged obj.app.name%}*{{obj.app.name}}*{% endifchanged %} | {{obj.name}} | {{ obj.get_level_display }} | {{ obj.hostsetting.installdate }} |  {{ obj.hostsetting.installed }} | {{ obj.hostsetting.delayed }} |
+	{% endfor %}
+{section}
+{% endif %}

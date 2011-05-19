@@ -1,0 +1,27 @@
+<graph
+  caption="Pending Deploys"
+  animation="0"
+  showNames="1"
+  showvalues="1" 
+  showalternatehgridcolor="1"
+  alternatehgridcolor="CFB4D0"
+  rotatenames="1"
+  decimalprecision="0"
+  numdivlines="8"
+  xaxisname="Date"
+  yaxisname="Server Count"
+>
+  <categories>
+  {% for object in object_list %}
+    <category name ="{{object.install_date}}" />
+  {% endfor %}
+  </categories>
+  
+  <dataset seriesName="Pending installs" color="F0F325">
+  {% for object in object_list %}
+    <set value='{{object.install_count}}' />
+  {% endfor %}
+  </dataset>
+  
+
+</graph> 
