@@ -61,7 +61,7 @@ def kyle_test(request):
     #                   template_name="likewise/installed.%s" % TemplateExt(request),
     #                   extra_context={'dToday': todaystr()},
     #                )
-    qsRunHosts = unixhost.objects.exclude(app__importance="L1")
+    qsRunHosts = unixhost.objects.exclude(app__importance="L2")
     nRunHostsInstalled = qsRunHosts.filter(hostsetting__installed=True).count()
     nRunHostsRemaining = qsRunHosts.filter(hostsetting__installed=False).count()
     
