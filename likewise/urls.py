@@ -4,6 +4,7 @@ urlpatterns = patterns('',
     # ####################
     # User functions
     # ####################
+    (r'^user/update/$', 'website.likewise.views.userupdate2'),
     (r'^user/(?P<host_name>\w+)/$', 'website.likewise.views.userupdate'),
     (r'^user/(?P<host_name>\w+)/disable/$', 'website.likewise.views.userdisablelist'), 
 
