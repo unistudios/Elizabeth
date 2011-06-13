@@ -1,7 +1,0 @@
-{% if object_list %}
-h1. Userlist table extract
-as of {{ dToday }}
-|| Username || Name || type || disable || source ||
-{% for obj in object_list %}| {{obj.username}} | {{obj.name}} | {{obj.get_type_display}} | {{ obj.disable }} | {{ obj.source}} |
-{% endfor %}
-{% endif %}
