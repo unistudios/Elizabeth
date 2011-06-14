@@ -1,7 +1,0 @@
-<graph caption='Overall Status' showNames='1' decimalPrecision='0' pieSliceDepth="30">
-   <set name='Not Determined' value='1500'/>
-   <set name='Errors' value='25'/>
-   <set name='Hold' value='100'/>
-   <set name='Installed' value='200'/>
-</graph>
-

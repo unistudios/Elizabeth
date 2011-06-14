@@ -1,8 +1,0 @@
-{% if object_list %}
-{align:right}As of {{ dToday }}{align}
-{section}
-    || Application || Server || Level || Install Date || Installed || Disable Delayed || Users Avail || Comments ||
-    {% for obj in object_list %}| {% ifchanged obj.app.name%}*{{obj.app.name}}*{% endifchanged %} | {{obj.name}} | {{ obj.get_level_display }} | {{ obj.hostsetting.installdate }} | {%if obj.hostsetting.installed %}(/){% else %}(x){% endif %} | {% if obj.hostsetting.delayed %}(-){% endif %} | {{ obj.activeusers }} | {{ obj.comment }}
-    {% endfor %}
-{section}
-{% endif %}

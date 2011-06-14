@@ -1,5 +1,0 @@
-<graph caption='Deployed To Date' subcaption='' xAxisName='Date Installed' yAxisName='Server Count' showNames='1' rotateNames='1' decimalPrecision='0'>
-  {% for object in object_list %}
-    <set name='{{object.install_date}}' hovertext='{{object.install_date}}' value='{{object.install_count}}' />
-  {% endfor %}
-</graph> 
