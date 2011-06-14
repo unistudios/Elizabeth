@@ -1,0 +1,173 @@
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=iso-8859-1"/>
+	<meta name="description" content="description"/>
+	<meta name="keywords" content="keywords"/> 
+	<meta name="author" content="author"/> 
+	<link rel="stylesheet" type="text/css" href="/site_media/default.css" media="screen"/>
+	<title>LNC - Likewise SOX L1 remediation project</title>
+</head>
+
+<body>
+
+<div class="container">
+	<div class="main">
+		<div class="header">
+			<div class="title">
+				<h1>Likewise Project</h1>
+			</div>
+		</div>
+		
+<!--
+	This is the news for now section, not sure if i'll put more here later.
+-->
+		<div class="content">
+		
+			<div class="item">
+				<h1>Current Updates</h1>
+				<div class="descr">Latest News</div>
+
+				<% 	rsNews.MoveFirst 
+					currDt = ""
+					
+					Do While not rsNews.eof
+						if rsNews.Fields("date") <> currDt Then
+							currDt = rsNews.Fields("date")
+							Response.Write "<div class=descr> <b>" 
+							Response.Write currDt
+							Response.Write "</b></div>"
+						end if
+						
+						Response.Write "<p>"
+						Response.Write rsNews.Fields("MemoItem")
+						Response.Write "</p>"
+						
+						rsNews.MoveNext
+					loop
+				%>
+
+			</div>
+
+			<div class="item">
+				<h1>Accomplishments</h1>
+				<div class="descr">Milestones reached</div>
+<% 					' Lets dump all accomplishments
+					rsAcc.MoveFirst
+					currDt = ""
+					Do While not rsAcc.eof
+						if rsAcc.fields("date") <> currDt then
+							currDt = rsAcc.fields("date") %>
+							<div class="descr"> <b> <% =currDt %> </b> </div>
+<%						end if %>
+						<p>
+<% 						=rsAcc.Fields("MemoItem") %>
+						</p>
+<%						rsAcc.MoveNext
+					Loop %>
+				
+			</div>
+		
+			<div class="item">
+				<h1>Next Steps</h1>
+				<div class="descr">What are we currently working on...</div>
+				<p> </p>
+			</div>
+
+			<div class="item">
+				<h1>Risks</h1>
+				<div class="descr">Any risks we forsee in this project?</div>
+				<p> None at this time, check back for updates</p>
+			</div>
+<!--
+		<div class="item">
+				<h1>Class Item H1</h1>
+				<div class="descr">class descr, h1</div>
+				<p>paragraph </p>
+				<ul>
+					<li>Item 1 Unordered list</li>
+					<li>Item 2</li>
+					<li>Item 3</li>
+				</ul>
+				<p>Paragraph again</p>
+			</div>
+
+			<div class="item">
+				<h1>Class Item, Heading 1</h1>
+				<div class="descr">Again, heading 1 descr class</div>
+				<p>Another Paragraph</p>
+				<code>
+This is where your crappy code would go
+And it looks like it takes thinks quite    li   ter ally.</code>
+				<p>Paragraph again</p>
+			</div>
+-->
+		</div class="content">
+
+		<div class="sidenav">
+			<h1>Reports</h1>
+			<ul>
+				<li><a href="WEB-HostInstalled.asp">Installed Systems </a></li>
+				<li><a href="WEB-UsersUnknown.asp">Unknown Users </a></li>
+				<li><a href="Web-UsersUnknownByServer.asp">Unknown by Server</a></li>
+				<li><a href="Web-UsersKnown.asp">All Known Users </a></li>
+				<li><a href="WEB-UsersWhoWillBeDisabled.aspl">IDs to disable</a></li>
+				<li><a href="Web-Servers-AllByFunction.asp">Servers Affected</a></li>
+				<li><a href="Web-DelayedInstall.asp">Delayed Installation</a></li>
+			</ul>
+			
+			<h1> Statistics </h1>
+			
+			<h2> Installation progress</h2>
+			<p> We have installed Likewise open on <%=nTotalHostInstalled%> systems, out of a total lf <%=nTotalHost%> </p>
+			
+			<h2> Delays </h2>
+			<p>We are being delayed on installation on <%=nTotalHostsDelayed %> (<%=nTotalHostsDelayedPerc%>%) systems, due to change freezes.</p>
+			
+			<h2> Host Users </h2>
+			<p> We have identified <% =nTotalHostsTodisable %> (<% =nPercentHostIDd %>%) users of out of a total <% =nTotalHosts %>, across all SOX L1 servers </p>
+
+			<h2> Disabled Users </h2>
+			<p> We have disabled <% =ndisabledusers %> (<% =nDisablePercent %> %) users </p>
+			
+<!--
+			<h1>Sidenav, heading 1</h1>
+			<ul>
+				<li><a href="index.html">consequat molestie</a></li>
+				<li><a href="index.html">sem justo</a></li>
+				<li><a href="index.html">semper</a></li>
+				<li><a href="index.html">sociis natoque</a></li>
+			</ul>
+
+			<h1>Sidenav, Heading 1</h1>
+			<ul>
+				<li><a href="index.html">sociis natoque</a></li>
+				<li><a href="index.html">magna sed purus</a></li>
+				<li><a href="index.html">pellentesque</a></li>
+				<li><a href="index.html">tincidunt</a></li>
+			</ul>
+
+			<h1>H1 Search with form input</h1>
+			<form action="index.html">
+			<div>
+				<input type="text" name="search" class="styled" /> <input type="submit" value="" class="button" />
+			</div>
+			</form>
+-->
+		</div class="sidenav">
+	
+		<div class="clearer">
+			<span></span>
+		</div>
+
+	</div class="main">
+
+	<div class="footer">
+		&copy; NBC Universal, Inc.  BIG Group <a href="index.html">likewise.nbcuni.ge.com</a>. 
+	</div>
+
+</div class="container">
+
+</body>
+
+</html>

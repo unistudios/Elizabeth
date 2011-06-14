@@ -1,0 +1,37 @@
+{% extends "opsware/opsware.html" %}
+
+{% load charts %}
+
+{% block title %}
+ - Overall Status
+{% endblock %}
+
+{% block head %}
+	{% ChartHeader %}
+{% endblock %}
+
+{% block content %}
+
+
+
+<table width="98%" border="0" cellspacing="0" cellpadding="3" align="center">
+  <tr> 
+    <td valign="top" align="center">
+      {% Chart pie3d 750 500 "/opsware/chartdata/?xml=allstatus"  %}
+    </td>
+  </tr>
+	<tr>
+		<td>
+			<hr size="5" color="#0094D6" noshade />
+		</td>
+	</tr>
+  <tr> 
+    <td valign="top" align="center">
+      {% Chart stackedcolumn2d 750 500 "/opsware/chartdata/?xml=deployedall"  %}
+    </td>
+  </tr>
+
+</table>
+
+
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "opsware/opsware.html" %}
+
+{% load charts %}
+
+{% block title %}
+ - Deployed By Date
+{% endblock %}
+
+{% block head %}
+  {% ChartHeader %}
+{% endblock %}
+
+{% block content %}
+
+<p class="content_title">Deployed By Date</p>
+
+<table width="98%" border="0" cellspacing="0" cellpadding="3" align="center">
+  <tr> 
+    <td valign="top" class="text" align="center">
+      {% Chart mscolumn2d 600 350 "/opsware/chartdata/?xml=deployedbydate" %}
+    </td>
+  </tr>
+</table>
+
+
+{% endblock %}

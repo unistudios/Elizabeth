@@ -1,0 +1,19 @@
+<graph
+  caption="Overall Status" 
+  animation="0"
+  shownames="1" 
+  showvalues="1" 
+  numbersuffix="%25"
+  showpercentagevalues="1"
+  showpercentageinlabel="1"
+
+  decimalPrecision="0" 
+  limitsDecimalPrecision="0"
+  divLineDecimalPrecision="0"
+
+pieYScale="45" pieBorderAlpha="40" pieFillAlpha="70" pieSliceDepth="15" pieRadius="100">
+    <set value="25" name="Deployed" color="FF9966"/>
+    <set value="17" name="On Hold" color="FF0000"/>
+    <set value="23" name="No Owner" color="006F00" />
+    <set value="65" name="Not Scheduled" color="0099FF"/>
+</graph>
