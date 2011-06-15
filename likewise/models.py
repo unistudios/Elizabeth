@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import Q
+from django.utils.safestring import mark_safe
 
 class unixhostManager(models.Manager):
     def get_query_set(self):
@@ -105,16 +106,18 @@ class userlist(models.Model):
     disable     = models.BooleanField()                                                             # Should this account be disabled?
     source      = models.CharField(max_length=100, blank=True, null=True)                           # Where did this ID come from?  
         
+    # Return a count of the total number of hosts on which the user exists.
     def hostCount(self):
         return self.unixuser_set.all().count()
     hostCount.short_description = "Number of Hosts"
     
+    # Return a list of hostnames on which the user exists, in string form.
     def getHosts(self):
         lines = self.unixuser_set.all()
         str=""
         for i in lines:
-            str=str+i.host.name+" "
-        return str
+            str=str+i.host.name+"<BR />"
+        return mark_safe(str)
     getHosts.short_description = "Exists on Hosts"
     
     def __unicode__(self):
