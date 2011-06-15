@@ -104,7 +104,19 @@ class userlist(models.Model):
     type        = models.CharField(max_length=10, choices=USERLIST_CHOICE, default="X",blank=True, null=True)   # type of account
     disable     = models.BooleanField()                                                             # Should this account be disabled?
     source      = models.CharField(max_length=100, blank=True, null=True)                           # Where did this ID come from?  
-
+        
+    def hostCount(self):
+        return self.unixuser_set.all().count()
+    hostCount.short_description = "Number of Hosts"
+    
+    def getHosts(self):
+        lines = self.unixuser_set.all()
+        str=""
+        for i in lines:
+            str=str+i.host.name+" "
+        return str
+    getHosts.short_description = "Exists on Hosts"
+    
     def __unicode__(self):
         return self.username 
 
