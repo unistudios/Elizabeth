@@ -43,10 +43,12 @@ class userlistAdmin(admin.ModelAdmin):
     #)
     #fields = ('username, 'type', 'disable', 'userCount')
     list_display = ('username','type', 'disable')
-    #fields = ['username']
+    fields = ['username', 'name', 'type', 'source', 'hostCount', 'getHosts']
     search_fields = ['username']
+    exclude = ['windowsid', 'disable']
     list_filter = ('type', 'disable')
-    readonly_fields = ['hostCount', 'getHosts']
+    readonly_fields = ['username', 'hostCount', 'getHosts']
+    ordering=['username']
     
 	
 admin.site.register(userlist, userlistAdmin)
