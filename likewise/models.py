@@ -129,6 +129,7 @@ class unixuser(models.Model):
     user        = models.ForeignKey(userlist, null=True)
     
     username    = models.CharField(max_length=20)
+    lastlogin   = models.DateField(null=True, blank=True, verbose_name="Last Login")
     enabled     = models.BooleanField(blank=True)
     datedisabled = models.DateField(null=True, blank=True)
 

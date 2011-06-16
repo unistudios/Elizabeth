@@ -26,7 +26,10 @@ class unixappAdmin(admin.ModelAdmin):
 admin.site.register(unixapp, unixappAdmin)
 
 class unixuserAdmin(admin.ModelAdmin):
-	search_fields = ['username',]
+    list_display = ['host', 'user']
+    search_fields = ['username', 'host__name']
+    exclude = ['datedisabled', 'enabled']
+    readonly_fields = ['lastlogin']
 	
 admin.site.register(unixuser, unixuserAdmin)
 

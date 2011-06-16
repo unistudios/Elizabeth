@@ -355,7 +355,9 @@ def userupdate2(request):
     # add a user to the server
 
     host_name = request.POST['host_name']
-    print host_name
+    lastlogin = request.POST['lastlogin']
+    user      = username=request.POST['user']
+    print host_name, user, lastlogin
 
     if request.method == 'POST':
         # find this host first, or add a new one.
@@ -393,6 +395,14 @@ def userupdate2(request):
 
             u.user = ul
             u.save()
+            
+            if "DNE" not in str(lastlogin):
+                print "Did not equal DNE", lastlogin[0:4], lastlogin[4:6], lastlogin[6:8],
+                u.lastlogin = datetime.date(int(lastlogin[0:4]), int(lastlogin[4:6]), int(lastlogin[6:8]))
+                #u.lastlogin = datetime.date(lastlogin[0:4], lastlogin[4:6], lastlogin[6:8])
+                u.save()
+            else:
+                print "Equaled DNE"
 
             # check if the enabled field was given
             if "disabled" in request.POST:
