@@ -54,7 +54,7 @@ def hostlist_run(request):
                                       'nRunUsersDisabled'      : nRunUsersDisabled,
                                      },
                     )
-
+                    
 def kyle_test(request):
     #return object_list(request,
     #                   queryset=unixhost.objects.filter(hostsetting__installed=True).exclude(app__importance="L1").order_by('-hostsetting__installdate'),

@@ -13,6 +13,10 @@ class unixhostManager(models.Manager):
             )
 
 class unixapp(models.Model):
+    class Meta:
+        ordering = ['name']
+        verbose_name = "Business Application"
+
     IMP_CHOICE= (
         ("L1", "Sox L1"),
         ("L2", "Sox L2"),
@@ -22,15 +26,15 @@ class unixapp(models.Model):
     
     name    = models.CharField(max_length=50)
     importance = models.CharField(max_length=2, default="OT", choices=IMP_CHOICE)
-
-    class Meta:
-        ordering = ['name']
     
     def __unicode__(self):
         return "%s" % self.name
 
 
 class unixhost(models.Model):
+    class Meta:
+        verbose_name = "UNIX Host"
+
     LEVEL_CHOICE = (
         ("PR", "Production"),
         ("QA", "Quality Assurance"),
@@ -92,6 +96,9 @@ class hostsetting(models.Model):
         return "I:" + str(self.installed) + " U:" + str(self.userlist) + " K:" + str(self.sshkeys) + " D:" + str(self.delayed)
 
 class userlist(models.Model):
+    class Meta:
+        verbose_name = "UNIX User Account"
+
     USERLIST_CHOICE = (
         ("U", "User"),
         ("A", "Application"),
@@ -124,6 +131,9 @@ class userlist(models.Model):
         return self.username 
 
 class unixuser(models.Model):
+    class Meta:
+        verbose_name = "Host to User Mapping"
+
     # each user on each unixhost
     host        = models.ForeignKey(unixhost)
     user        = models.ForeignKey(userlist, null=True)
