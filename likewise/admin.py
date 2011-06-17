@@ -29,7 +29,7 @@ class unixuserAdmin(admin.ModelAdmin):
     list_display = ['host', 'user', 'lastlogin']
     search_fields = ['username', 'host__name']
     exclude = ['datedisabled', 'enabled']
-    readonly_fields = ['lastlogin']
+    readonly_fields = ['host', 'user', 'username', 'lastlogin']
 	
 admin.site.register(unixuser, unixuserAdmin)
 
