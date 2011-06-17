@@ -93,7 +93,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
 
     'website.likewise',
-    'south'
+    'south',
 )
 
 # A sample logging configuration. The only tangible logging
