@@ -3,3 +3,6 @@ likewise/fixtures/*
 wikiexport/fixtures/*
 *.sql
 *.pyc
+settings_local.py
+settings.py.*
+migrations
