@@ -12,7 +12,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'django_db4',                      # Or path to database file if using sqlite3.
+        'NAME': 'django_db2',                      # Or path to database file if using sqlite3.
         'USER': 'django',                      # Not used with sqlite3.
         'PASSWORD': 'django',                  # Not used with sqlite3.
         'HOST': 'localhost',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -56,7 +56,7 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = '/usr/lib/python2.4/site-packages/django/contrib/admin/media/'
+STATIC_ROOT = '/usr/local/lib/python2.6/dist-packages/django/contrib/admin/media/'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -83,7 +83,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '5o(kg0vzsidddma464^jo^q*kxce^97!8r*7f@fq*=#edjb=5p'
+SECRET_KEY = 'g1d5l9*m@f9j(%6x6=fpn)(s69j^w@rngjm1)bkl@_ay_ck=v4'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -120,7 +120,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
+    'django.contrib.admindocs',
 
     'website.likewise',
     'south'
