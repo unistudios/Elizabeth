@@ -9,12 +9,12 @@ class unixhostInline(admin.TabularInline):
 	model = unixhost
 
 class unixhostAdmin(admin.ModelAdmin):
-
-	list_display = ('name', 'fqdn', 'level', hostsetting, 'app', 'os', 'id' )
-	fields = ('name', 'fqdn', 'app','level', 'os', 'comment')
-	inlines = [ hostsettingInline,]
-	search_fields = ['name', 'fqdn']
-	list_filter = ('app',)
+    list_display = ('name', 'fqdn', 'level', hostsetting, 'app', 'os', 'id' )
+    fields = ('name', 'fqdn', 'app','level', 'os', 'comment')
+    #inlines = [ hostsettingInline,]
+    search_fields = ['name', 'fqdn']
+    readonly_fields = ['name', 'fqdn', 'app', 'level', 'os', 'comment']
+    list_filter = ('app',)
 	
 admin.site.register(unixhost, unixhostAdmin)
 
@@ -26,7 +26,7 @@ class unixappAdmin(admin.ModelAdmin):
 admin.site.register(unixapp, unixappAdmin)
 
 class unixuserAdmin(admin.ModelAdmin):
-    list_display = ['host', 'user']
+    list_display = ['host', 'user', 'lastlogin']
     search_fields = ['username', 'host__name']
     exclude = ['datedisabled', 'enabled']
     readonly_fields = ['lastlogin']
