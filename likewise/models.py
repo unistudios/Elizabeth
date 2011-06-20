@@ -49,7 +49,8 @@ class unixhost(models.Model):
     level   = models.CharField(max_length=30, blank=True, choices=LEVEL_CHOICE)     # Prod, QA, DR, DEV
     comment = models.CharField(max_length=100, blank=True)
     
-    app     = models.ForeignKey(unixapp, blank=True, null=True)                     # what app goes with this host.
+    apps     = models.ManyToManyField(unixapp)
+    #app     = models.ForeignKey(unixapp, blank=True, null=True)                     # what app goes with this host.
     
     objects     = unixhostManager()
         
