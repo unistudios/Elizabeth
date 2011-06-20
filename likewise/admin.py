@@ -5,23 +5,23 @@ from django.contrib.contenttypes import generic
 class hostsettingInline(admin.TabularInline):
 	model = hostsetting
 
-class unixhostInline(admin.TabularInline):
-	model = unixhost
+#class unixhostInline(admin.TabularInline):
+    #model = unixhost
 
 class unixhostAdmin(admin.ModelAdmin):
-    list_display = ('name', 'fqdn', 'level', hostsetting, 'app', 'os', 'id' )
-    fields = ('name', 'fqdn', 'app','level', 'os', 'comment')
+    list_display = ('name', 'fqdn', 'level', hostsetting, 'os', 'id' )
+    fields = ('name', 'fqdn', 'apps','level', 'os', 'comment')
     #inlines = [ hostsettingInline,]
     search_fields = ['name', 'fqdn']
-    readonly_fields = ['name', 'fqdn', 'app', 'level', 'os', 'comment']
-    list_filter = ('app',)
+    readonly_fields = ['name', 'fqdn', 'level', 'os', 'comment']
+    list_filter = ('apps',)
 	
 admin.site.register(unixhost, unixhostAdmin)
 
 
 class unixappAdmin(admin.ModelAdmin):
-	#fields = ('name',)
-	inlines = [unixhostInline,]
+    fields = ('name',)
+    #inlines = [unixhostInline,]
 	
 admin.site.register(unixapp, unixappAdmin)
 
@@ -30,6 +30,7 @@ class unixuserAdmin(admin.ModelAdmin):
     search_fields = ['username', 'host__name']
     exclude = ['datedisabled', 'enabled']
     readonly_fields = ['host', 'user', 'username', 'lastlogin']
+    list_filter = ['host__apps']
 	
 admin.site.register(unixuser, unixuserAdmin)
 
