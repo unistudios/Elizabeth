@@ -15,6 +15,7 @@ class unixhostAdmin(admin.ModelAdmin):
     search_fields = ['name', 'fqdn']
     readonly_fields = ['name', 'fqdn', 'level', 'os', 'comment']
     list_filter = ('apps',)
+    filter_horizontal = ['apps']
 	
 admin.site.register(unixhost, unixhostAdmin)
 
@@ -50,7 +51,7 @@ class userlistAdmin(admin.ModelAdmin):
     fields = ['username', 'name', 'type', 'source', 'hostCount', 'getHosts']
     search_fields = ['username']
     exclude = ['windowsid', 'disable']
-    list_filter = ('type', 'disable')
+    list_filter = ('type', 'disable', 'unixuser__host')
     readonly_fields = ['username', 'hostCount', 'getHosts']
     ordering=['username']
     

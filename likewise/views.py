@@ -1,4 +1,5 @@
 import datetime
+import sys
 
 from django.http import HttpResponse
 from django.views.generic.list_detail import *
@@ -416,6 +417,30 @@ def userupdate2(request):
 
         else:
             return HttpResponse("No user given, oh well\n")
+    else:
+        return HttpResponse("HTTP GET, nothing here, move on")       
+
+def addApp(request):
+    # this is called when someone visits /likewise/user/<host_name>?user=<username>&enabled=True
+    # add a user to the server
+    
+    if request.method == 'POST':
+        # find this host first, or add a new one.
+        app_name = request.POST['app_name']
+
+        try:
+            app = unixapp.objects.get(name=app_name)
+            return HttpResponse("App already exists.\n")
+        except unixapp.DoesNotExist:
+            # so add it!
+            app = unixapp()
+            app.name = app_name
+            app.save()
+
+            return HttpResponse("App %s added\n" % (app.name) )
+
+        else:
+            return HttpResponse("Failure.\n")
     else:
         return HttpResponse("HTTP GET, nothing here, move on")        
         
