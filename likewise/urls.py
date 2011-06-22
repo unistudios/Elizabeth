@@ -29,6 +29,7 @@ urlpatterns = patterns('',
     (r'^hostlist/kyle/$', 'website.likewise.views.kyle_test'),
     
     (r'^app/update/$', 'website.likewise.views.addApp'),
+    (r'^app/add/host/$', 'website.likewise.views.addApp2Host'),
     
     # #####################
     # MISC

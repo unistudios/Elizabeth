@@ -51,7 +51,7 @@ class userlistAdmin(admin.ModelAdmin):
     fields = ['username', 'name', 'type', 'source', 'hostCount', 'getHosts']
     search_fields = ['username']
     exclude = ['windowsid', 'disable']
-    list_filter = ('type', 'disable', 'unixuser__host')
+    list_filter = ('type', 'disable', 'unixuser__host__apps')
     readonly_fields = ['username', 'hostCount', 'getHosts']
     ordering=['username']
     

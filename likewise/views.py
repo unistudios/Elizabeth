@@ -418,8 +418,47 @@ def userupdate2(request):
         else:
             return HttpResponse("No user given, oh well\n")
     else:
-        return HttpResponse("HTTP GET, nothing here, move on")       
+        return HttpResponse("HTTP GET, nothing here, move on")      
 
+
+# Add hosts to different apps using blaster_apps.py OGFS script
+def addApp2Host(request):
+    # this is called when someone visits /likewise/user/<host_name>?user=<username>&enabled=True
+    # add a user to the server
+    
+    if request.method == 'POST':
+        host_name = request.POST['host_name'].strip()
+        app_name  = request.POST['app_name'].strip()
+        
+        print host_name, app_name
+
+        # If App does not exist, add it.
+        try:
+            app = unixapp.objects.get(name=app_name)
+        except unixapp.DoesNotExist:
+            print "adding application"
+            app = unixapp()
+            app.name = app_name
+            app.save()
+            
+        # If Host does not exist, quit.
+        try:
+            print "host: ", host_name, app.name
+            host = unixhost.objects.get(name__startswith=host_name)
+        except unixhost.DoesNotExist:
+            print "host does not exist"
+            return HttpResponse("Host %s does not exist.\n" % (host.name) )
+        else:
+            #  If host and app exist, associate them and save host object.
+            host.apps.add(app)
+            host.save()
+            return HttpResponse("Added app %s to host %s" % (app.name, host.name))     
+        return HttpResponse("Failed to add app %s to host %s" % (app.name, host.name))
+        
+    else:
+        return HttpResponse("HTTP GET, nothing here, move on")           
+
+# Add Applications to Elizabeth database
 def addApp(request):
     # this is called when someone visits /likewise/user/<host_name>?user=<username>&enabled=True
     # add a user to the server
