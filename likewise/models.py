@@ -36,6 +36,10 @@ class unixapp(models.Model):
         return mark_safe(str)
     getHosts.short_description = "Hosts"
     
+    def getHostCount(self):
+        return self.unixhost_set.all().count()
+    getHostCount.short_description = "Host Count"
+    
     def __unicode__(self):
         return "%s" % self.name
 

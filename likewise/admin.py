@@ -14,15 +14,16 @@ class unixhostAdmin(admin.ModelAdmin):
     #inlines = [ hostsettingInline,]
     search_fields = ['name', 'fqdn']
     readonly_fields = ['name', 'fqdn', 'level', 'os', 'comment']
-    list_filter = ('apps', )
+    list_filter = ('apps',)
     filter_horizontal = ['apps']
 	
 admin.site.register(unixhost, unixhostAdmin)
 
 
 class unixappAdmin(admin.ModelAdmin):
-    fields = ('name', 'getHosts')
-    readonly_fields = ['getHosts']
+    fields = ('name', 'getHostCount', 'getHosts')
+    list_display = ['name', 'getHostCount']
+    readonly_fields = ['getHostCount', 'getHosts']
     #inlines = [unixhostInline,]
 	
 admin.site.register(unixapp, unixappAdmin)
