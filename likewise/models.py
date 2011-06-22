@@ -27,6 +27,15 @@ class unixapp(models.Model):
     name    = models.CharField(max_length=50)
     importance = models.CharField(max_length=2, default="OT", choices=IMP_CHOICE)
     
+    # Return a list of hostnames on which the user exists, in string form.
+    def getHosts(self):
+        lines = self.unixhost_set.all()
+        str=""
+        for i in lines:
+            str=str+i.name+"<BR />"
+        return mark_safe(str)
+    getHosts.short_description = "Hosts"
+    
     def __unicode__(self):
         return "%s" % self.name
 
@@ -146,6 +155,13 @@ class unixuser(models.Model):
 
     # default manager
     objects = models.Manager()
+    
+    def getApps(self):
+        applist=""
+        for app in self.host.apps.all():
+            applist=applist+app.name+"<BR />"
+        return mark_safe(applist)
+    getApps.short_description = "Apps"
 
     def __unicode__(self):
         return self.host.name + " " + self.username

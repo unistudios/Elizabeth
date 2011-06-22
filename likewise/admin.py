@@ -14,14 +14,15 @@ class unixhostAdmin(admin.ModelAdmin):
     #inlines = [ hostsettingInline,]
     search_fields = ['name', 'fqdn']
     readonly_fields = ['name', 'fqdn', 'level', 'os', 'comment']
-    list_filter = ('apps',)
+    list_filter = ('apps', )
     filter_horizontal = ['apps']
 	
 admin.site.register(unixhost, unixhostAdmin)
 
 
 class unixappAdmin(admin.ModelAdmin):
-    fields = ('name',)
+    fields = ('name', 'getHosts')
+    readonly_fields = ['getHosts']
     #inlines = [unixhostInline,]
 	
 admin.site.register(unixapp, unixappAdmin)
@@ -30,18 +31,17 @@ class unixuserAdmin(admin.ModelAdmin):
     list_display = ['host', 'user', 'lastlogin']
     search_fields = ['username', 'host__name']
     exclude = ['datedisabled', 'enabled']
-    readonly_fields = ['host', 'user', 'username', 'lastlogin']
+    readonly_fields = ['host', 'user', 'username', 'lastlogin', 'getApps']
     list_filter = ['host__apps']
 	
 admin.site.register(unixuser, unixuserAdmin)
 
 class userlistAdmin(admin.ModelAdmin):
-
-    #def queryset(self, request):
-    #    qs = super(userlistAdmin, self).queryset(request)
-    #    if request.user.is_superuser:
-    #        return qs
-    #    return qs.filter(username="flavink")
+    # Override ModelAdmin queryset to only return distinct user accounts.
+    # This is necessary when filtering by application.
+    def queryset(self, request):
+        qs = super(userlistAdmin, self).queryset(request)
+        return qs.distinct()
     
     #fieldsets = (
     #    (None, { 'fields': ('username', 'type', 'disable', 'userCount')}),
