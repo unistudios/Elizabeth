@@ -9,7 +9,7 @@ class hostsettingInline(admin.TabularInline):
     #model = unixhost
 
 class unixhostAdmin(admin.ModelAdmin):
-    list_display = ('name', 'fqdn', 'level', hostsetting, 'os', 'id' )
+    list_display = ('name', 'level', 'os', 'id' )
     fields = ('name', 'fqdn', 'apps','level', 'os', 'comment')
     #inlines = [ hostsettingInline,]
     search_fields = ['name', 'fqdn']
