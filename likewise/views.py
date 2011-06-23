@@ -56,28 +56,19 @@ def hostlist_run(request):
                                      },
                     )
                     
-def kyle_test(request):
+def listHosts(request):
     #return object_list(request,
     #                   queryset=unixhost.objects.filter(hostsetting__installed=True).exclude(app__importance="L1").order_by('-hostsetting__installdate'),
     #                   template_name="likewise/installed.%s" % TemplateExt(request),
     #                   extra_context={'dToday': todaystr()},
     #                )
-    qsRunHosts = unixhost.objects.exclude(app__importance="L2")
-    nRunHostsInstalled = qsRunHosts.filter(hostsetting__installed=True).count()
-    nRunHostsRemaining = qsRunHosts.filter(hostsetting__installed=False).count()
-    
-    qsRunUsers = unixuser.objects.exclude(host__app__importance="L1")
-    nRunUsersEnabled = qsRunUsers.filter(enabled=True).count()
-    nRunUsersDisabled = qsRunUsers.filter(enabled=False).count()
-
+    qsHosts = unixhost.objects.all()
+    #return HttpResponse(qsHosts)
     return object_list(request,
-                       queryset=qsRunHosts.order_by('-hostsetting__installdate'),
-                       template_name="likewise/kyle_test.%s" % TemplateExt(request),
+                       queryset=qsHosts.order_by('name'),
+                       template_name="likewise/listhosts.%s" % TemplateExt(request),
                        extra_context={'dToday': todaystr(),
-                                      'nRunHostsInstalled'     : nRunHostsInstalled,
-                                      'nRunHostsRemaining'     : nRunHostsRemaining,
-                                      'nRunUsersEnabled'       : nRunUsersEnabled, 
-                                      'nRunUsersDisabled'      : nRunUsersDisabled,
+                                      'qsHosts'     : qsHosts,
                                      },
                     )
 
