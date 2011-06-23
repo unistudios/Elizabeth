@@ -2,6 +2,11 @@ from django.db import models
 from django.db.models import Q
 from django.utils.safestring import mark_safe
 
+##################################
+# Custom Object Manager for UNIX
+# Host Model.  Legacy -- No longer
+# necessary?
+##################################
 class unixhostManager(models.Manager):
     def get_query_set(self):
         return super(unixhostManager, self).get_query_set()
@@ -12,6 +17,9 @@ class unixhostManager(models.Manager):
                 hostsetting__sshkeys = True
             )
 
+##################################
+# Application Model
+##################################
 class unixapp(models.Model):
     class Meta:
         ordering = ['name']
@@ -27,7 +35,7 @@ class unixapp(models.Model):
     name    = models.CharField(max_length=50)
     importance = models.CharField(max_length=2, default="OT", choices=IMP_CHOICE)
     
-    # Return a list of hostnames on which the user exists, in string form.
+    # Return a list of hostnames on which app resides
     def getHosts(self):
         lines = self.unixhost_set.all()
         str=""
@@ -36,6 +44,7 @@ class unixapp(models.Model):
         return mark_safe(str)
     getHosts.short_description = "Hosts"
     
+    # Return a host count for the app
     def getHostCount(self):
         return self.unixhost_set.all().count()
     getHostCount.short_description = "Host Count"
@@ -43,7 +52,9 @@ class unixapp(models.Model):
     def __unicode__(self):
         return "%s" % self.name
 
-
+##################################
+# UNIX host Model
+##################################
 class unixhost(models.Model):
     class Meta:
         verbose_name = "UNIX Host"
@@ -62,10 +73,11 @@ class unixhost(models.Model):
     level   = models.CharField(max_length=30, blank=True, choices=LEVEL_CHOICE)     # Prod, QA, DR, DEV
     comment = models.CharField(max_length=100, blank=True)
     
+    # Changing app to host relationship from 12M to M2M.
     apps     = models.ManyToManyField(unixapp, blank=True, null=True)
     #app     = models.ForeignKey(unixapp, blank=True, null=True)                     # what app goes with this host.
     
-    objects     = unixhostManager()
+    objects     = unixhostManager()                                                 # Using a custom object manager because we can...
         
     def save(self, force_insert=False, force_update=False):
         self.name = self.name.lower()
@@ -88,6 +100,9 @@ class unixhost(models.Model):
     def __unicode__(self):
         return self.name 
 
+######################################################
+# Used for Legacy Likewise system...  Remove possibly?
+######################################################
 class hostsetting(models.Model):
     # settings for each host.
 
@@ -109,6 +124,9 @@ class hostsetting(models.Model):
     def __unicode__(self):
         return "I:" + str(self.installed) + " U:" + str(self.userlist) + " K:" + str(self.sshkeys) + " D:" + str(self.delayed)
 
+##################################
+# Unique User Accounts Model
+##################################
 class userlist(models.Model):
     class Meta:
         verbose_name = "UNIX User Account"
@@ -144,6 +162,9 @@ class userlist(models.Model):
     def __unicode__(self):
         return self.username 
 
+##################################
+# User Accounts across Hosts Model
+##################################
 class unixuser(models.Model):
     class Meta:
         verbose_name = "Host to User Mapping"
@@ -160,6 +181,7 @@ class unixuser(models.Model):
     # default manager
     objects = models.Manager()
     
+    # Get the apps that the host resides on
     def getApps(self):
         applist=""
         for app in self.host.apps.all():

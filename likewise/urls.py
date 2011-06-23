@@ -28,6 +28,9 @@ urlpatterns = patterns('',
     (r'^hostlist/allsox/$', 'website.likewise.views.allsox'),
     (r'^hostlist/kyle/$', 'website.likewise.views.kyle_test'),
     
+    # ###########################################
+    # Used by OGFS scripts to add applications
+    # ###########################################
     (r'^app/update/$', 'website.likewise.views.addApp'),
     (r'^app/add/host/$', 'website.likewise.views.addApp2Host'),
     

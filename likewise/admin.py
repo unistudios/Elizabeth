@@ -48,6 +48,7 @@ class userlistAdmin(admin.ModelAdmin):
     #    (None, { 'fields': ('username', 'type', 'disable', 'userCount')}),
     #)
     #fields = ('username, 'type', 'disable', 'userCount')
+    
     list_display = ('username','type', 'disable')
     fields = ['username', 'name', 'type', 'source', 'hostCount', 'getHosts']
     search_fields = ['username']
