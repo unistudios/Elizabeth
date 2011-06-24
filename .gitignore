@@ -7,3 +7,4 @@ settings_local.py
 settings.py.*
 migrations
 backup
+sandbox
