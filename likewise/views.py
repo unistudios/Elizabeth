@@ -349,7 +349,7 @@ def userupdate2(request):
     host_name = request.POST['host_name']
     lastlogin = request.POST['lastlogin']
     user      = username=request.POST['user']
-    os        = request.POST['host_os']
+    host_os   = request.POST['host_os']
     print host_name, user, lastlogin, os
 
     if request.method == 'POST':
@@ -357,13 +357,13 @@ def userupdate2(request):
 
         try:
             h = unixhost.objects.get(name=host_name)
-            h.os = os
+            h.os = host_os
             h.save()
         except unixhost.DoesNotExist:
             # so add it!
             h = unixhost()
             h.name = host_name
-            h.os   = os
+            h.os   = host_os
             h.save()
             
         # new code to use userlist instead
