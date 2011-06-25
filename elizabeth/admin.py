@@ -1,4 +1,4 @@
-from website.likewise.models import *
+from website.elizabeth.models import *
 from django.contrib import admin
 from django.contrib.contenttypes import generic
 

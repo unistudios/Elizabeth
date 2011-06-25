@@ -6,7 +6,7 @@ from django.views.generic.list_detail import *
 from django.views.generic.simple import *
 from django.db.models import Q
 
-from website.likewise.models import *
+from website.elizabeth.models import *
 
 def todaystr():
     return datetime.datetime.now().strftime("%A, %d. %B %Y %I:%M%p")
@@ -20,7 +20,7 @@ def TemplateExt(request):
 def index(request):
     # return the main index.html page although this should be a redirect to the WIKI for now.
     return direct_to_template(request,
-                              template="likewise/index.html",
+                              template="elizabeth/index.html",
                               extra_context={},
                             )   
 
@@ -28,13 +28,13 @@ def installed(request):
     return object_list(request,
                        queryset=unixhost.objects.filter(hostsetting__installed=True,
                                                         app__importance="L1"). order_by('-hostsetting__installdate'),
-                       template_name="likewise/installed.%s" % TemplateExt(request),
+                       template_name="elizabeth/installed.%s" % TemplateExt(request),
                        extra_context={'dToday': todaystr()},
                     )
 def hostlist_run(request):
     #return object_list(request,
     #                   queryset=unixhost.objects.filter(hostsetting__installed=True).exclude(app__importance="L1").order_by('-hostsetting__installdate'),
-    #                   template_name="likewise/installed.%s" % TemplateExt(request),
+    #                   template_name="elizabeth/installed.%s" % TemplateExt(request),
     #                   extra_context={'dToday': todaystr()},
     #                )
     qsRunHosts = unixhost.objects.exclude(app__importance="L1")
@@ -47,7 +47,7 @@ def hostlist_run(request):
 
     return object_list(request,
                        queryset=qsRunHosts.order_by('-hostsetting__installdate'),
-                       template_name="likewise/hostlist_run.%s" % TemplateExt(request),
+                       template_name="elizabeth/hostlist_run.%s" % TemplateExt(request),
                        extra_context={'dToday': todaystr(),
                                       'nRunHostsInstalled'     : nRunHostsInstalled,
                                       'nRunHostsRemaining'     : nRunHostsRemaining,
@@ -59,14 +59,14 @@ def hostlist_run(request):
 def listHosts(request):
     #return object_list(request,
     #                   queryset=unixhost.objects.filter(hostsetting__installed=True).exclude(app__importance="L1").order_by('-hostsetting__installdate'),
-    #                   template_name="likewise/installed.%s" % TemplateExt(request),
+    #                   template_name="elizabeth/installed.%s" % TemplateExt(request),
     #                   extra_context={'dToday': todaystr()},
     #                )
     qsHosts = unixhost.objects.all()
     #return HttpResponse(qsHosts)
     return object_list(request,
                        queryset=qsHosts.order_by('name'),
-                       template_name="likewise/listhosts.%s" % TemplateExt(request),
+                       template_name="elizabeth/listhosts.%s" % TemplateExt(request),
                        extra_context={'dToday': todaystr(),
                                       'qsHosts'     : qsHosts,
                                      },
@@ -96,7 +96,7 @@ def DisableHosts(request):
     #                )
     return object_list(request,
                        queryset=qs,
-                       template_name="likewise/unixhost_list.%s" % TemplateExt(request), 
+                       template_name="elizabeth/unixhost_list.%s" % TemplateExt(request), 
                     )
 
 def prHosts(request):
@@ -130,7 +130,7 @@ def prHosts(request):
     
     return object_list(request,
                        queryset=qs,
-                       template_name="likewise/prhosts.%s" % TemplateExt(request),
+                       template_name="elizabeth/prhosts.%s" % TemplateExt(request),
                        extra_context=ec
             )
 
@@ -242,10 +242,10 @@ def wikivalues(request):
                     'dToday'            : todaystr(),
                 }
     
-    return direct_to_template(request, template="likewise/wikivalues.html", extra_context=return_context)
+    return direct_to_template(request, template="elizabeth/wikivalues.html", extra_context=return_context)
     
 def hostupdate(request, host_name):
-    # this is called when someone visits /likewise/host/<host_name>
+    # this is called when someone visits /elizabeth/host/<host_name>
     # look for various POST data
     
     host_result = ""
@@ -287,7 +287,7 @@ def hostupdate(request, host_name):
         return HttpResponse("Error in hostupdate")
 
 def userupdate(request, host_name):
-    # this is called when someone visits /likewise/user/<host_name>?user=<username>&enabled=True
+    # this is called when someone visits /elizabeth/user/<host_name>?user=<username>&enabled=True
     # add a user to the server
     
     if request.method == 'POST':
@@ -343,7 +343,7 @@ def userupdate(request, host_name):
         return HttpResponse("HTTP GET, nothing here, move on")
 
 def userupdate2(request):
-    # this is called when someone visits /likewise/user/<host_name>?user=<username>&enabled=True
+    # this is called when someone visits /elizabeth/user/<host_name>?user=<username>&enabled=True
     # add a user to the server
 
     host_name = request.POST['host_name']
@@ -418,7 +418,7 @@ def userupdate2(request):
 
 # Add hosts to different apps using blaster_apps.py OGFS script
 def addApp2Host(request):
-    # this is called when someone visits /likewise/user/<host_name>?user=<username>&enabled=True
+    # this is called when someone visits /elizabeth/user/<host_name>?user=<username>&enabled=True
     # add a user to the server
     
     if request.method == 'POST':
@@ -455,7 +455,7 @@ def addApp2Host(request):
 
 # Add Applications to Elizabeth database
 def addApp(request):
-    # this is called when someone visits /likewise/user/<host_name>?user=<username>&enabled=True
+    # this is called when someone visits /elizabeth/user/<host_name>?user=<username>&enabled=True
     # add a user to the server
     
     if request.method == 'POST':
@@ -495,6 +495,6 @@ def allsox(request):
     
     return object_list(request,
                        queryset=qs,
-                       template_name="likewise/allsox.%s" % TemplateExt(request),
+                       template_name="elizabeth/allsox.%s" % TemplateExt(request),
                        extra_context=ec
             )

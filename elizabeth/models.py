@@ -101,7 +101,7 @@ class unixhost(models.Model):
         return self.name 
 
 ######################################################
-# Used for Legacy Likewise system...  Remove possibly?
+# Used for Legacy elizabeth system...  Remove possibly?
 ######################################################
 class hostsetting(models.Model):
     # settings for each host.
@@ -112,9 +112,9 @@ class hostsetting(models.Model):
     # fields
     sshkeys     = models.BooleanField()     # are the keys ready?
     userlist    = models.BooleanField()     # did we scan users yet?
-    installed   = models.BooleanField()     # is likewise installed?
+    installed   = models.BooleanField()     # is elizabeth installed?
     installdate = models.DateField(null=True, blank=True)
-    running     = models.BooleanField()     # is likewise running?
+    running     = models.BooleanField()     # is elizabeth running?
     delayed     = models.BooleanField()     # is this box delayed for some reason?
     complexity  = models.BooleanField()     # has password complexity been enabled?
 
