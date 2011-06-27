@@ -244,11 +244,12 @@ def wikivalues(request):
     
     return direct_to_template(request, template="elizabeth/wikivalues.html", extra_context=return_context)
     
-def hostupdate(request, host_name):
-    # this is called when someone visits /elizabeth/host/<host_name>
+def hostupdate(request):
+    # this is called when someone visits /elizabeth/host/update/
     # look for various POST data
     
     host_result = ""
+    host_name = request.POST['host_name']
     
     try:
         if request.method == 'POST':
@@ -264,11 +265,11 @@ def hostupdate(request, host_name):
             
             h.save()
             
-            if "userlist" in request.POST:
-                # the setuserlist parameter was sent, so update that setting
-                h.hostsetting.userlist = request.POST['userlist'] == "true"
-                h.hostsetting.save()
-                host_result += " userlist %s " % str(h.hostsetting.userlist)
+            #if "userlist" in request.POST:
+            #    # the setuserlist parameter was sent, so update that setting
+            #    h.hostsetting.userlist = request.POST['userlist'] == "true"
+            #    h.hostsetting.save()
+            #    host_result += " userlist %s " % str(h.hostsetting.userlist)
             
             if "osinfo" in request.POST:
                 h.os = request.POST['osinfo']

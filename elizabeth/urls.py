@@ -14,7 +14,7 @@ urlpatterns = patterns('',
     # #################
     # Host Functions
     # #################
-    (r'^host/(?P<host_name>\w+)/$', 'website.elizabeth.views.hostupdate'), 
+    (r'^host/update/$', 'website.elizabeth.views.hostupdate'), 
     
     # ###########################################
     # Hostlist URL's - Gives back lists of unixhost's
