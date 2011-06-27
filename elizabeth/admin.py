@@ -49,11 +49,11 @@ class userlistAdmin(admin.ModelAdmin):
     #)
     #fields = ('username, 'type', 'disable', 'userCount')
     
-    list_display = ('username','type', 'disable')
+    list_display = ('username','type', 'enabled')
     fields = ['username', 'name', 'type', 'source', 'hostCount', 'getHosts']
     search_fields = ['username']
-    exclude = ['windowsid', 'disable']
-    list_filter = ('type', 'disable', 'unixuser__host__apps')
+    exclude = ['windowsid', 'enabled']
+    list_filter = ('type', 'enabled', 'unixuser__host__apps')
     readonly_fields = ['username', 'hostCount', 'getHosts']
     ordering=['username']
     

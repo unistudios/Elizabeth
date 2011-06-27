@@ -142,7 +142,7 @@ class userlist(models.Model):
     windowsid   = models.CharField(max_length=20, blank=True, null=True)                            # What is the equivelent ID in NBCUNI
     name        = models.CharField(max_length=50, blank=True, null=True)
     type        = models.CharField(max_length=10, choices=USERLIST_CHOICE, default="X",blank=True, null=True)   # type of account
-    disable     = models.BooleanField()                                                             # Should this account be disabled?
+    enabled     = models.BooleanField()                                                             # Should this account be disabled?
     source      = models.CharField(max_length=100, blank=True, null=True)                           # Where did this ID come from?  
         
     # Return a count of the total number of hosts on which the user exists.
