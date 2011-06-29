@@ -58,9 +58,9 @@ class userlistAdmin(admin.ModelAdmin):
 
     # Override ModelAdmin queryset to only return distinct user accounts.
     # This is necessary when filtering by application.
-    #def queryset(self, request):
-    #    qs = super(userlistAdmin, self).queryset(request)
-    #    return qs.distinct()
+    def queryset(self, request):
+        qs = super(userlistAdmin, self).queryset(request)
+        return qs.distinct()
     
     #fieldsets = (
     #    (None, { 'fields': ('username', 'type', 'disable', 'userCount')}),
