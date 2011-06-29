@@ -57,7 +57,7 @@ class unixapp(models.Model):
 ##################################
 class unixhost(models.Model):
     class Meta:
-        verbose_name = "UNIX Host"
+        verbose_name = "Host"
 
     LEVEL_CHOICE = (
         ("PR", "Production"),
@@ -129,7 +129,7 @@ class hostsetting(models.Model):
 ##################################
 class userlist(models.Model):
     class Meta:
-        verbose_name = "UNIX User Account"
+        verbose_name = "User Account"
 
     USERLIST_CHOICE = (
         ("U", "User"),
@@ -167,7 +167,7 @@ class userlist(models.Model):
 ##################################
 class unixuser(models.Model):
     class Meta:
-        verbose_name = "Host to User Mapping"
+        verbose_name = "User to Host Mapping"
 
     # each user on each unixhost
     host        = models.ForeignKey(unixhost)

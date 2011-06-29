@@ -1,6 +1,10 @@
 from website.elizabeth.models import *
 from django.contrib import admin
 from django.contrib.contenttypes import generic
+from django.contrib.auth.models import User
+from django import forms
+
+superuser = ""
 
 class hostsettingInline(admin.TabularInline):
 	model = hostsetting
@@ -10,7 +14,7 @@ class hostsettingInline(admin.TabularInline):
 
 class unixhostAdmin(admin.ModelAdmin):
     list_display = ('name', 'level', 'os', 'id' )
-    fields = ('name', 'fqdn', 'apps','level', 'os', 'comment')
+    fields = ('name', 'fqdn', 'apps', 'level', 'os', 'comment')
     #inlines = [ hostsettingInline,]
     search_fields = ['name', 'fqdn']
     readonly_fields = ['name', 'fqdn', 'level', 'os', 'comment']
@@ -37,12 +41,26 @@ class unixuserAdmin(admin.ModelAdmin):
 	
 admin.site.register(unixuser, unixuserAdmin)
 
+
+class CustomUserListAdmin(forms.ModelForm):
+    def __init__(self, request=None, *args, **kwargs):
+        self.request = request
+        super(CustomUserListAdmin, self).__init__(*args, **kwargs)
+        
 class userlistAdmin(admin.ModelAdmin):
+    #form = CustomUserListAdmin
+    #def get_form(self, request, obj=None, **kwargs):
+    #    ModelForm = super(userlistAdmin, self).get_form(request, obj, **kwargs)
+    #    def form_wrapper(*args, **kwargs):
+    #        a = ModelForm(request=request, *args, **kwargs)
+    #        return a
+    #    return form_wrapper
+
     # Override ModelAdmin queryset to only return distinct user accounts.
     # This is necessary when filtering by application.
-    def queryset(self, request):
-        qs = super(userlistAdmin, self).queryset(request)
-        return qs.distinct()
+    #def queryset(self, request):
+    #    qs = super(userlistAdmin, self).queryset(request)
+    #    return qs.distinct()
     
     #fieldsets = (
     #    (None, { 'fields': ('username', 'type', 'disable', 'userCount')}),
@@ -53,9 +71,13 @@ class userlistAdmin(admin.ModelAdmin):
     fields = ['username', 'name', 'type', 'source', 'hostCount', 'getHosts']
     search_fields = ['username']
     exclude = ['windowsid', 'enabled']
-    list_filter = ('type', 'enabled', 'unixuser__host__apps')
+    list_filter = ('type', 'enabled', 'unixuser__host__apps', 'unixuser__host__os')
     readonly_fields = ['username', 'hostCount', 'getHosts']
     ordering=['username']
+    #print "Yes or no: " + request.user.is_superuser() 
+    
+
+
     
 	
 admin.site.register(userlist, userlistAdmin)

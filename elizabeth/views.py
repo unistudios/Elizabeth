@@ -265,18 +265,19 @@ def hostupdate(request):
             
             h.save()
             
-            #if "userlist" in request.POST:
-            #    # the setuserlist parameter was sent, so update that setting
-            #    h.hostsetting.userlist = request.POST['userlist'] == "true"
-            #    h.hostsetting.save()
-            #    host_result += " userlist %s " % str(h.hostsetting.userlist)
+            if "level" in request.POST:
+                # the level parameter was sent, so update that setting
+                h.level = request.POST['level']
+                h.save()
+                host_result += " level %s " % h.level
             
             if "osinfo" in request.POST:
                 h.os = request.POST['osinfo']
                 h.save()
                 host_result += " osinfo %s" % h.os          
-                
-            return HttpResponse("%s %s\n" % (h.name, host_result))
+            
+            h.save()    
+            return HttpResponse("Updated Host: %s %s\n" % (h.name, host_result))
         else:
             try:
                 h = unixhost.objects.get(name=host_name)
@@ -347,24 +348,42 @@ def userupdate2(request):
     # this is called when someone visits /elizabeth/user/<host_name>?user=<username>&enabled=True
     # add a user to the server
 
-    host_name = request.POST['host_name']
-    lastlogin = request.POST['lastlogin']
-    user      = username=request.POST['user']
-    host_os   = request.POST['host_os']
-    print host_name, user, lastlogin, os
-
     if request.method == 'POST':
+        if 'host_name' in request.POST:
+            host_name = request.POST['host_name']
+        else:
+            host_name = ""
+        if 'user' in request.POST:
+            user      = username=request.POST['user']
+        else:
+            user      = "" 
+        if 'osinfo' in request.POST:
+            host_os   = request.POST['osinfo']
+        else:
+            host_os   = ""
+        if 'enabled' in request.POST:
+            enabled   = request.POST['enabled']
+        else:
+            enabled   = ""
+        if 'lastlogin' in request.POST:
+            lastlogin = request.POST['lastlogin']
+        else:
+            lastlogin = ""
+        print host_name, user, lastlogin, host_os
+        
+        
         # find this host first, or add a new one.
-
         try:
             h = unixhost.objects.get(name=host_name)
-            h.os = host_os
+            if host_os:
+                h.os = host_os
             h.save()
         except unixhost.DoesNotExist:
             # so add it!
             h = unixhost()
             h.name = host_name
-            h.os   = host_os
+            if host_os:
+                h.os = host_os
             h.save()
             
         # new code to use userlist instead
@@ -380,7 +399,7 @@ def userupdate2(request):
                 ul.windowsid = ""
                 ul.name = ""
                 ul.type = "X"
-                ul.disable = False
+                ul.enabled = True
                 ul.source = ""
                 ul.save()
 
@@ -393,20 +412,20 @@ def userupdate2(request):
             u.user = ul
             u.save()
             
-            if "DNE" not in str(lastlogin):
-                print "Did not equal DNE", lastlogin[0:4], lastlogin[4:6], lastlogin[6:8],
-                u.lastlogin = datetime.date(int(lastlogin[0:4]), int(lastlogin[4:6]), int(lastlogin[6:8]))
-                #u.lastlogin = datetime.date(lastlogin[0:4], lastlogin[4:6], lastlogin[6:8])
-                u.save()
-            else:
-                print "Equaled DNE"
+            if lastlogin:
+                if "DNE" not in str(lastlogin):
+                    print "Did not equal DNE", lastlogin[0:4], lastlogin[4:6], lastlogin[6:8],
+                    u.lastlogin = datetime.date(int(lastlogin[0:4]), int(lastlogin[4:6]), int(lastlogin[6:8]))
+                    #u.lastlogin = datetime.date(lastlogin[0:4], lastlogin[4:6], lastlogin[6:8])
+                    u.save()
+                else:
+                    print "Equaled DNE"
 
             # check if the enabled field was given
-            if "disabled" in request.POST:
-                u.enabled = request.POST['disabled'] != "true"
-
-                if (u.datedisabled == None) and (u.user.type=="U") :
-                    u.datedisabled = datetime.date.today()
+            if "enabled" in request.POST:
+                u.enabled = request.POST['enabled'] == "true"
+                #if (u.datedisabled == None) and (u.user.type=="U") :
+                #    u.datedisabled = datetime.date.today()
                 u.save()
 
             return HttpResponse("%s, %s - %s\n" % (h.name, u.username, str(u.enabled) ) )
