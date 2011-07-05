@@ -344,10 +344,7 @@ def userupdate(request, host_name):
     else:
         return HttpResponse("HTTP GET, nothing here, move on")
 
-def userupdate2(request):
-    # this is called when someone visits /elizabeth/user/<host_name>?user=<username>&enabled=True
-    # add a user to the server
-
+def linuxuserupdate(request):
     if request.method == 'POST':
         if 'host_name' in request.POST:
             host_name = request.POST['host_name']
@@ -392,9 +389,9 @@ def userupdate2(request):
         if "user" in request.POST:
             # look it up in the userlist first.
             try:
-                ul = userlist.objects.get(username=request.POST['user'])
-            except userlist.DoesNotExist:
-                ul = userlist()
+                ul = unixuserlist.objects.get(username=request.POST['user'])
+            except unixuserlist.DoesNotExist:
+                ul = unixuserlist()
                 ul.username = username=request.POST['user']
                 ul.windowsid = ""
                 ul.name = ""
@@ -408,6 +405,94 @@ def userupdate2(request):
                 u = h.unixuser_set.get(username=request.POST['user'])
             except unixuser.DoesNotExist:
                 u = h.unixuser_set.create(username=request.POST['user'])
+
+            u.user = ul
+            u.save()
+            
+            if lastlogin:
+                if "DNE" not in str(lastlogin):
+                    print "Did not equal DNE", lastlogin[0:4], lastlogin[4:6], lastlogin[6:8],
+                    u.lastlogin = datetime.date(int(lastlogin[0:4]), int(lastlogin[4:6]), int(lastlogin[6:8]))
+                    #u.lastlogin = datetime.date(lastlogin[0:4], lastlogin[4:6], lastlogin[6:8])
+                    u.save()
+                else:
+                    print "Equaled DNE"
+
+            # check if the enabled field was given
+            if "enabled" in request.POST:
+                u.enabled = request.POST['enabled'] == "true"
+                #if (u.datedisabled == None) and (u.user.type=="U") :
+                #    u.datedisabled = datetime.date.today()
+                u.save()
+
+            return HttpResponse("%s, %s - %s\n" % (h.name, u.username, str(u.enabled) ) )
+
+        else:
+            return HttpResponse("No user given, oh well\n")
+    else:
+        return HttpResponse("HTTP GET, nothing here, move on")      
+
+def winuserupdate(request):
+    if request.method == 'POST':
+        if 'host_name' in request.POST:
+            host_name = request.POST['host_name']
+        else:
+            host_name = ""
+        if 'user' in request.POST:
+            user      = username=request.POST['user']
+        else:
+            user      = "" 
+        if 'osinfo' in request.POST:
+            host_os   = request.POST['osinfo']
+        else:
+            host_os   = ""
+        if 'enabled' in request.POST:
+            enabled   = request.POST['enabled']
+        else:
+            enabled   = ""
+        if 'lastlogin' in request.POST:
+            lastlogin = request.POST['lastlogin']
+        else:
+            lastlogin = ""
+        print host_name, user, lastlogin, host_os
+        
+        
+        # find this host first, or add a new one.
+        try:
+            h = winhost.objects.get(name=host_name)
+            if host_os:
+                h.os = host_os
+            h.save()
+        except winhost.DoesNotExist:
+            # so add it!
+            h = winhost()
+            h.name = host_name
+            if host_os:
+                h.os = host_os
+            h.save()
+            
+        # new code to use userlist instead
+        # make sure the user exists in the userlist table first
+
+        if "user" in request.POST:
+            # look it up in the userlist first.
+            try:
+                ul = winuserlist.objects.get(username=request.POST['user'])
+            except winuserlist.DoesNotExist:
+                ul = winuserlist()
+                ul.username = username=request.POST['user']
+                ul.windowsid = ""
+                ul.name = ""
+                ul.type = "X"
+                ul.enabled = True
+                ul.source = ""
+                ul.save()
+
+            # so ul is the userlist user that we need to assign as a user to this host.
+            try:
+                u = h.winuser_set.get(username=request.POST['user'])
+            except winuser.DoesNotExist:
+                u = h.winuser_set.create(username=request.POST['user'])
 
             u.user = ul
             u.save()

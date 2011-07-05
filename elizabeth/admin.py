@@ -42,12 +42,12 @@ class unixuserAdmin(admin.ModelAdmin):
 admin.site.register(unixuser, unixuserAdmin)
 
 
-class CustomUserListAdmin(forms.ModelForm):
-    def __init__(self, request=None, *args, **kwargs):
-        self.request = request
-        super(CustomUserListAdmin, self).__init__(*args, **kwargs)
+#class CustomUserListAdmin(forms.ModelForm):
+#    def __init__(self, request=None, *args, **kwargs):
+#        self.request = request
+#        super(CustomUserListAdmin, self).__init__(*args, **kwargs)
         
-class userlistAdmin(admin.ModelAdmin):
+class unixuserlistAdmin(admin.ModelAdmin):
     #form = CustomUserListAdmin
     #def get_form(self, request, obj=None, **kwargs):
     #    ModelForm = super(userlistAdmin, self).get_form(request, obj, **kwargs)
@@ -59,7 +59,7 @@ class userlistAdmin(admin.ModelAdmin):
     # Override ModelAdmin queryset to only return distinct user accounts.
     # This is necessary when filtering by application.
     def queryset(self, request):
-        qs = super(userlistAdmin, self).queryset(request)
+        qs = super(unixuserlistAdmin, self).queryset(request)
         return qs.distinct()
     
     #fieldsets = (
@@ -70,14 +70,46 @@ class userlistAdmin(admin.ModelAdmin):
     list_display = ('username','type', 'enabled')
     fields = ['username', 'name', 'type', 'source', 'hostCount', 'getHosts']
     search_fields = ['username']
-    exclude = ['windowsid', 'enabled']
+    exclude = ['enabled']
     list_filter = ('type', 'enabled', 'unixuser__host__apps', 'unixuser__host__os')
     readonly_fields = ['username', 'hostCount', 'getHosts']
     ordering=['username']
     #print "Yes or no: " + request.user.is_superuser() 
-    
-
-
-    
 	
-admin.site.register(userlist, userlistAdmin)
+admin.site.register(unixuserlist, unixuserlistAdmin)
+
+
+class winhostAdmin(admin.ModelAdmin):
+    list_display = ('name', 'level', 'os', 'id' )
+    fields = ('name', 'fqdn', 'apps', 'level', 'os', 'comment')
+    #inlines = [ hostsettingInline,]
+    search_fields = ['name', 'fqdn']
+    readonly_fields = ['name', 'fqdn', 'level', 'os', 'comment']
+    list_filter = ('apps',)
+    filter_horizontal = ['apps']
+	
+admin.site.register(winhost, winhostAdmin)
+
+class winuserAdmin(admin.ModelAdmin):
+    list_display = ['host', 'user', 'lastlogin']
+    search_fields = ['username', 'host__name']
+    exclude = ['datedisabled', 'enabled']
+    readonly_fields = ['host', 'user', 'username', 'lastlogin', 'getApps']
+    list_filter = ['host__apps']
+	
+admin.site.register(winuser, winuserAdmin)
+
+class winuserlistAdmin(admin.ModelAdmin):
+    def queryset(self, request):
+        qs = super(winuserlistAdmin, self).queryset(request)
+        return qs.distinct()
+    
+    list_display = ('username','type', 'enabled')
+    fields = ['username', 'name', 'type', 'source', 'hostCount', 'getHosts']
+    search_fields = ['username']
+    exclude = ['windowsid', 'enabled']
+    list_filter = ('type', 'enabled', 'winuser__host__apps', 'winuser__host__os')
+    readonly_fields = ['username', 'hostCount', 'getHosts']
+    ordering=['username']
+
+admin.site.register(winuserlist, winuserlistAdmin)
