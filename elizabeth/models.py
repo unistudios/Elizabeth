@@ -69,7 +69,7 @@ class unixhost(models.Model):
 
     name    = models.CharField(max_length=50, unique=True)                          # short name
     fqdn    = models.CharField(max_length=50, blank=True)                           # FQDN
-    os      = models.CharField(max_length=10, blank=True)                           # What OS is on the box.
+    os      = models.CharField(max_length=30, blank=True)                           # What OS is on the box.
     level   = models.CharField(max_length=30, blank=True, choices=LEVEL_CHOICE)     # Prod, QA, DR, DEV
     comment = models.CharField(max_length=100, blank=True)
     
@@ -210,7 +210,7 @@ class winhost(models.Model):
 
     name    = models.CharField(max_length=50, unique=True)                          # short name
     fqdn    = models.CharField(max_length=50, blank=True)                           # FQDN
-    os      = models.CharField(max_length=10, blank=True)                           # What OS is on the box.
+    os      = models.CharField(max_length=30, blank=True)                           # What OS is on the box.
     level   = models.CharField(max_length=30, blank=True, choices=LEVEL_CHOICE)     # Prod, QA, DR, DEV
     comment = models.CharField(max_length=100, blank=True)
     
