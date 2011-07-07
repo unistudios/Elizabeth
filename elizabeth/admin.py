@@ -24,13 +24,13 @@ class unixhostAdmin(admin.ModelAdmin):
 admin.site.register(unixhost, unixhostAdmin)
 
 
-class unixappAdmin(admin.ModelAdmin):
+class hostappAdmin(admin.ModelAdmin):
     fields = ('name', 'getHostCount', 'getHosts')
     list_display = ['name', 'getHostCount']
     readonly_fields = ['getHostCount', 'getHosts']
     #inlines = [unixhostInline,]
 	
-admin.site.register(unixapp, unixappAdmin)
+admin.site.register(hostapp, hostappAdmin)
 
 class unixuserAdmin(admin.ModelAdmin):
     list_display = ['host', 'user', 'lastlogin']

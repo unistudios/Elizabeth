@@ -20,7 +20,7 @@ class unixhostManager(models.Manager):
 ##################################
 # Application Model
 ##################################
-class unixapp(models.Model):
+class hostapp(models.Model):
     class Meta:
         ordering = ['name']
         verbose_name = "Business Application"
@@ -74,8 +74,8 @@ class unixhost(models.Model):
     comment = models.CharField(max_length=100, blank=True)
     
     # Changing app to host relationship from 12M to M2M.
-    apps     = models.ManyToManyField(unixapp, blank=True, null=True)
-    #app     = models.ForeignKey(unixapp, blank=True, null=True)                     # what app goes with this host.
+    apps     = models.ManyToManyField(hostapp, blank=True, null=True)
+    #app     = models.ForeignKey(hostapp, blank=True, null=True)                     # what app goes with this host.
     
     objects     = unixhostManager()                                                 # Using a custom object manager because we can...
         
@@ -210,13 +210,13 @@ class winhost(models.Model):
 
     name    = models.CharField(max_length=50, unique=True)                          # short name
     fqdn    = models.CharField(max_length=50, blank=True)                           # FQDN
-    os      = models.CharField(max_length=30, blank=True)                           # What OS is on the box.
+    os      = models.CharField(max_length=50, blank=True)                           # What OS is on the box.
     level   = models.CharField(max_length=30, blank=True, choices=LEVEL_CHOICE)     # Prod, QA, DR, DEV
     comment = models.CharField(max_length=100, blank=True)
     
     # Changing app to host relationship from 12M to M2M.
-    apps     = models.ManyToManyField(unixapp, blank=True, null=True)
-    #app     = models.ForeignKey(unixapp, blank=True, null=True)                     # what app goes with this host.
+    apps     = models.ManyToManyField(hostapp, blank=True, null=True)
+    #app     = models.ForeignKey(hostapp, blank=True, null=True)                     # what app goes with this host.
     
     #objects     = unixhostManager()                                                 # Using a custom object manager because we can...
         

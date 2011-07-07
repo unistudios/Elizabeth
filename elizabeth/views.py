@@ -550,10 +550,10 @@ def addApp2Host(request):
 
         # If App does not exist, add it.
         try:
-            app = unixapp.objects.get(name=app_name)
-        except unixapp.DoesNotExist:
+            app = hostapp.objects.get(name=app_name)
+        except hostapp.DoesNotExist:
             print "adding application"
-            app = unixapp()
+            app = hostapp()
             app.name = app_name
             app.save()
             
@@ -584,11 +584,11 @@ def addApp(request):
         app_name = request.POST['app_name']
 
         try:
-            app = unixapp.objects.get(name=app_name)
+            app = hostapp.objects.get(name=app_name)
             return HttpResponse("App already exists.\n")
-        except unixapp.DoesNotExist:
+        except hostapp.DoesNotExist:
             # so add it!
-            app = unixapp()
+            app = hostapp()
             app.name = app_name
             app.save()
 
