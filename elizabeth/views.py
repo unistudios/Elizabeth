@@ -570,7 +570,7 @@ def addApp2Host(request):
             except winhost.DoesNotExist:
                 print "except windows"
                 print "host does not exist"
-                return HttpResponse("Host %s does not exist.\n" % (host.name) )
+                return HttpResponse("Host %s does not exist.\n" % (host_name) )
         
         try:
             #  If host and app exist, associate them and save host object.
