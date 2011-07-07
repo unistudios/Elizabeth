@@ -560,10 +560,15 @@ def addApp2Host(request):
         # If Host does not exist, quit.
         try:
             print "host: ", host_name, app.name
+            # Check if it's a UNIX host first...
             host = unixhost.objects.get(name__startswith=host_name)
         except unixhost.DoesNotExist:
-            print "host does not exist"
-            return HttpResponse("Host %s does not exist.\n" % (host.name) )
+            try:
+                # Try Windows next...
+                host = winhost.objects.get(name__startswith=host_name)
+            except winhost.DoesNotExist:
+                print "host does not exist"
+                return HttpResponse("Host %s does not exist.\n" % (host.name) )
         else:
             #  If host and app exist, associate them and save host object.
             host.apps.add(app)

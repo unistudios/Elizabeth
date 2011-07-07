@@ -25,9 +25,9 @@ admin.site.register(unixhost, unixhostAdmin)
 
 
 class hostappAdmin(admin.ModelAdmin):
-    fields = ('name', 'getHostCount', 'getHosts')
+    fields = ('name', 'getHostCount', 'getWinHosts', 'getUnixHosts')
     list_display = ['name', 'getHostCount']
-    readonly_fields = ['getHostCount', 'getHosts']
+    readonly_fields = ['getHostCount', 'getHosts', 'getWinHosts', 'getUnixHosts']
     #inlines = [unixhostInline,]
 	
 admin.site.register(hostapp, hostappAdmin)
