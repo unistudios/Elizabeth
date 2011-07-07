@@ -28,6 +28,7 @@ urlpatterns = patterns('',
     (r'^hostlist/installed/$', 'website.elizabeth.views.installed'),
     (r'^hostlist/allsox/$', 'website.elizabeth.views.allsox'),
     (r'^hostlist/listhosts/$', 'website.elizabeth.views.listHosts'),
+    (r'^hostlist/listwinhosts/$', 'website.elizabeth.views.listwinHosts'),
     
     # ###########################################
     # Used by OGFS scripts to add applications
