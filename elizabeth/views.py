@@ -376,7 +376,7 @@ def userupdate(request, host_name):
     else:
         return HttpResponse("HTTP GET, nothing here, move on")
 
-def linuxuserupdate(request):
+def unixuserupdate(request):
     if request.method == 'POST':
         if 'host_name' in request.POST:
             host_name = request.POST['host_name']

@@ -33,9 +33,9 @@ class hostappAdmin(admin.ModelAdmin):
 admin.site.register(hostapp, hostappAdmin)
 
 class unixuserAdmin(admin.ModelAdmin):
-    list_display = ['host', 'user', 'lastlogin']
+    list_display = ['host', 'user', 'lastlogin', 'enabled']
     search_fields = ['username', 'host__name']
-    exclude = ['datedisabled', 'enabled']
+    exclude = ['datedisabled',]
     readonly_fields = ['host', 'user', 'username', 'lastlogin', 'getApps']
     list_filter = ['host__apps']
 	
