@@ -71,6 +71,22 @@ def listHosts(request):
                                       'qsHosts'     : qsHosts,
                                      },
                     )
+def listunixUsers(request):
+    #return object_list(request,
+    #                   queryset=unixhost.objects.filter(hostsetting__installed=True).exclude(app__importance="L1").order_by('-hostsetting__installdate'),
+    #                   template_name="elizabeth/installed.%s" % TemplateExt(request),
+    #                   extra_context={'dToday': todaystr()},
+    #                )
+    qsHosts = unixuserlist.objects.all()
+    #return HttpResponse(qsHosts)
+    return object_list(request,
+                       queryset=qsHosts.order_by('name'),
+                       template_name="elizabeth/unixuserlist.%s" % TemplateExt(request),
+                       extra_context={'dToday': todaystr(),
+                                      'qsHosts'     : qsHosts,
+                                     },
+                    )    
+    
     
 def listwinHosts(request):
     #return object_list(request,

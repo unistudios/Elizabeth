@@ -7,7 +7,7 @@
 from settings_local import *
 import os, sys
 
-settingsPath = os.getcwd()
+#settingsPath = os.getcwd()
 
 
 #######################################
@@ -80,7 +80,8 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    settingsPath+'/templates/',
+    #settingsPath+
+    ELIZ_PATH+'/templates/',
 )
 
 INSTALLED_APPS = (
