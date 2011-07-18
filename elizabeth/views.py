@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.views.generic.list_detail import *
 from django.views.generic.simple import *
 from django.db.models import Q
+from excel_response import ExcelResponse
 
 from website.elizabeth.models import *
 
@@ -71,19 +72,19 @@ def listHosts(request):
                                       'qsHosts'     : qsHosts,
                                      },
                     )
+   
 def listunixUsers(request):
     #return object_list(request,
     #                   queryset=unixhost.objects.filter(hostsetting__installed=True).exclude(app__importance="L1").order_by('-hostsetting__installdate'),
     #                   template_name="elizabeth/installed.%s" % TemplateExt(request),
     #                   extra_context={'dToday': todaystr()},
     #                )
-    qsHosts = unixuserlist.objects.all()
-    #return HttpResponse(qsHosts)
+    qsHosts = unixuserlist.objects.all()      
     return object_list(request,
                        queryset=qsHosts.order_by('name'),
                        template_name="elizabeth/unixuserlist.%s" % TemplateExt(request),
                        extra_context={'dToday': todaystr(),
-                                      'qsHosts'     : qsHosts,
+                                     'qsHosts'     : qsHosts,
                                      },
                     )    
     
@@ -319,62 +320,6 @@ def hostupdate(request):
                 return HttpResponse("Hostname %s not found\n" % host_name)
     except:
         return HttpResponse("Error in hostupdate")
-
-def userupdate(request, host_name):
-    # this is called when someone visits /elizabeth/user/<host_name>?user=<username>&enabled=True
-    # add a user to the server
-    
-    if request.method == 'POST':
-        # find this host first, or add a new one.
-        
-        try:
-            h = unixhost.objects.get(name=host_name)
-        except unixhost.DoesNotExist:
-            # so add it!
-            h = unixhost()
-            h.name = host_name
-            h.save()
-
-        # new code to use userlist instead
-        # make sure the user exists in the userlist table first
-        
-        if "user" in request.POST:
-            # look it up in the userlist first.
-            try:
-                ul = userlist.objects.get(username=request.POST['user'])
-            except userlist.DoesNotExist:
-                ul = userlist()
-                ul.username = username=request.POST['user']
-                ul.windowsid = ""
-                ul.name = ""
-                ul.type = "X"
-                ul.disable = False
-                ul.source = ""
-                ul.save()
-
-            # so ul is the userlist user that we need to assign as a user to this host.                 
-            try:
-                u = h.unixuser_set.get(username=request.POST['user'])
-            except unixuser.DoesNotExist:
-                u = h.unixuser_set.create(username=request.POST['user'])
-                
-            u.user = ul
-            u.save()
-                
-            # check if the enabled field was given
-            if "disabled" in request.POST:
-                u.enabled = request.POST['disabled'] != "true"
-
-                if (u.datedisabled == None) and (u.user.type=="U") :
-                    u.datedisabled = datetime.date.today()
-                u.save()
-
-            return HttpResponse("%s, %s - %s\n" % (h.name, u.username, str(u.enabled) ) )
-
-        else:
-            return HttpResponse("No user given, oh well\n")
-    else:
-        return HttpResponse("HTTP GET, nothing here, move on")
 
 def unixuserupdate(request):
     if request.method == 'POST':

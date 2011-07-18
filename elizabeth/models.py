@@ -91,7 +91,8 @@ class hostapp(models.Model):
 ##################################
 class unixhost(models.Model):
     class Meta:
-        verbose_name = "Unix Host"
+        verbose_name        = "Host (UNIX)"
+        verbose_name_plural = "Hosts (UNIX)"
 
     LEVEL_CHOICE = (
         ("PR", "Production"),
@@ -163,7 +164,8 @@ class hostsetting(models.Model):
 ##################################
 class unixuserlist(models.Model):
     class Meta:
-        verbose_name = "UNIX User Account"
+        verbose_name        = "Local User Account (UNIX)"
+        verbose_name_plural = "Local User Accounts (UNIX)"
 
     USERLIST_CHOICE = (
         ("U", "User"),
@@ -176,7 +178,7 @@ class unixuserlist(models.Model):
     #windowsid   = models.CharField(max_length=20, blank=True, null=True)                            # What is the equivelent ID in NBCUNI
     name        = models.CharField(max_length=50, blank=True, null=True)
     type        = models.CharField(max_length=10, choices=USERLIST_CHOICE, default="X",blank=True, null=True)   # type of account
-    enabled     = models.BooleanField()                                                             # Should this account be disabled?
+    enabled     = models.BooleanField(verbose_name="User Allowed?")                                                             # Should this account be disabled?
     source      = models.CharField(max_length=100, blank=True, null=True)                           # Where did this ID come from?  
         
     # Return a count of the total number of hosts on which the user exists.
@@ -201,7 +203,8 @@ class unixuserlist(models.Model):
 ##################################
 class unixuser(models.Model):
     class Meta:
-        verbose_name = "UNIX User to Host Mapping"
+        verbose_name        = "User to Host Mapping (UNIX)"
+        verbose_name_plural = "User to Host Mappings (UNIX)"
 
     # each user on each unixhost
     host        = models.ForeignKey(unixhost)
@@ -232,7 +235,8 @@ class unixuser(models.Model):
 ##################################
 class winhost(models.Model):
     class Meta:
-        verbose_name = "Windows Host"
+        verbose_name        = "Host (Windows)"
+        verbose_name_plural = "Hosts (Windows)"
 
     LEVEL_CHOICE = (
         ("PR", "Production"),
@@ -280,7 +284,8 @@ class winhost(models.Model):
 ##################################
 class winuserlist(models.Model):
     class Meta:
-        verbose_name = "Windows User Account"
+        verbose_name        = "Local User Account (Windows)"
+        verbose_name_plural = "Local User Accounts (Windows)"
 
     USERLIST_CHOICE = (
         ("U", "User"),
@@ -293,7 +298,7 @@ class winuserlist(models.Model):
     windowsid   = models.CharField(max_length=20, blank=True, null=True)                            # What is the equivelent ID in NBCUNI
     name        = models.CharField(max_length=50, blank=True, null=True)
     type        = models.CharField(max_length=10, choices=USERLIST_CHOICE, default="X",blank=True, null=True)   # type of account
-    enabled     = models.BooleanField()                                                             # Should this account be disabled?
+    enabled     = models.BooleanField(verbose_name="User Allowed?")                                                             # Should this account be disabled?
     source      = models.CharField(max_length=100, blank=True, null=True)                           # Where did this ID come from?  
         
     # Return a count of the total number of hosts on which the user exists.
@@ -318,7 +323,8 @@ class winuserlist(models.Model):
 ##################################
 class winuser(models.Model):
     class Meta:
-        verbose_name = "Windows User to Host Mapping"
+        verbose_name        = "User to Host Mapping (Windows)"
+        verbose_name_plural = "User to Host Mapping (Windows)"
 
     # each user on each winhost
     host        = models.ForeignKey(winhost)
