@@ -41,6 +41,7 @@ urlpatterns = patterns('',
     # ##################### 
     # wiki values page (kludgy for now)
     (r'^wikivalues/$', 'website.elizabeth.views.wikivalues'),
+    (r'^excel/$', 'website.elizabeth.views.excelview'),
 
     #(r'^test/$', 'website.elizabeth.views.test'),
 )

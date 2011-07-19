@@ -9,6 +9,12 @@ from excel_response import ExcelResponse
 
 from website.elizabeth.models import *
 
+
+# test excelview
+def excelview(request):
+    data = [ ['Column 1', 'Column2'], [1,2], [23,67]]
+    return ExcelResponse(data, 'my_data')
+
 def todaystr():
     return datetime.datetime.now().strftime("%A, %d. %B %Y %I:%M%p")
     
@@ -327,22 +333,27 @@ def unixuserupdate(request):
             host_name = request.POST['host_name']
         else:
             host_name = ""
+            
         if 'user' in request.POST:
             user      = username=request.POST['user']
         else:
             user      = "" 
+        
         if 'osinfo' in request.POST:
             host_os   = request.POST['osinfo']
         else:
             host_os   = ""
+        
         if 'enabled' in request.POST:
             enabled   = request.POST['enabled']
         else:
             enabled   = ""
+        
         if 'lastlogin' in request.POST:
             lastlogin = request.POST['lastlogin']
         else:
             lastlogin = ""
+            
         print host_name, user, lastlogin, host_os
         
         
@@ -367,6 +378,7 @@ def unixuserupdate(request):
             # look it up in the userlist first.
             try:
                 ul = unixuserlist.objects.get(username=request.POST['user'])
+                print "here"
             except unixuserlist.DoesNotExist:
                 ul = unixuserlist()
                 ul.username = username=request.POST['user']
@@ -376,7 +388,8 @@ def unixuserupdate(request):
                 ul.enabled = True
                 ul.source = ""
                 ul.save()
-
+                print "here2"
+                
             # so ul is the userlist user that we need to assign as a user to this host.
             try:
                 u = h.unixuser_set.get(username=request.POST['user'])
@@ -384,16 +397,17 @@ def unixuserupdate(request):
                 u = h.unixuser_set.create(username=request.POST['user'])
 
             u.user = ul
+            u.lastscan = datetime.date.today()
             u.save()
             
             if lastlogin:
                 if "DNE" not in str(lastlogin):
-                    print "Did not equal DNE", lastlogin[0:4], lastlogin[4:6], lastlogin[6:8],
+                    print "Last Login Time Retrieved", lastlogin[0:4], lastlogin[4:6], lastlogin[6:8],
                     u.lastlogin = datetime.date(int(lastlogin[0:4]), int(lastlogin[4:6]), int(lastlogin[6:8]))
                     #u.lastlogin = datetime.date(lastlogin[0:4], lastlogin[4:6], lastlogin[6:8])
                     u.save()
                 else:
-                    print "Equaled DNE"
+                    print "Could not retrieve last login time"
 
             # check if the enabled field was given
             if "enabled" in request.POST:
@@ -472,7 +486,10 @@ def winuserupdate(request):
                 u = h.winuser_set.create(username=request.POST['user'])
 
             u.user = ul
+            u.lastscan = datetime.date.today()
             u.save()
+            
+            print "Last Login", lastlogin
             
             if lastlogin:
                 if "DNE" not in str(lastlogin):

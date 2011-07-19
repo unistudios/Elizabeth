@@ -43,10 +43,10 @@ class hostappAdmin(admin.ModelAdmin):
 admin.site.register(hostapp, hostappAdmin)
 
 class unixuserAdmin(admin.ModelAdmin):
-    list_display = ['host', 'user', 'lastlogin', 'enabled']
+    list_display = ['host', 'user', 'lastlogin', 'enabled', 'lastscan']
     search_fields = ['username', 'host__name']
-    exclude = ['datedisabled',]
-    readonly_fields = ['host', 'user', 'username', 'lastlogin', 'getApps']
+    exclude = ['datedisabled','username']
+    readonly_fields = ['host', 'user', 'enabled', 'lastlogin', 'lastscan', 'getApps']
     list_filter = ['host__apps']
     actions= [export_excel]
 	
@@ -106,10 +106,10 @@ class winhostAdmin(admin.ModelAdmin):
 admin.site.register(winhost, winhostAdmin)
 
 class winuserAdmin(admin.ModelAdmin):
-    list_display = ['host', 'user', 'lastlogin']
+    list_display = ['host', 'user', 'lastlogin', 'enabled', 'lastscan']
     search_fields = ['username', 'host__name']
-    exclude = ['datedisabled', 'enabled']
-    readonly_fields = ['host', 'user', 'username', 'lastlogin', 'getApps']
+    exclude = ['datedisabled','username']
+    readonly_fields = ['host', 'user', 'enabled', 'lastlogin', 'lastscan', 'getApps']
     list_filter = ['host__apps']
     actions= [export_excel]
 	
