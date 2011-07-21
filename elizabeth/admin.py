@@ -1,18 +1,13 @@
 from website.elizabeth.models import *
+from website.elizabeth.excel import *
 from django.contrib import admin
 from django.contrib.contenttypes import generic
 from django.contrib.auth.models import User
 from django import forms
-from excel_response import ExcelResponse
+#from excel_response import ExcelResponse
 
 superuser = ""
 
-# Download spreadsheet action
-def export_excel(modeladmin, request, queryset):
-    #qsHosts = unixuserlist.objects.all()
-    #qsHosts = queryset.objects.all()      
-    return ExcelResponse(queryset)
-export_excel.short_description = "Download spreadsheet"
 
 class hostsettingInline(admin.TabularInline):
 	model = hostsetting
@@ -28,7 +23,7 @@ class unixhostAdmin(admin.ModelAdmin):
     readonly_fields = ['name', 'fqdn', 'level', 'os', 'comment']
     list_filter = ('apps',)
     filter_horizontal = ['apps']
-    actions= [export_excel]
+    actions= [exportExcel]
 	
 admin.site.register(unixhost, unixhostAdmin)
 
@@ -38,7 +33,7 @@ class hostappAdmin(admin.ModelAdmin):
     list_display = ['name', 'getHostCount']
     readonly_fields = ['getHostCount', 'getHosts', 'getWinHosts', 'getUnixHosts']
     #inlines = [unixhostInline,]
-    actions= [export_excel]
+    actions= [exportExcel]
 	
 admin.site.register(hostapp, hostappAdmin)
 
@@ -48,7 +43,7 @@ class unixuserAdmin(admin.ModelAdmin):
     exclude = ['datedisabled','username']
     readonly_fields = ['host', 'user', 'enabled', 'lastlogin', 'lastscan', 'getApps']
     list_filter = ['host__apps']
-    actions= [export_excel]
+    actions= [exportExcelHmUnix]
 	
 admin.site.register(unixuser, unixuserAdmin)
 
@@ -87,7 +82,7 @@ class unixuserlistAdmin(admin.ModelAdmin):
     list_filter = ('type', 'enabled', 'unixuser__host__apps', 'unixuser__host__os')
     readonly_fields = ['username', 'hostCount', 'getHosts']
     ordering=['username']
-    actions = [export_excel]
+    actions = [exportExcel]
     #print "Yes or no: " + request.user.is_superuser() 
 	
 admin.site.register(unixuserlist, unixuserlistAdmin)
@@ -101,7 +96,7 @@ class winhostAdmin(admin.ModelAdmin):
     readonly_fields = ['name', 'fqdn', 'level', 'os', 'comment']
     list_filter = ('apps',)
     filter_horizontal = ['apps']
-    actions= [export_excel]
+    actions= [exportExcel]
 	
 admin.site.register(winhost, winhostAdmin)
 
@@ -111,7 +106,7 @@ class winuserAdmin(admin.ModelAdmin):
     exclude = ['datedisabled','username']
     readonly_fields = ['host', 'user', 'enabled', 'lastlogin', 'lastscan', 'getApps']
     list_filter = ['host__apps']
-    actions= [export_excel]
+    actions=[exportExcelHmWin]
 	
 admin.site.register(winuser, winuserAdmin)
 
@@ -127,6 +122,6 @@ class winuserlistAdmin(admin.ModelAdmin):
     list_filter = ('type', 'enabled', 'winuser__host__apps', 'winuser__host__os')
     readonly_fields = ['username', 'hostCount', 'getHosts']
     ordering=['username']
-    actions= [export_excel]
+    actions= [exportExcel]
 
 admin.site.register(winuserlist, winuserlistAdmin)
