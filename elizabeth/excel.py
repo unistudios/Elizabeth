@@ -58,4 +58,4 @@ exportExcelHmWin.short_description = "Download spreadsheet..."
 # Download spreadsheet action for others
 def exportExcel(modeladmin, request, queryset):
     return ExcelResponse(queryset)
-exportExcel.short_description = "Download spreadsheet old..."
+exportExcel.short_description = "Download Spreadsheet..."
