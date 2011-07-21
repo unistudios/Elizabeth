@@ -2,7 +2,7 @@ from website.elizabeth.models import *
 from excel_response import ExcelResponse
 
 # Download spreadsheet action for UNIX user to host mappings
-def exportExcelHmUnix(modeladmin, request, queryset):
+def exportExcelUnix(modeladmin, request, queryset):
     #qsHosts = unixuserlist.objects.all()
     entries = list(queryset.values())
     
@@ -36,10 +36,10 @@ def exportExcelHmUnix(modeladmin, request, queryset):
     #    u.append(i)
               
     return ExcelResponse(entries)
-exportExcelHmUnix.short_description = "Download spreadsheet..."
+exportExcelUnix.short_description = "Download UNIX spreadsheet"
 
 # Download spreadsheet action for Windows user to host mappings
-def exportExcelHmWin(modeladmin, request, queryset):
+def exportExcelWin(modeladmin, request, queryset):
     entries = list(queryset.values())
     
     for e in entries:
@@ -53,9 +53,9 @@ def exportExcelHmWin(modeladmin, request, queryset):
         del(e['user_id'])
               
     return ExcelResponse(entries)
-exportExcelHmWin.short_description = "Download spreadsheet..."
+exportExcelWin.short_description = "Download Windows spreadsheet"
 
 # Download spreadsheet action for others
-def exportExcel(modeladmin, request, queryset):
+def exportExcelAll(modeladmin, request, queryset):
     return ExcelResponse(queryset)
-exportExcel.short_description = "Download Spreadsheet..."
+exportExcelAll.short_description = "Download spreadsheet"

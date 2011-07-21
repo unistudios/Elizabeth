@@ -23,7 +23,7 @@ class unixhostAdmin(admin.ModelAdmin):
     readonly_fields = ['name', 'fqdn', 'level', 'os', 'comment']
     list_filter = ('apps',)
     filter_horizontal = ['apps']
-    actions= [exportExcel]
+    actions= [exportExcelAll]
 	
 admin.site.register(unixhost, unixhostAdmin)
 
@@ -33,7 +33,7 @@ class hostappAdmin(admin.ModelAdmin):
     list_display = ['name', 'getHostCount']
     readonly_fields = ['getHostCount', 'getHosts', 'getWinHosts', 'getUnixHosts']
     #inlines = [unixhostInline,]
-    actions= [exportExcel]
+    actions= [exportExcelAll]
 	
 admin.site.register(hostapp, hostappAdmin)
 
@@ -43,7 +43,7 @@ class unixuserAdmin(admin.ModelAdmin):
     exclude = ['datedisabled','username']
     readonly_fields = ['host', 'user', 'enabled', 'lastlogin', 'lastscan', 'getApps']
     list_filter = ['host__apps']
-    actions= [exportExcelHmUnix]
+    actions= [exportExcelUnix]
 	
 admin.site.register(unixuser, unixuserAdmin)
 
@@ -82,7 +82,7 @@ class unixuserlistAdmin(admin.ModelAdmin):
     list_filter = ('type', 'enabled', 'unixuser__host__apps', 'unixuser__host__os')
     readonly_fields = ['username', 'hostCount', 'getHosts']
     ordering=['username']
-    actions = [exportExcel]
+    actions = [exportExcelAll]
     #print "Yes or no: " + request.user.is_superuser() 
 	
 admin.site.register(unixuserlist, unixuserlistAdmin)
@@ -96,7 +96,7 @@ class winhostAdmin(admin.ModelAdmin):
     readonly_fields = ['name', 'fqdn', 'level', 'os', 'comment']
     list_filter = ('apps',)
     filter_horizontal = ['apps']
-    actions= [exportExcel]
+    actions= [exportExcelAll]
 	
 admin.site.register(winhost, winhostAdmin)
 
@@ -106,7 +106,7 @@ class winuserAdmin(admin.ModelAdmin):
     exclude = ['datedisabled','username']
     readonly_fields = ['host', 'user', 'enabled', 'lastlogin', 'lastscan', 'getApps']
     list_filter = ['host__apps']
-    actions=[exportExcelHmWin]
+    actions=[exportExcelWin]
 	
 admin.site.register(winuser, winuserAdmin)
 
@@ -122,6 +122,6 @@ class winuserlistAdmin(admin.ModelAdmin):
     list_filter = ('type', 'enabled', 'winuser__host__apps', 'winuser__host__os')
     readonly_fields = ['username', 'hostCount', 'getHosts']
     ordering=['username']
-    actions= [exportExcel]
+    actions= [exportExcelAll]
 
 admin.site.register(winuserlist, winuserlistAdmin)
