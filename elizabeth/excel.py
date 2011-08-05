@@ -46,7 +46,6 @@ def exportExcelAppsToHosts(modeladmin, request, queryset):
     entries = [ ['Application', 'Host', 'OS'], 
               ]
     for q in queryset:    
-        curr_row=['', '', '']
         winhosts = ""
         unixhosts = ""
 
@@ -56,20 +55,15 @@ def exportExcelAppsToHosts(modeladmin, request, queryset):
             print "Failed to retrieve app"
             continue
         else: 
-            curr_row[0] = app.name
             winhosts = app.winhost_set.all()
             unixhosts = app.unixhost_set.all()
         
         if winhosts:
             for w in winhosts:
-                curr_row[1] = w.name
-                curr_row[2] = w.os
                 entries.append([app.name, w.name, w.os])
                 
         if unixhosts:
             for u in unixhosts:
-                curr_row[1] = u.name
-                curr_row[2] = u.os
                 #entries.append(curr_row)
                 entries.append([app.name, u.name, u.os])
         
@@ -79,7 +73,7 @@ exportExcelAppsToHosts.short_description = "Download Apps spreadsheet"
 
 # Create spreadsheet which shows enabled users linked to Applications
 def exportExcelAppsToUsers(modeladmin, request, queryset):
-    rows = [ ['Application', 'Hostname', 'OS', 'Username', 'Last Login', 'Enabled?'], 
+    rows = [ ['Application', 'Level', 'Hostname', 'OS', 'Username', 'Last Login', 'Enabled?'], 
               ]
     
     for app in queryset:    
@@ -93,7 +87,7 @@ def exportExcelAppsToUsers(modeladmin, request, queryset):
             
             for user in unixusers:
                 if user.enabled:
-                    rows.append([app.name, user.host.name, user.host.os, user.username, user.lastlogin, user.enabled])
+                    rows.append([app.name, app.importance, user.host.name, user.host.os, user.username, user.lastlogin, user.enabled])
         
         # Repeat for Windows...   
         for u in winhosts:
@@ -101,7 +95,7 @@ def exportExcelAppsToUsers(modeladmin, request, queryset):
             
             for user in winusers:
                 if user.enabled:
-                    rows.append([app.name, user.host.name, user.host.os, user.username, user.lastlogin, user.enabled])
+                    rows.append([app.name, app.importance, user.host.name, user.host.os, user.username, user.lastlogin, user.enabled])
                 
         
     return ExcelResponse(rows)

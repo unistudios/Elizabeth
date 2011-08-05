@@ -569,20 +569,36 @@ def addApp(request):
     if request.method == 'POST':
         # find this host first, or add a new one.
         app_name = request.POST['app_name']
-
+        if "add" in request.POST:
+            add = request.POST['add'] == "true"
+        else:
+            add = False
+        
         try:
             app = hostapp.objects.get(name=app_name)
-            return HttpResponse("App already exists.\n")
         except hostapp.DoesNotExist:
             # so add it!
-            app = hostapp()
-            app.name = app_name
-            app.save()
-
-            return HttpResponse("App %s added\n" % (app.name) )
-
+            if add == True:
+                app = hostapp()
+                app.name = app_name
+                if "importance" in request.POST:
+                    try:
+                        app.importance=request.POST['importance']
+                    except:
+                        return HttpResponse("Invalid Importance Level given." % (app.name))
+                    app.save()
+                    return HttpResponse("App %s added\n" % (app.name) )
+            else:
+                return HttpResponse("App %s already exists, will not update." % (app_name))
         else:
-            return HttpResponse("Failure.\n")
+            # Update importance level if passed in
+            if "importance" in request.POST:
+                    try:
+                        app.importance=request.POST['importance']
+                    except:
+                        return HttpResponse("Invalid Importance Level given." % (app.name))
+            app.save()
+            return HttpResponse("App %s updated\n" % (app.name) )
     else:
         return HttpResponse("HTTP GET, nothing here, move on")        
         

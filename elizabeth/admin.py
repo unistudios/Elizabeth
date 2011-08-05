@@ -1,5 +1,6 @@
 from website.elizabeth.models import *
 from website.elizabeth.excel import *
+#from website.elizabeth.filters import *
 from django.contrib import admin
 from django.contrib.contenttypes import generic
 from django.contrib.auth.models import User
@@ -29,9 +30,9 @@ admin.site.register(unixhost, unixhostAdmin)
 
 
 class hostappAdmin(admin.ModelAdmin):
-    fields = ('name', 'getHostCount', 'getWinHosts', 'getUnixHosts')
-    list_display = ['name', 'getHostCount']
-    readonly_fields = ['getHostCount', 'getHosts', 'getWinHosts', 'getUnixHosts']
+    fields = ('name', 'importance', 'getHostCount', 'getWinHosts', 'getUnixHosts')
+    list_display = ['name', 'getHostCount', 'importance']
+    readonly_fields = ['importance', 'getHostCount', 'getHosts', 'getWinHosts', 'getUnixHosts']
     #inlines = [unixhostInline,]
     actions= [exportExcelAppsToUsers]
 	
@@ -42,7 +43,7 @@ class unixuserAdmin(admin.ModelAdmin):
     search_fields = ['username', 'host__name']
     exclude = ['datedisabled','username']
     readonly_fields = ['host', 'user', 'enabled', 'lastlogin', 'lastscan', 'getApps']
-    list_filter = ['host__apps']
+    list_filter = ['enabled', 'lastlogin', 'lastscan', 'host__apps']
     actions= [exportExcelUnix]
 	
 admin.site.register(unixuser, unixuserAdmin)
@@ -105,7 +106,7 @@ class winuserAdmin(admin.ModelAdmin):
     search_fields = ['username', 'host__name']
     exclude = ['datedisabled','username']
     readonly_fields = ['host', 'user', 'enabled', 'lastlogin', 'lastscan', 'getApps']
-    list_filter = ['host__apps']
+    list_filter = ['enabled', 'lastlogin', 'lastscan', 'host__apps']
     actions=[exportExcelWin]
 	
 admin.site.register(winuser, winuserAdmin)
