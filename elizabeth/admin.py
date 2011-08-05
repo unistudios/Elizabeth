@@ -18,10 +18,10 @@ class hostsettingInline(admin.TabularInline):
 
 class unixhostAdmin(admin.ModelAdmin):
     list_display = ('name', 'os', )
-    fields = ('name', 'fqdn', 'apps', 'level', 'os', 'comment')
+    fields = ('name', 'os', 'apps', 'comment')
     #inlines = [ hostsettingInline,]
     search_fields = ['name', 'fqdn']
-    readonly_fields = ['name', 'fqdn', 'level', 'os', 'comment']
+    readonly_fields = ['name', 'os', 'comment']
     list_filter = ('apps',)
     filter_horizontal = ['apps']
     actions= [exportExcelAll]
@@ -91,10 +91,10 @@ admin.site.register(unixuserlist, unixuserlistAdmin)
 
 class winhostAdmin(admin.ModelAdmin):
     list_display = ('name', 'os',)
-    fields = ('name', 'fqdn', 'apps', 'level', 'os', 'comment')
+    fields = ('name', 'os', 'apps', 'comment')
     #inlines = [ hostsettingInline,]
     search_fields = ['name', 'fqdn']
-    readonly_fields = ['name', 'fqdn', 'level', 'os', 'comment']
+    readonly_fields = ['name', 'os', 'comment']
     list_filter = ('apps',)
     filter_horizontal = ['apps']
     actions= [exportExcelAll]
