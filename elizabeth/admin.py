@@ -33,7 +33,7 @@ class hostappAdmin(admin.ModelAdmin):
     list_display = ['name', 'getHostCount']
     readonly_fields = ['getHostCount', 'getHosts', 'getWinHosts', 'getUnixHosts']
     #inlines = [unixhostInline,]
-    actions= [exportExcelAll]
+    actions= [exportExcelAppsToUsers]
 	
 admin.site.register(hostapp, hostappAdmin)
 
