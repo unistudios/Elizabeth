@@ -2,10 +2,12 @@ import datetime
 import sys
 
 from django.http import HttpResponse
+from django.shortcuts import render_to_response
 from django.views.generic.list_detail import *
 from django.views.generic.simple import *
 from django.db.models import Q
 from excel_response import ExcelResponse
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
 from website.elizabeth.models import *
 
@@ -378,7 +380,6 @@ def unixuserupdate(request):
             # look it up in the userlist first.
             try:
                 ul = unixuserlist.objects.get(username=request.POST['user'])
-                print "here"
             except unixuserlist.DoesNotExist:
                 ul = unixuserlist()
                 ul.username = username=request.POST['user']
@@ -388,7 +389,6 @@ def unixuserupdate(request):
                 ul.enabled = True
                 ul.source = ""
                 ul.save()
-                print "here2"
                 
             # so ul is the userlist user that we need to assign as a user to this host.
             try:
@@ -601,7 +601,30 @@ def addApp(request):
             return HttpResponse("App %s updated\n" % (app.name) )
     else:
         return HttpResponse("HTTP GET, nothing here, move on")        
-        
+
+
+# List all users associated with a hostname, and indicates whether or not they should be active on the
+# box according to the userlists.
+def listusers(request, host_name):
+     
+    try:
+        qs = unixhost.objects.get(name__icontains=host_name.lower())
+        s = "unix"
+    except:
+        try:
+            qs = winhost.objects.get(name__startswith=host_name.lower())
+            s = "win"
+        except:
+            return HttpResponse("Host %s not in database" % host_name)
+            
+    users  = eval("qs."+s+"user_set.all()")
+
+    for i in users:
+        print "username: ", i.user.username, i.user.enabled       
+    
+    return render_to_response('elizabeth/listusers.html', {'userlist': users})
+
+# Remove: No longer used
 def userdisablelist(self, host_name):
     queryset = unixuser.objects.all().filter(   enabled=True,
                                                 host__hostsetting__delayed=False,
