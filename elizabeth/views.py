@@ -185,8 +185,15 @@ def HostOSinfo(request):
                        queryset
                        )
 
-def allusers(request):
-    qs = userlist.objects.order_by('-type', 'username')
+def allwinusers(request):
+    qs = winuserlist.objects.order_by('-type', 'username')
+    return object_list(request,
+                       queryset=qs,
+                       extra_context={'dToday':todaystr() },
+            )
+    
+def allunixusers(request):
+    qs = unixuserlist.objects.order_by('-type', 'username')
     return object_list(request,
                        queryset=qs,
                        extra_context={'dToday':todaystr() },
@@ -330,6 +337,8 @@ def hostupdate(request):
         return HttpResponse("Error in hostupdate")
 
 def unixuserupdate(request):
+    
+    # Start by gathering all variables in POST data
     if request.method == 'POST':
         if 'host_name' in request.POST:
             host_name = request.POST['host_name']
@@ -356,8 +365,18 @@ def unixuserupdate(request):
         else:
             lastlogin = ""
             
-        print host_name, user, lastlogin, host_os
+        if 'datedisabled' in request.POST:
+            datedisabled = request.POST['datedisabled']
+        else:
+            datedisabled = ""
         
+        if 'dateremoved' in request.POST: 
+            dateremoved = request.POST['dateremoved']
+        else:
+            dateremoved = ""
+        
+            
+        print host_name, user, lastlogin, host_os
         
         # find this host first, or add a new one.
         try:
@@ -398,23 +417,37 @@ def unixuserupdate(request):
 
             u.user = ul
             u.lastscan = datetime.date.today()
-            u.save()
             
             if lastlogin:
                 if "DNE" not in str(lastlogin):
                     print "Last Login Time Retrieved", lastlogin[0:4], lastlogin[4:6], lastlogin[6:8],
                     u.lastlogin = datetime.date(int(lastlogin[0:4]), int(lastlogin[4:6]), int(lastlogin[6:8]))
                     #u.lastlogin = datetime.date(lastlogin[0:4], lastlogin[4:6], lastlogin[6:8])
-                    u.save()
-                else:
-                    print "Could not retrieve last login time"
+            
+            # datedisabled and dateremoved should only be set if the account is actually disabled.  also, these
+            # values should not be reset after subsequent executions (ie: save only the first value...)
+            if datedisabled:
+                yr, mo, day = datedisabled.split("-")
+                print "Date Disabled:",  yr, mo, day
+                if u.datedisabled is None:
+                    u.datedisabled = datetime.date(int(yr), int(mo), int(day))
+                
+            if dateremoved:
+                yr, mo, day = dateremoved.split("-")
+                print "Date Removed:",  yr, mo, day
+                if u.dateremoved is None:
+                    u.dateremoved = datetime.date(int(yr), int(mo), int(day))
 
             # check if the enabled field was given
             if "enabled" in request.POST:
                 u.enabled = request.POST['enabled'] == "true"
+                if u.enabled:
+                        u.datedisabled = None
+                        u.dateremoved  = None
                 #if (u.datedisabled == None) and (u.user.type=="U") :
                 #    u.datedisabled = datetime.date.today()
-                u.save()
+            
+            u.save()
 
             return HttpResponse("%s, %s - %s\n" % (h.name, u.username, str(u.enabled) ) )
 
@@ -624,15 +657,20 @@ def listusers(request, host_name):
     
     return render_to_response('elizabeth/listusers.html', {'userlist': users})
 
-# Remove: No longer used
-def userdisablelist(self, host_name):
-    queryset = unixuser.objects.all().filter(   enabled=True,
-                                                host__hostsetting__delayed=False,
-                                                host__name=host_name,
-                                                user__disable=True
-                                            )
+# List user accounts that need to be disabled
+def listdisabledusers(request, host_name):
+    queryset = unixuser.objects.filter( host__name__icontains = host_name, user__enabled = False, user__type = "U")
+    if not queryset:
+        queryset = winuser.objects.filter( host__name__icontains = host_name, user__enabled = False, user__type = "U")
+    if not queryset:
+        return HttpResponse("")
     
-    return object_list(self, queryset)
+    # print out to webserver console for debugging...
+    for i in queryset:
+        print "username: ", i.user.username, i.user.enabled       
+    
+    return render_to_response('elizabeth/listusers.html', {'userlist': queryset})
+    
     
 def allsox(request):
     QProductionHosts = Q(app__importance="L1")

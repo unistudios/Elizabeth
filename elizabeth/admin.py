@@ -39,11 +39,11 @@ class hostappAdmin(admin.ModelAdmin):
 admin.site.register(hostapp, hostappAdmin)
 
 class unixuserAdmin(admin.ModelAdmin):
-    list_display = ['host', 'user', 'lastlogin', 'enabled', 'lastscan']
+    list_display = ['host', 'user', 'lastlogin', 'enabled', 'lastscan', 'datedisabled', 'dateremoved']
     search_fields = ['username', 'host__name']
-    exclude = ['datedisabled','username']
-    readonly_fields = ['host', 'user', 'enabled', 'lastlogin', 'lastscan', 'getApps']
-    list_filter = ['enabled', 'lastlogin', 'lastscan', 'host__apps']
+    exclude = ['username']
+    readonly_fields = ['host', 'user', 'enabled', 'getApps', 'lastlogin', 'lastscan', 'datedisabled', 'dateremoved']
+    list_filter = ['enabled', 'lastlogin', 'lastscan', 'host__apps']  
     actions= [exportExcelUnix]
 	
 admin.site.register(unixuser, unixuserAdmin)
@@ -77,9 +77,9 @@ class unixuserlistAdmin(admin.ModelAdmin):
     #fields = ('username, 'type', 'disable', 'userCount')
     
     list_display = ('username','type', 'enabled')
-    fields = ['username', 'name', 'type', 'source', 'hostCount', 'getHosts']
+    fields = ['username', 'name', 'type', 'source', 'hostCount', 'getHosts', 'enabled']
     search_fields = ['username']
-    exclude = ['enabled']
+    exclude = []
     list_filter = ('type', 'enabled', 'unixuser__host__apps', 'unixuser__host__os')
     readonly_fields = ['username', 'hostCount', 'getHosts']
     ordering=['username']
@@ -102,10 +102,10 @@ class winhostAdmin(admin.ModelAdmin):
 admin.site.register(winhost, winhostAdmin)
 
 class winuserAdmin(admin.ModelAdmin):
-    list_display = ['host', 'user', 'lastlogin', 'enabled', 'lastscan']
+    list_display = ['host', 'user', 'lastlogin', 'enabled', 'lastscan', 'datedisabled', 'dateremoved']
     search_fields = ['username', 'host__name']
-    exclude = ['datedisabled','username']
-    readonly_fields = ['host', 'user', 'enabled', 'lastlogin', 'lastscan', 'getApps']
+    exclude = ['username']
+    readonly_fields = ['host', 'user', 'enabled', 'getApps', 'lastlogin', 'lastscan', 'datedisabled', 'dateremoved']
     list_filter = ['enabled', 'lastlogin', 'lastscan', 'host__apps']
     actions=[exportExcelWin]
 	

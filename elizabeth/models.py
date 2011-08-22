@@ -213,8 +213,10 @@ class unixuser(models.Model):
     username    = models.CharField(max_length=20)
     lastlogin   = models.DateField(null=True, blank=True, verbose_name="Last Login")
     enabled     = models.BooleanField(blank=True)
-    datedisabled = models.DateField(null=True, blank=True)
     lastscan    = models.DateField(null=True, blank=True, verbose_name="Last Scanned")
+    
+    datedisabled = models.DateField(null=True, blank=True, verbose_name="Date Disabled")
+    dateremoved  = models.DateField(null=True, blank=True, verbose_name="Date Removed")
 
     # default manager
     objects = models.Manager()
@@ -334,8 +336,10 @@ class winuser(models.Model):
     username    = models.CharField(max_length=20)
     lastlogin   = models.DateField(null=True, blank=True, verbose_name="Last Login")
     enabled     = models.BooleanField(blank=True)
-    datedisabled = models.DateField(null=True, blank=True)
     lastscan    = models.DateField(null=True, blank=True, verbose_name="Last Scanned")
+    
+    datedisabled = models.DateField(null=True, blank=True, verbose_name="Date Disabled")
+    dateremoved  = models.DateField(null=True, blank=True, verbose_name="Date Removed")
 
     # default manager
     objects = models.Manager()

@@ -3,13 +3,15 @@ from django.conf.urls.defaults import *
 urlpatterns = patterns('',
     # ####################
     # User functions
-    # ####################
+    # ####################  
     (r'^user/unix/update/$', 'website.elizabeth.views.unixuserupdate'),
-    (r'^user/(?P<host_name>\w+)/$', 'website.elizabeth.views.listusers'),
     (r'^user/win/update/$', 'website.elizabeth.views.winuserupdate'), 
+    (r'^user/disabled/(?P<host_name>\w+)/$', 'website.elizabeth.views.listdisabledusers'),
+    (r'^user/(?P<host_name>\w+)/$', 'website.elizabeth.views.listusers'),
 
     # userlist's
-    (r'^userlist/$', 'website.elizabeth.views.allusers'),    # all users
+    (r'^unixuserlist/$', 'website.elizabeth.views.allunixusers'),    # all users
+    (r'^winuserlist/$', 'website.elizabeth.views.allwinusers'),    # all users
     
     # #################
     # Host Functions
