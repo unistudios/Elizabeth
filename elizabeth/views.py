@@ -661,6 +661,7 @@ def listusers(request, host_name):
 def listdisabledusers(request, host_name):
     queryset = unixuser.objects.filter( host__name__icontains = host_name, user__enabled = False, user__type = "U")
     if not queryset:
+        print "here"
         queryset = winuser.objects.filter( host__name__icontains = host_name, user__enabled = False, user__type = "U")
     if not queryset:
         return HttpResponse("")

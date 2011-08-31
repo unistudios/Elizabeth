@@ -117,9 +117,9 @@ class winuserlistAdmin(admin.ModelAdmin):
         return qs.distinct()
     
     list_display = ('username','type', 'enabled')
-    fields = ['username', 'name', 'type', 'source', 'hostCount', 'getHosts']
+    fields = ['username', 'name', 'type', 'source', 'hostCount', 'getHosts', 'enabled']
     search_fields = ['username']
-    exclude = ['windowsid', 'enabled']
+    exclude = ['windowsid']
     list_filter = ('type', 'enabled', 'winuser__host__apps', 'winuser__host__os')
     readonly_fields = ['username', 'hostCount', 'getHosts']
     ordering=['username']
