@@ -580,7 +580,7 @@ def winuserupdate(request):
     
     
 # Update users in database.  ONLY UPDATE.  Do not add user if they do not already exist.
-def readuserlist(request):
+def readuser(request):
     if request.method == 'POST':
            
         if 'user' in request.POST:
