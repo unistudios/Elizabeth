@@ -4,7 +4,7 @@ urlpatterns = patterns('',
     # ####################
     # User functions
     # ####################
-    (r'^user/unix/readuserlist/$', 'website.elizabeth.views.readuserlist'),  
+    (r'^user/readuserlist/$', 'website.elizabeth.views.readuserlist'),  
     (r'^user/unix/update/$', 'website.elizabeth.views.unixuserupdate'),
     (r'^user/win/update/$', 'website.elizabeth.views.winuserupdate'), 
     (r'^user/disabled/(?P<host_name>\w+)/$', 'website.elizabeth.views.listdisabledusers'),

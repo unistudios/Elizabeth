@@ -600,8 +600,12 @@ def readuserlist(request):
             
         if 'enabled' in request.POST:
             enabled = request.POST['enabled']
+            if enabled == "False":
+                enabled = False
+            else:
+                enabled = True
         else:
-            enabled = ""
+            enabled = True
             
         if 'comments' in request.POST:
             comments = request.POST['comments']
@@ -609,7 +613,7 @@ def readuserlist(request):
             comments = ""
 
             
-        print host_name, user, lastlogin, host_os
+        print user, enabled
         
         # Find userlist
 
@@ -626,11 +630,11 @@ def readuserlist(request):
             # if we get the user...
             ul.name = tam
             ul.type = account_type
-            ul.enabled = enabled
             ul.source = comments
+            ul.enabled = enabled
             ul.save()
 
-            return HttpResponse("%s, %s - %s\n" % (ul.user, ul.name, str(ul.enabled) ) )
+            return HttpResponse("%s, %s - %s\n" % (ul.username, ul.name, str(ul.enabled) ) )
 
         else:
             return HttpResponse("No user given, oh well\n")
