@@ -442,8 +442,8 @@ def unixuserupdate(request):
             if "enabled" in request.POST:
                 u.enabled = request.POST['enabled'] == "true"
                 if u.enabled:
-                        u.datedisabled = None
-                        u.dateremoved  = None
+                    u.datedisabled = None
+                    u.dateremoved  = None
                 #if (u.datedisabled == None) and (u.user.type=="U") :
                 #    u.datedisabled = datetime.date.today()
             
@@ -462,22 +462,37 @@ def winuserupdate(request):
             host_name = request.POST['host_name']
         else:
             host_name = ""
+            
         if 'user' in request.POST:
             user      = username=request.POST['user']
         else:
             user      = "" 
+            
         if 'osinfo' in request.POST:
             host_os   = request.POST['osinfo']
         else:
             host_os   = ""
+            
         if 'enabled' in request.POST:
             enabled   = request.POST['enabled']
         else:
             enabled   = ""
+            
         if 'lastlogin' in request.POST:
             lastlogin = request.POST['lastlogin']
         else:
             lastlogin = ""
+            
+        if 'datedisabled' in request.POST:
+            datedisabled = request.POST['datedisabled']
+        else:
+            datedisabled = ""
+        
+        if 'dateremoved' in request.POST: 
+            dateremoved = request.POST['dateremoved']
+        else:
+            dateremoved = ""
+            
         print host_name, user, lastlogin, host_os
         
         
@@ -529,18 +544,93 @@ def winuserupdate(request):
                     print "Did not equal DNE", lastlogin[0:4], lastlogin[4:6], lastlogin[6:8],
                     u.lastlogin = datetime.date(int(lastlogin[0:4]), int(lastlogin[4:6]), int(lastlogin[6:8]))
                     #u.lastlogin = datetime.date(lastlogin[0:4], lastlogin[4:6], lastlogin[6:8])
-                    u.save()
                 else:
                     print "Equaled DNE"
+                    
+            # datedisabled and dateremoved should only be set if the account is actually disabled.  also, these
+            # values should not be reset after subsequent executions (ie: save only the first value...)
+            if datedisabled:
+                yr, mo, day = datedisabled.split("-")
+                print "Date Disabled:",  yr, mo, day
+                if u.datedisabled is None:
+                    u.datedisabled = datetime.date(int(yr), int(mo), int(day))
+                
+            if dateremoved:
+                yr, mo, day = dateremoved.split("-")
+                print "Date Removed:",  yr, mo, day
+                if u.dateremoved is None:
+                    u.dateremoved = datetime.date(int(yr), int(mo), int(day))
 
             # check if the enabled field was given
             if "enabled" in request.POST:
                 u.enabled = request.POST['enabled'] == "true"
+                if u.enabled:
+                    u.datedisabled = None
+                    u.dateremoved  = None
                 #if (u.datedisabled == None) and (u.user.type=="U") :
                 #    u.datedisabled = datetime.date.today()
-                u.save()
+            u.save()
 
             return HttpResponse("%s, %s - %s\n" % (h.name, u.username, str(u.enabled) ) )
+
+        else:
+            return HttpResponse("No user given, oh well\n")
+    else:
+        return HttpResponse("HTTP GET, nothing here, move on")      
+    
+    
+# Update users in database.  ONLY UPDATE.  Do not add user if they do not already exist.
+def readuserlist(request):
+    if request.method == 'POST':
+           
+        if 'user' in request.POST:
+            user      = username=request.POST['user']
+        else:
+            user      = "" 
+            
+        if 'tam' in request.POST:
+            tam   = request.POST['tam']
+        else:
+            tam   = ""
+            
+        if 'account_type' in request.POST:
+            account_type   = request.POST['account_type']
+        else:
+            account_type   = ""
+            
+        if 'enabled' in request.POST:
+            enabled = request.POST['enabled']
+        else:
+            enabled = ""
+            
+        if 'comments' in request.POST:
+            comments = request.POST['comments']
+        else:
+            comments = ""
+
+            
+        print host_name, user, lastlogin, host_os
+        
+        # Find userlist
+
+        if "user" in request.POST:
+            # look it up in the userlist first.
+            try:
+                ul = unixuserlist.objects.get(username=user)
+            except unixuserlist.DoesNotExist:
+                try:
+                    ul = winuserlist.objects.get(username=user)
+                except:
+                    return HttpResponse("%s does not exist.\n" % (user) )
+                    
+            # if we get the user...
+            ul.name = tam
+            ul.type = account_type
+            ul.enabled = enabled
+            ul.source = comments
+            ul.save()
+
+            return HttpResponse("%s, %s - %s\n" % (ul.user, ul.name, str(ul.enabled) ) )
 
         else:
             return HttpResponse("No user given, oh well\n")
