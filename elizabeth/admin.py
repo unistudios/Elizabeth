@@ -49,11 +49,14 @@ admin.site.register(hostapp, hostappAdmin)
 # Display host to user mappings and their last scan state
 ##############################################################################################
 class unixuserAdmin(admin.ModelAdmin):
-    list_display = ['host', 'user', 'lastlogin', 'enabled', 'lastscan', 'datedisabled', 'dateremoved']
+    list_display = ['host', 'user', 'lastlogin', 'lastscan', 'enabled', 'datedisabled', 'dateremoved']
     search_fields = ['username', 'host__name']
     exclude = ['username']
-    #readonly_fields = ['host', 'user', 'enabled', 'getApps', 'lastlogin', 'lastscan', 'datedisabled', 'dateremoved']
-    readonly_fields = ['getApps']
+    readonly_fields = ['host', 'user', 'getApps', 'lastlogin', 'lastscan', 'enabled', 'datedisabled', 'dateremoved']
+    
+    #for "quick" editing...
+    #readonly_fields = ['getApps']
+    
     list_filter = ['enabled', 'lastlogin', 'lastscan', 'host__apps']  
     actions= [exportExcelUnix]
 	
@@ -125,10 +128,14 @@ admin.site.register(winhost, winhostAdmin)
 # Display host to user mappings and their last scan state
 ##############################################################################################
 class winuserAdmin(admin.ModelAdmin):
-    list_display = ['host', 'user', 'lastlogin', 'enabled', 'lastscan', 'datedisabled', 'dateremoved']
+    list_display = ['host', 'user', 'lastlogin', 'lastscan', 'enabled', 'datedisabled', 'dateremoved']
     search_fields = ['username', 'host__name']
     exclude = ['username']
-    readonly_fields = ['host', 'user', 'enabled', 'getApps', 'lastlogin', 'lastscan', 'datedisabled', 'dateremoved']
+    readonly_fields = ['host', 'user', 'getApps', 'lastlogin', 'lastscan', 'enabled', 'datedisabled', 'dateremoved']
+    
+    #for "quick" editing...
+    #readonly_fields = ['getApps']
+    
     list_filter = ['enabled', 'lastlogin', 'lastscan', 'host__apps']
     actions=[exportExcelWin]
 	
