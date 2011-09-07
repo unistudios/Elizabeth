@@ -160,7 +160,7 @@ class hostsetting(models.Model):
         return "I:" + str(self.installed) + " U:" + str(self.userlist) + " K:" + str(self.sshkeys) + " D:" + str(self.delayed)
 
 ##################################
-# Unique User Accounts Model
+# Unique UNIX User Accounts Model
 ##################################
 class unixuserlist(models.Model):
     class Meta:
@@ -214,6 +214,7 @@ class unixuser(models.Model):
     lastlogin   = models.DateField(null=True, blank=True, verbose_name="Last Login")
     enabled     = models.BooleanField(blank=True)
     lastscan    = models.DateField(null=True, blank=True, verbose_name="Last Scanned")
+    #remove      = models.BooleanField(blank=True)
     
     datedisabled = models.DateField(null=True, blank=True, verbose_name="Date Disabled")
     dateremoved  = models.DateField(null=True, blank=True, verbose_name="Date Removed")
@@ -283,7 +284,7 @@ class winhost(models.Model):
         return self.name 
 
 ##################################
-# Unique User Accounts Model
+# Unique Windows User Accounts Model
 ##################################
 class winuserlist(models.Model):
     class Meta:
@@ -322,7 +323,7 @@ class winuserlist(models.Model):
         return self.username 
 
 ##################################
-# User Accounts across Hosts Model
+# User Windows Accounts across Hosts Model
 ##################################
 class winuser(models.Model):
     class Meta:
@@ -337,6 +338,7 @@ class winuser(models.Model):
     lastlogin   = models.DateField(null=True, blank=True, verbose_name="Last Login")
     enabled     = models.BooleanField(blank=True)
     lastscan    = models.DateField(null=True, blank=True, verbose_name="Last Scanned")
+    #remove      = models.BooleanField(blank=True)
     
     datedisabled = models.DateField(null=True, blank=True, verbose_name="Date Disabled")
     dateremoved  = models.DateField(null=True, blank=True, verbose_name="Date Removed")

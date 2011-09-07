@@ -11,8 +11,9 @@ from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
 from website.elizabeth.models import *
 
-
-# test excelview
+##############################################################################################
+# Test view for ExcelView
+##############################################################################################
 def excelview(request):
     data = [ ['Column 1', 'Column2'], [1,2], [23,67]]
     return ExcelResponse(data, 'my_data')
@@ -185,13 +186,19 @@ def HostOSinfo(request):
                        queryset
                        )
 
+##############################################################################################
+# List all (unique) Windows users
+##############################################################################################
 def allwinusers(request):
     qs = winuserlist.objects.order_by('-type', 'username')
     return object_list(request,
                        queryset=qs,
                        extra_context={'dToday':todaystr() },
             )
-    
+
+##############################################################################################
+# List all (unique) UNIX users
+##############################################################################################    
 def allunixusers(request):
     qs = unixuserlist.objects.order_by('-type', 'username')
     return object_list(request,
@@ -199,6 +206,9 @@ def allunixusers(request):
                        extra_context={'dToday':todaystr() },
             )
 
+##############################################################################################
+# John's wiki ninja'ing.
+##############################################################################################
 def wikivalues(request):
     # build a page with all our stats on the DB
     
@@ -336,6 +346,10 @@ def hostupdate(request):
     except:
         return HttpResponse("Error in hostupdate")
 
+##############################################################################################
+# Update UNIX User
+# Update an existing user, or create if it does not exist.
+##############################################################################################
 def unixuserupdate(request):
     
     # Start by gathering all variables in POST data
@@ -455,6 +469,12 @@ def unixuserupdate(request):
             return HttpResponse("No user given, oh well\n")
     else:
         return HttpResponse("HTTP GET, nothing here, move on")      
+
+
+##############################################################################################
+# Update WIN User
+# Update an existing user, or create if it does not exist.
+##############################################################################################
 
 def winuserupdate(request):
     if request.method == 'POST':
@@ -579,7 +599,10 @@ def winuserupdate(request):
         return HttpResponse("HTTP GET, nothing here, move on")      
     
     
-# Update users in database.  ONLY UPDATE.  Do not add user if they do not already exist.
+##############################################################################################
+# Import users into the database.
+# ONLY UPDATE.  Do not add user if they do not already exist.
+##############################################################################################
 def readuser(request):
     if request.method == 'POST':
            
@@ -642,7 +665,9 @@ def readuser(request):
         return HttpResponse("HTTP GET, nothing here, move on")      
 
 
-# Add hosts to different apps using blaster_apps.py OGFS script
+##############################################################################################
+# Associate hosts and apps using blaster_apps.py OGFS script
+##############################################################################################
 def addApp2Host(request):
     # this is called when someone visits /elizabeth/user/<host_name>?user=<username>&enabled=True
     # add a user to the server
@@ -688,7 +713,9 @@ def addApp2Host(request):
     else:
         return HttpResponse("HTTP GET, nothing here, move on")           
 
+##############################################################################################
 # Add Applications to Elizabeth database
+##############################################################################################
 def addApp(request):
     # this is called when someone visits /elizabeth/user/<host_name>?user=<username>&enabled=True
     # add a user to the server
@@ -730,8 +757,10 @@ def addApp(request):
         return HttpResponse("HTTP GET, nothing here, move on")        
 
 
-# List all users associated with a hostname, and indicates whether or not they should be active on the
-# box according to the userlists.
+##############################################################################################
+# List all users associated with a hostname, and indicates whether or not they should be 
+# active on the box according to the userlists.
+##############################################################################################
 def listusers(request, host_name):
      
     try:
@@ -751,7 +780,10 @@ def listusers(request, host_name):
     
     return render_to_response('elizabeth/listusers.html', {'userlist': users})
 
-# List user accounts that need to be disabled
+
+##############################################################################################
+# List user accounts that need to be disabled 
+##############################################################################################
 def listdisabledusers(request, host_name):
     queryset = unixuser.objects.filter( host__name__icontains = host_name, user__enabled = False, user__type = "U")
     if not queryset:
@@ -764,9 +796,11 @@ def listdisabledusers(request, host_name):
     for i in queryset:
         print "username: ", i.user.username, i.user.enabled       
     
-    return render_to_response('elizabeth/listusers.html', {'userlist': queryset})
-    
-    
+    return render_to_response('elizabeth/listusers.html', {'userlist': queryset})    
+
+##############################################################################################
+# List all SOX L1
+##############################################################################################    
 def allsox(request):
     QProductionHosts = Q(app__importance="L1")
     qs=unixhost.objects.filter(QProductionHosts).order_by("app__name")

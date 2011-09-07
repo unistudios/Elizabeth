@@ -9,13 +9,15 @@ from django import forms
 
 superuser = ""
 
-
 class hostsettingInline(admin.TabularInline):
 	model = hostsetting
 
 #class unixhostInline(admin.TabularInline):
     #model = unixhost
 
+##############################################################################################
+# UNIX hosts
+##############################################################################################
 class unixhostAdmin(admin.ModelAdmin):
     list_display = ('name', 'os', )
     fields = ('name', 'os', 'apps', 'comment')
@@ -28,7 +30,10 @@ class unixhostAdmin(admin.ModelAdmin):
 	
 admin.site.register(unixhost, unixhostAdmin)
 
-
+##############################################################################################
+# Application Admin
+# Shows host to application mappings
+##############################################################################################
 class hostappAdmin(admin.ModelAdmin):
     fields = ('name', 'importance', 'getHostCount', 'getWinHosts', 'getUnixHosts')
     list_display = ['name', 'getHostCount', 'importance']
@@ -38,11 +43,17 @@ class hostappAdmin(admin.ModelAdmin):
 	
 admin.site.register(hostapp, hostappAdmin)
 
+
+##############################################################################################
+# UNIX user list Admin - 
+# Display host to user mappings and their last scan state
+##############################################################################################
 class unixuserAdmin(admin.ModelAdmin):
     list_display = ['host', 'user', 'lastlogin', 'enabled', 'lastscan', 'datedisabled', 'dateremoved']
     search_fields = ['username', 'host__name']
     exclude = ['username']
-    readonly_fields = ['host', 'user', 'enabled', 'getApps', 'lastlogin', 'lastscan', 'datedisabled', 'dateremoved']
+    #readonly_fields = ['host', 'user', 'enabled', 'getApps', 'lastlogin', 'lastscan', 'datedisabled', 'dateremoved']
+    readonly_fields = ['getApps']
     list_filter = ['enabled', 'lastlogin', 'lastscan', 'host__apps']  
     actions= [exportExcelUnix]
 	
@@ -55,7 +66,10 @@ admin.site.register(unixuser, unixuserAdmin)
 #        super(CustomUserListAdmin, self).__init__(*args, **kwargs)
         
         
-
+##############################################################################################
+# UNIX user list Admin - 
+# Authoritative for what can and cannot exist in the environment
+##############################################################################################
 class unixuserlistAdmin(admin.ModelAdmin):
     #form = CustomUserListAdmin
     #def get_form(self, request, obj=None, **kwargs):
@@ -89,6 +103,9 @@ class unixuserlistAdmin(admin.ModelAdmin):
 admin.site.register(unixuserlist, unixuserlistAdmin)
 
 
+##############################################################################################
+# Windows hosts
+##############################################################################################
 class winhostAdmin(admin.ModelAdmin):
     list_display = ('name', 'os',)
     fields = ('name', 'os', 'apps', 'comment')
@@ -101,6 +118,12 @@ class winhostAdmin(admin.ModelAdmin):
 	
 admin.site.register(winhost, winhostAdmin)
 
+
+
+##############################################################################################
+# Windows user list Admin - 
+# Display host to user mappings and their last scan state
+##############################################################################################
 class winuserAdmin(admin.ModelAdmin):
     list_display = ['host', 'user', 'lastlogin', 'enabled', 'lastscan', 'datedisabled', 'dateremoved']
     search_fields = ['username', 'host__name']
@@ -111,6 +134,11 @@ class winuserAdmin(admin.ModelAdmin):
 	
 admin.site.register(winuser, winuserAdmin)
 
+
+##############################################################################################
+# Windows user list Admin - 
+# Authoritative for what can and cannot exist in the environment
+##############################################################################################
 class winuserlistAdmin(admin.ModelAdmin):
     def queryset(self, request):
         qs = super(winuserlistAdmin, self).queryset(request)

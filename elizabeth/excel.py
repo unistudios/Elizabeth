@@ -1,7 +1,12 @@
 from website.elizabeth.models import *
 from excel_response import ExcelResponse
 
+# These methods are used by the admin as Django actions for 
+# exporting data to Excel spreadsheets in various ways.
+
+##############################################################################################
 # Download spreadsheet action for UNIX user to host mappings
+##############################################################################################
 def exportExcelUnix(modeladmin, request, queryset):
     #qsHosts = unixuserlist.objects.all()
     entries = list(queryset.values())
@@ -19,7 +24,9 @@ def exportExcelUnix(modeladmin, request, queryset):
     return ExcelResponse(entries)
 exportExcelUnix.short_description = "Download UNIX spreadsheet"
 
+##############################################################################################
 # Download spreadsheet action for Windows user to host mappings
+##############################################################################################
 def exportExcelWin(modeladmin, request, queryset):
     entries = list(queryset.values())
     
@@ -39,7 +46,10 @@ exportExcelWin.short_description = "Download Windows spreadsheet"
 ##########################
 # *** MAY BE REMOVED *** #
 ##########################
+
+##############################################################################################
 # Download spreadsheet action for Windows user to host mappings
+##############################################################################################
 def exportExcelAppsToHosts(modeladmin, request, queryset):
     #entries = list(queryset.values())
     
@@ -70,8 +80,9 @@ def exportExcelAppsToHosts(modeladmin, request, queryset):
     return ExcelResponse(entries)
 exportExcelAppsToHosts.short_description = "Download Apps spreadsheet"
 
-
+##############################################################################################
 # Create spreadsheet which shows enabled users linked to Applications
+##############################################################################################
 def exportExcelAppsToUsers(modeladmin, request, queryset):
     rows = [ ['Application', 'Level', 'Hostname', 'OS', 'Username', 'Last Login', 'Enabled?'], 
               ]
@@ -101,7 +112,9 @@ def exportExcelAppsToUsers(modeladmin, request, queryset):
     return ExcelResponse(rows)
 exportExcelAppsToUsers.short_description = "Download Apps Spreadsheet"
 
+##############################################################################################
 # General method to download spreadsheet action for other views.  Exports all fields in model.
+##############################################################################################
 def exportExcelAll(modeladmin, request, queryset):
     return ExcelResponse(queryset)
 exportExcelAll.short_description = "Download spreadsheet"
