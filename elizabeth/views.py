@@ -854,3 +854,179 @@ def allsox(request):
                        template_name="elizabeth/allsox.%s" % TemplateExt(request),
                        extra_context=ec
             )
+
+
+
+##############################################################################################
+#
+#  ********The remaining views are being used for the sept 9, 2011 disabling  *********
+#
+##############################################################################################
+
+    
+    
+##############################################################################################
+# List all windows and unix hosts associated with the apps in Group 1
+##############################################################################################    
+def group1(request):
+    Qapps = Q(name="SSO") | \
+            Q(name="Aloha (Food Point of Sale)") |\
+            Q(name="Cambar") |\
+            Q(name="Comshare") |\
+            Q(name="Strata (CPG)") |\
+            Q(name="EATEC") |\
+            Q(name="EventBuilder") |\
+            Q(name="Music Tracker") |\
+            Q(name="OPERATIONAL DATA STORE (ODS)") |\
+            Q(name="PT (Pay TV AR)") |\
+            Q(name="SAFE") |\
+            Q(name="STAR") |\
+            Q(name="STING") |\
+            Q(name="TM (Title Management)") |\
+            Q(name="Unistar (TDS2000)") |\
+            Q(name="VGS (POS)") |\
+            Q(name="MACCS") |\
+            Q(name="Tibco") |\
+            Q(name="Gentran Integration Suite(EDI) - Intl") |\
+            Q(name="Gentran Integration Suite(EDI) - Domestic")
+            #Q(name="") |\
+            
+    
+    qs=hostapp.objects.filter(Qapps)
+    
+    winlist = []
+    unixlist = []
+    
+    for q in qs:
+        unixlist = unixlist + list(q.unixhost_set.all())
+        #for u in unixhosts:
+        #    unixlist.append(u)
+        
+        winlist = winlist + list(q.winhost_set.all())
+        #for w in winlist:
+        #    winlist.append(w)
+        
+    
+    print "winhosts", winlist
+    print "unixhosts", unixlist        
+    
+    return render_to_response('elizabeth/apphosts.html', {'winlist': winlist, 'unixlist': unixlist}) 
+
+
+##############################################################################################
+# List all windows and unix hosts associated with the apps in Group 2
+##############################################################################################    
+def group2(request):
+    Qapps = Q(name="Paris") |\
+            Q(name="OpenTV Participate") |\
+            Q(name="Vista_0984") |\
+            Q(name="TRANSWORKS") |\
+            Q(name="STORM") |\
+            Q(name="SOLAR") |\
+            Q(name="Siemens") |\
+            Q(name="ScheduALL - MTC (SatOps)") |\
+            Q(name="ScheduALL - NOC") |\
+            Q(name="ScheduAll - Production Services") |\
+            Q(name="SCHEDUALL - SOUND") |\
+            Q(name="SCHEDUALL - TECH OPS") |\
+            Q(name="Rental Works Editorial Facilities") |\
+            Q(name="RENTAL WORKS NBCU UNIVERSAL") |\
+            Q(name="Rental Tracker Pro - Albuquerque Costume") |\
+            Q(name="RENTAL TRACKER PRO - COSTUME/PROPERTY") |\
+            Q(name="Media Village") |\
+            Q(name="Maximo") |\
+            Q(name="Mastermind") |\
+            Q(name="Lenel") |\
+            Q(name="Lightbox") |\
+            Q(name="Geoffrey") |\
+            Q(name="Gateworks") |\
+            Q(name="Enterprise OMS") |\
+            Q(name="DSR (Digital Screening Room)") |\
+            Q(name="Asset Tracker") |\
+            Q(name="AMAG") |\
+            Q(name="HEDWay") |\
+            Q(name="WideOrbit") |\
+            Q(name="VCI Orion Entertainment") |\
+            Q(name="Urgent Messaging") |\
+            Q(name="TVROCS") |\
+            Q(name="Startover") |\
+            Q(name="Research Datawarehouse") |\
+            Q(name="OSI - TRAFFIC & BILLING (TELEMUNDO)") |\
+            Q(name="IDEAL") |\
+            Q(name="Gabriel Oxygen") |\
+            Q(name="Gabriel USA SciFi") |\
+            Q(name="Gabriel WS Bridge (Oxygen)") |\
+            Q(name="Gabriel WS Bridge (USA/SF)") |\
+            Q(name="Dealmaker Barter Sales Syndication 02") |\
+            Q(name="Dealmaker Bravo") |\
+            Q(name="Dealmaker Cable News") |\
+            Q(name="Dealmaker Telemundo") |\
+            Q(name="Data Warehouse") |\
+            Q(name="COMPASS Juice") |\
+            Q(name="COMPASS") |\
+            Q(name="Cable ADU") |\
+            Q(name="Affiliate Partnership Tool (APT)") |\
+            Q(name="Affiliate Sales Toolkit (Billing Module)") |\
+            Q(name="2E")
+            #Q(name="") |\
+            
+    
+    qs=hostapp.objects.filter(Qapps)
+    
+    winlist = []
+    unixlist = []
+    
+    for q in qs:
+        unixlist = unixlist + list(q.unixhost_set.all())
+        #for u in unixhosts:
+        #    unixlist.append(u)
+        
+        winlist = winlist + list(q.winhost_set.all())
+        #for w in winlist:
+        #    winlist.append(w)
+        
+    
+    print "winhosts", winlist
+    print "unixhosts", unixlist        
+    
+    return render_to_response('elizabeth/apphosts.html', {'winlist': winlist, 'unixlist': unixlist}) 
+
+
+##############################################################################################
+# List all windows and unix hosts associated with the apps in Group 3
+##############################################################################################    
+def group3(request):
+    Qapps = Q(name="Paris") |\
+            Q(name="LOUISE") |\
+            Q(name="Informatica") |\
+            Q(name="Elements (JD Edwards)") |\
+            Q(name="TIMEKEEPER") |\
+            Q(name="PPMC") |\
+            Q(name="PeopleSoft HRMS 7.5") |\
+            Q(name="Peoplesoft 8.4") |\
+            Q(name="Oasis") |\
+            Q(name="FLIX") |\
+            Q(name="COMMON STAGING PLATFORM")
+            #Q(name="") |\
+            
+    
+    qs=hostapp.objects.filter(Qapps)
+    
+    winlist = []
+    unixlist = []
+    
+    for q in qs:
+        unixlist = unixlist + list(q.unixhost_set.all())
+        #for u in unixhosts:
+        #    unixlist.append(u)
+        
+        winlist = winlist + list(q.winhost_set.all())
+        #for w in winlist:
+        #    winlist.append(w)
+        
+    
+    print "winhosts", winlist
+    print "unixhosts", unixlist        
+    
+    return render_to_response('elizabeth/apphosts.html', {'winlist': winlist, 'unixlist': unixlist}) 
+

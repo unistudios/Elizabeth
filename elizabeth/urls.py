@@ -37,6 +37,9 @@ urlpatterns = patterns('',
     # ###########################################
     # Used by OGFS scripts to add applications
     # ###########################################
+    (r'^app/group1/$', 'website.elizabeth.views.group1'),
+    (r'^app/group2/$', 'website.elizabeth.views.group2'),
+    (r'^app/group3/$', 'website.elizabeth.views.group3'),
     (r'^app/update/$', 'website.elizabeth.views.addApp'),
     (r'^app/add/host/$', 'website.elizabeth.views.addApp2Host'),
     
