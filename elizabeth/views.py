@@ -8,6 +8,8 @@ from django.views.generic.simple import *
 from django.db.models import Q
 from excel_response import ExcelResponse
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+from datetime import timedelta
+import datetime
 
 from website.elizabeth.models import *
 
@@ -639,11 +641,14 @@ def readuser(request):
         print user, enabled
         
         # Find userlist
+        
+        flag=0
 
         if "user" in request.POST:
             # look it up in the userlist first.
             try:
                 ul = unixuserlist.objects.get(username=user)
+                flag = 1
             except unixuserlist.DoesNotExist:
                 try:
                     ul = winuserlist.objects.get(username=user)
@@ -656,8 +661,24 @@ def readuser(request):
             ul.source = comments
             ul.enabled = enabled
             ul.save()
-
-            return HttpResponse("%s, %s - %s\n" % (ul.username, ul.name, str(ul.enabled) ) )
+            
+            # if this came up as a unix account, we still need to see if it exists on the windows side
+            if flag == 1:
+                try:
+                    ul = winuserlist.objects.get(username=user)
+                except:
+                    return HttpResponse("UNIX, %s, %s - %s\n" % (ul.username, ul.name, str(ul.enabled) ) )
+                
+                 # if we get the user...
+                ul.name = tam
+                ul.type = account_type
+                ul.source = comments
+                ul.enabled = enabled
+                ul.save()
+                return HttpResponse("BOTH, %s, %s - %s\n" % (ul.username, ul.name, str(ul.enabled) ) )
+                
+            else:
+                return HttpResponse("Windows, %s, %s - %s\n" % (ul.username, ul.name, str(ul.enabled) ) )
 
         else:
             return HttpResponse("No user given, oh well\n")
@@ -789,6 +810,27 @@ def listdisabledusers(request, host_name):
     if not queryset:
         print "here"
         queryset = winuser.objects.filter( host__name__icontains = host_name, user__enabled = False, user__type = "U")
+    if not queryset:
+        return HttpResponse("")
+    
+    # print out to webserver console for debugging...
+    for i in queryset:
+        print "username: ", i.user.username, i.user.enabled       
+    
+    return render_to_response('elizabeth/listusers.html', {'userlist': queryset})    
+
+##############################################################################################
+# List user accounts that need to be removed 
+##############################################################################################
+def listremovedusers(request, host_name):
+    day_delay= 0
+    queryset = unixuser.objects.filter( host__name__icontains = host_name, user__enabled = False, user__type = "U")
+    #queryset = unixuser.objects.filter( host__name__icontains = host_name, user__enabled = False, user__type = "U", 
+    #                                    datedisabled__lte=datetime.date.today()-timedelta(days=day_delay))
+    if not queryset:
+        queryset = winuser.objects.filter( host__name__icontains = host_name, user__enabled = False, user__type = "U")
+        #queryset = winuser.objects.filter( host__name__icontains = host_name, user__enabled = False, user__type = "U",
+        #                                   datedisabled__lte=datetime.date.today()-timedelta(days=day_delay))
     if not queryset:
         return HttpResponse("")
     
