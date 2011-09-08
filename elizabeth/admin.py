@@ -93,7 +93,7 @@ class unixuserlistAdmin(admin.ModelAdmin):
     #)
     #fields = ('username, 'type', 'disable', 'userCount')
     
-    list_display = ('username','type', 'enabled')
+    list_display = ('username','name','type', 'enabled')
     fields = ['username', 'name', 'type', 'source', 'hostCount', 'getHosts', 'enabled']
     search_fields = ['username']
     exclude = []
@@ -151,7 +151,7 @@ class winuserlistAdmin(admin.ModelAdmin):
         qs = super(winuserlistAdmin, self).queryset(request)
         return qs.distinct()
     
-    list_display = ('username','type', 'enabled')
+    list_display = ('username', 'name', 'type', 'enabled')
     fields = ['username', 'name', 'type', 'source', 'hostCount', 'getHosts', 'enabled']
     search_fields = ['username']
     exclude = ['windowsid']
