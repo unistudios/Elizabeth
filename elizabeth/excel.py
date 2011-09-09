@@ -16,7 +16,7 @@ def exportExcelUnix(modeladmin, request, queryset):
             e['hostname'] = unixhost.objects.get(pk=int(e['host_id'])).name
         except:
             e['hostname'] = e['host_id']
-        del(e['datedisabled'])
+        #del(e['datedisabled'])
         del(e['host_id'])
         del(e['id'])
         del(e['user_id'])               
@@ -35,7 +35,7 @@ def exportExcelWin(modeladmin, request, queryset):
             e['hostname'] = winhost.objects.get(pk=int(e['host_id'])).name
         except:
             e['hostname'] = e['host_id']
-        del(e['datedisabled'])
+        #del(e['datedisabled'])
         del(e['host_id'])
         del(e['id'])
         del(e['user_id'])
