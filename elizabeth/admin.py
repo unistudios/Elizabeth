@@ -106,7 +106,7 @@ class unixuserAdmin(admin.ModelAdmin):
     
     # Show readonly fields for non-super users
     def get_readonly_fields(self, request, obj = None):
-        adminROFields = ['adminUserLinked', 'getApps', 'lastlogin', 'lastscan', 'datedisabled', 'dateremoved']
+        adminROFields = ['adminUserLinked', 'host', 'user', 'getApps', 'lastlogin', 'lastscan', 'datedisabled', 'dateremoved']
         userROFields = ['adminUserLinked', 'host', 'user', 'getApps', 'lastlogin', 'lastscan', 'enabled', 'datedisabled', 'dateremoved']
                       
         if obj:
