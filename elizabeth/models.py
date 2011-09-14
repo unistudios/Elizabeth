@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import Q
 from django.utils.safestring import mark_safe
+from django.core import urlresolvers
 
 ##################################
 # Custom Object Manager for UNIX
@@ -228,6 +229,12 @@ class unixuser(models.Model):
             applist=applist+app.name+"<BR />"
         return mark_safe(applist)
     getApps.short_description = "Apps"
+    
+    def adminUserLinked(self):
+        #strOut = '<a href="%s">%s</a>' % (urlresolvers.reverse('admin:device_host_change',args=(self.username,) ),self.username) + "<BR />"
+        strOut = '<a href="%s">%s</a>' % (urlresolvers.reverse('admin:elizabeth_unixuserlist_change', args=(self.user.id,)),self.username) + "<BR />"
+        return mark_safe(strOut) 
+    adminUserLinked.short_description = "Username"
 
     def __unicode__(self):
         return self.host.name + " " + self.username
@@ -351,6 +358,12 @@ class winuser(models.Model):
             applist=applist+app.name+"<BR />"
         return mark_safe(applist)
     getApps.short_description = "Apps"
+    
+    def adminUserLinked(self):
+        #strOut = '<a href="%s">%s</a>' % (urlresolvers.reverse('admin:device_host_change',args=(self.username,) ),self.username) + "<BR />"
+        strOut = '<a href="%s">%s</a>' % (urlresolvers.reverse('admin:elizabeth_winuserlist_change', args=(self.user.id,)),self.username) + "<BR />"
+        return mark_safe(strOut) 
+    adminUserLinked.short_description = "Username"
 
     def __unicode__(self):
         return self.host.name + " " + self.username

@@ -1,6 +1,8 @@
 import datetime
 import sys
 
+from elizabeth.reporting import *
+
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.views.generic.list_detail import *
@@ -824,11 +826,13 @@ def listdisabledusers(request, host_name):
 ##############################################################################################
 def listremovedusers(request, host_name):
     day_delay= 0
-    queryset = unixuser.objects.filter( host__name__icontains = host_name, user__enabled = False, user__type = "U")
+    
+    # find users accounts that are already disabled on host_name
+    queryset = unixuser.objects.filter(host__name__icontains = host_name, enabled=False, user__enabled = False, user__type = "U")
     #queryset = unixuser.objects.filter( host__name__icontains = host_name, user__enabled = False, user__type = "U", 
     #                                    datedisabled__lte=datetime.date.today()-timedelta(days=day_delay))
     if not queryset:
-        queryset = winuser.objects.filter( host__name__icontains = host_name, user__enabled = False, user__type = "U")
+        queryset = winuser.objects.filter(host__name__icontains = host_name, enabled=False, user__enabled = False, user__type = "U")
         #queryset = winuser.objects.filter( host__name__icontains = host_name, user__enabled = False, user__type = "U",
         #                                   datedisabled__lte=datetime.date.today()-timedelta(days=day_delay))
     if not queryset:

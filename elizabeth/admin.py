@@ -10,7 +10,7 @@ from django import forms
 superuser = ""
 
 class hostsettingInline(admin.TabularInline):
-	model = hostsetting
+    model = hostsetting
 
 #class unixhostInline(admin.TabularInline):
     #model = unixhost
@@ -27,7 +27,20 @@ class unixhostAdmin(admin.ModelAdmin):
     list_filter = ('apps',)
     filter_horizontal = ['apps']
     actions= [exportExcelAll]
-	
+    
+    # Remove the deleted action for non-super users
+    def get_actions(self, request):   
+        actions = super(unixhostAdmin, self).get_actions(request)
+        
+        if not request.user.is_superuser:        
+            try:
+                del actions['delete_selected']
+            except KeyError:
+                pass
+            return actions
+        else:
+            return actions
+    
 admin.site.register(unixhost, unixhostAdmin)
 
 ##############################################################################################
@@ -37,10 +50,23 @@ admin.site.register(unixhost, unixhostAdmin)
 class hostappAdmin(admin.ModelAdmin):
     fields = ('name', 'importance', 'getHostCount', 'getWinHosts', 'getUnixHosts')
     list_display = ['name', 'getHostCount', 'importance']
-    readonly_fields = ['importance', 'getHostCount', 'getHosts', 'getWinHosts', 'getUnixHosts']
+    readonly_fields = ['name', 'importance', 'getHostCount', 'getHosts', 'getWinHosts', 'getUnixHosts']
     #inlines = [unixhostInline,]
     actions= [exportExcelAppsToUsers]
-	
+    
+    # Remove the deleted action for non-super users
+    def get_actions(self, request):   
+        actions = super(hostappAdmin, self).get_actions(request)
+        
+        if not request.user.is_superuser:        
+            try:
+                del actions['delete_selected']
+            except KeyError:
+                pass
+            return actions
+        else:
+            return actions
+    
 admin.site.register(hostapp, hostappAdmin)
 
 
@@ -52,16 +78,46 @@ class unixuserAdmin(admin.ModelAdmin):
     list_display = ['host', 'user', 'lastlogin', 'lastscan', 'enabled', 'datedisabled', 'dateremoved']
     search_fields = ['username', 'host__name']
     exclude = ['username']
-    readonly_fields = ['host', 'user', 'getApps', 'lastlogin', 'lastscan', 'enabled', 'datedisabled', 'dateremoved']
-    
-    #for "quick" editing...
-    #readonly_fields = ['getApps']
-    
+    readonly_fields = ['adminUserLinked', 'getApps']
     list_filter = ['enabled', 'lastlogin', 'lastscan', 'host__apps']  
     actions= [exportExcelUnix]
-	
+    
+    fieldsets = (
+                ("Settings", {
+                        'fields': ('adminUserLinked', 'host', 'getApps', 'lastlogin', 'enabled', ),                    
+                }),
+                ("Scans", {            
+                        'fields': ('lastscan', 'datedisabled', 'dateremoved'),
+                }),
+    )
+    
+    # Remove the deleted action for non-super users
+    def get_actions(self, request):   
+        actions = super(unixuserAdmin, self).get_actions(request)
+        
+        if not request.user.is_superuser:        
+            try:
+                del actions['delete_selected']
+            except KeyError:
+                pass
+            return actions
+        else:
+            return actions
+    
+    # Show readonly fields for non-super users
+    def get_readonly_fields(self, request, obj = None):
+        adminROFields = ['adminUserLinked', 'getApps', 'lastlogin', 'lastscan', 'datedisabled', 'dateremoved']
+        userROFields = ['adminUserLinked', 'host', 'user', 'getApps', 'lastlogin', 'lastscan', 'enabled', 'datedisabled', 'dateremoved']
+                      
+        if obj:
+            if not request.user.is_superuser:
+                #return ['featured',] + self.readonly_fields
+                return userROFields
+            return adminROFields
+        else:
+            return userROFields
+           
 admin.site.register(unixuser, unixuserAdmin)
-
 
 #class CustomUserListAdmin(forms.ModelForm):
 #    def __init__(self, request=None, *args, **kwargs):
@@ -101,8 +157,31 @@ class unixuserlistAdmin(admin.ModelAdmin):
     readonly_fields = ['username', 'hostCount', 'getHosts']
     ordering=['username']
     actions = [exportExcelAll]
-    #print "Yes or no: " + request.user.is_superuser() 
-	
+    #print "Yes or no: " + request.user.is_superuser()
+    
+    # Remove the deleted action for non-super users
+    def get_actions(self, request):   
+        actions = super(unixuserlistAdmin, self).get_actions(request)
+        
+        if not request.user.is_superuser:        
+            try:
+                del actions['delete_selected']
+            except KeyError:
+                pass
+            return actions
+        else:
+            return actions
+    
+    # Show readonly fields for non-super users
+    def get_readonly_fields(self, request, obj = None):              
+        if obj:
+            if not request.user.is_superuser:
+                #return ['featured',] + self.readonly_fields
+                return ['username', 'name', 'type', 'source', 'hostCount', 'getHosts', 'enabled']
+            return ['username', 'hostCount', 'getHosts']
+        else:
+            return ['username', 'name', 'type', 'source', 'hostCount', 'getHosts', 'enabled']
+    
 admin.site.register(unixuserlist, unixuserlistAdmin)
 
 
@@ -118,7 +197,20 @@ class winhostAdmin(admin.ModelAdmin):
     list_filter = ('apps',)
     filter_horizontal = ['apps']
     actions= [exportExcelAll]
-	
+    
+    # Remove the deleted action for non-super users
+    def get_actions(self, request):   
+        actions = super(winhostAdmin, self).get_actions(request)
+        
+        if not request.user.is_superuser:        
+            try:
+                del actions['delete_selected']
+            except KeyError:
+                pass
+            return actions
+        else:
+            return actions
+    
 admin.site.register(winhost, winhostAdmin)
 
 
@@ -130,15 +222,46 @@ admin.site.register(winhost, winhostAdmin)
 class winuserAdmin(admin.ModelAdmin):
     list_display = ['host', 'user', 'lastlogin', 'lastscan', 'enabled', 'datedisabled', 'dateremoved']
     search_fields = ['username', 'host__name']
-    exclude = ['username']
-    readonly_fields = ['host', 'user', 'getApps', 'lastlogin', 'lastscan', 'enabled', 'datedisabled', 'dateremoved']
-    
-    #for "quick" editing...
-    #readonly_fields = ['getApps']
-    
+    exclude = ['username',]
+    readonly_fields = ['getApps']
     list_filter = ['enabled', 'lastlogin', 'lastscan', 'host__apps']
-    actions=[exportExcelWin]
-	
+    actions = [exportExcelWin]
+    readonly_fields = ['adminUserLinked', 'getApps']
+    fieldsets = (
+                ("Settings", {
+                        'fields': ('adminUserLinked', 'host', 'getApps', 'lastlogin', 'enabled', ),                    
+                }),
+                ("Scans", {            
+                        'fields': ('lastscan', 'datedisabled', 'dateremoved'),
+                }),
+    )
+    
+    # Remove the deleted action for non-super users
+    def get_actions(self, request):   
+        actions = super(winuserAdmin, self).get_actions(request)
+        
+        if not request.user.is_superuser:        
+            try:
+                del actions['delete_selected']
+            except KeyError:
+                pass
+            return actions
+        else:
+            return actions
+           
+    # Show readonly fields for non-super users
+    def get_readonly_fields(self, request, obj = None):
+        adminROFields = ['adminUserLinked', 'host', 'user', 'getApps', 'lastlogin', 'lastscan', 'datedisabled', 'dateremoved']
+        userROFields = ['adminUserLinked', 'host', 'user', 'getApps', 'lastlogin', 'lastscan', 'enabled', 'datedisabled', 'dateremoved']
+                      
+        if obj:
+            if not request.user.is_superuser:
+                #return ['featured',] + self.readonly_fields
+                return userROFields
+            return adminROFields
+        else:
+            return userROFields
+    
 admin.site.register(winuser, winuserAdmin)
 
 
@@ -159,5 +282,28 @@ class winuserlistAdmin(admin.ModelAdmin):
     readonly_fields = ['username', 'hostCount', 'getHosts']
     ordering=['username']
     actions= [exportExcelAll]
+    
+    # Remove the deleted action for non-super users
+    def get_actions(self, request):   
+        actions = super(winuserlistAdmin, self).get_actions(request)
+        
+        if not request.user.is_superuser:        
+            try:
+                del actions['delete_selected']
+            except KeyError:
+                pass
+            return actions
+        else:
+            return actions
+    
+    # Show readonly fields for non-super users
+    def get_readonly_fields(self, request, obj = None):              
+        if obj:
+            if not request.user.is_superuser:
+                #return ['featured',] + self.readonly_fields
+                return ['username', 'name', 'type', 'source', 'hostCount', 'getHosts', 'enabled']
+            return ['username', 'hostCount', 'getHosts']
+        else:
+            return ['username', 'name', 'type', 'source', 'hostCount', 'getHosts', 'enabled']
 
 admin.site.register(winuserlist, winuserlistAdmin)
