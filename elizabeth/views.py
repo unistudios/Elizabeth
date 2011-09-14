@@ -1,7 +1,7 @@
 import datetime
 import sys
 
-from elizabeth.reporting import *
+#from elizabeth.reporting import *
 
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
