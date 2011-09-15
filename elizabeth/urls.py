@@ -20,6 +20,11 @@ urlpatterns = patterns('',
     # #################
     (r'^host/update/$', 'website.elizabeth.views.hostupdate'), 
     
+    # #################
+    # Upload OGFS Files
+    # #################
+    (r'^delivery/$', 'website.elizabeth.views.uploadFile'), 
+    
     # ###########################################
     # Hostlist URL's - Gives back lists of unixhost's
     # ###########################################
