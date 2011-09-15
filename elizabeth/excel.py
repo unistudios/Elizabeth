@@ -18,6 +18,11 @@ def exportExcelUnix(modeladmin, request, queryset):
             the_host = unixhost.objects.get(pk=int(e['host_id']))
         except:
             e['hostname'] = e['host_id']
+            
+            # no "try-finally" statement in python 2.4 :-(
+            del(e['host_id'])
+            del(e['id'])
+            del(e['user_id'])   
         else:
             #del(e['datedisabled'])
             e['hostname'] = the_host.name
@@ -27,8 +32,6 @@ def exportExcelUnix(modeladmin, request, queryset):
             
             app_str = app_str.strip(", ")
             e['apps'] = app_str
-            
-        finally:
             del(e['host_id'])
             del(e['id'])
             del(e['user_id'])           
@@ -47,6 +50,11 @@ def exportExcelWin(modeladmin, request, queryset):
             the_host = winhost.objects.get(pk=int(e['host_id']))
         except:
             e['hostname'] = e['host_id']
+            
+            # no "try-finally" statement in python 2.4 :-(
+            del(e['host_id'])
+            del(e['id'])
+            del(e['user_id']) 
         else:
             #del(e['datedisabled'])
             e['hostname'] = the_host.name
@@ -56,7 +64,6 @@ def exportExcelWin(modeladmin, request, queryset):
             
             app_str = app_str.strip(", ")
             e['apps'] = app_str
-        finally:
             del(e['host_id'])
             del(e['id'])
             del(e['user_id'])   
