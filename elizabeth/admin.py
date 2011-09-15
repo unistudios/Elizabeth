@@ -79,7 +79,7 @@ class unixuserAdmin(admin.ModelAdmin):
     search_fields = ['username', 'host__name']
     exclude = ['username']
     readonly_fields = ['adminUserLinked', 'getApps']
-    list_filter = ['enabled', 'lastlogin', 'lastscan', 'host__apps']  
+    list_filter = ['enabled', 'user__type', 'lastlogin', 'lastscan', 'host__apps']  
     actions= [exportExcelUnix]
     
     fieldsets = (
@@ -224,7 +224,7 @@ class winuserAdmin(admin.ModelAdmin):
     search_fields = ['username', 'host__name']
     exclude = ['username',]
     readonly_fields = ['getApps']
-    list_filter = ['enabled', 'lastlogin', 'lastscan', 'host__apps']
+    list_filter = ['enabled', 'user__type', 'lastlogin', 'lastscan', 'host__apps']
     actions = [exportExcelWin]
     readonly_fields = ['adminUserLinked', 'getApps']
     fieldsets = (
