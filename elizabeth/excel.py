@@ -12,14 +12,26 @@ def exportExcelUnix(modeladmin, request, queryset):
     entries = list(queryset.values())
     
     for e in entries:
+        app_str = ""
+        
         try:
-            e['hostname'] = unixhost.objects.get(pk=int(e['host_id'])).name
+            the_host = unixhost.objects.get(pk=int(e['host_id']))
         except:
             e['hostname'] = e['host_id']
-        #del(e['datedisabled'])
-        del(e['host_id'])
-        del(e['id'])
-        del(e['user_id'])               
+        else:
+            #del(e['datedisabled'])
+            e['hostname'] = the_host.name
+            
+            for app in the_host.apps.values():
+                app_str += app['name'] + ", "
+            
+            app_str = app_str.strip(", ")
+            e['apps'] = app_str
+            
+        finally:
+            del(e['host_id'])
+            del(e['id'])
+            del(e['user_id'])           
 
     return ExcelResponse(entries)
 exportExcelUnix.short_description = "Download UNIX spreadsheet"
@@ -32,13 +44,22 @@ def exportExcelWin(modeladmin, request, queryset):
     
     for e in entries:
         try:
-            e['hostname'] = winhost.objects.get(pk=int(e['host_id'])).name
+            the_host = winhost.objects.get(pk=int(e['host_id']))
         except:
             e['hostname'] = e['host_id']
-        #del(e['datedisabled'])
-        del(e['host_id'])
-        del(e['id'])
-        del(e['user_id'])
+        else:
+            #del(e['datedisabled'])
+            e['hostname'] = the_host.name
+            
+            for app in the_host.apps.values():
+                app_str += app['name'] + ", "
+            
+            app_str = app_str.strip(", ")
+            e['apps'] = app_str
+        finally:
+            del(e['host_id'])
+            del(e['id'])
+            del(e['user_id'])   
               
     return ExcelResponse(entries)
 exportExcelWin.short_description = "Download Windows spreadsheet"
