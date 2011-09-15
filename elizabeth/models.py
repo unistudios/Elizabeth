@@ -235,6 +235,12 @@ class unixuser(models.Model):
         strOut = '<a href="%s">%s</a>' % (urlresolvers.reverse('admin:elizabeth_unixuserlist_change', args=(self.user.id,)),self.username) + "<BR />"
         return mark_safe(strOut) 
     adminUserLinked.short_description = "Username"
+    
+    def adminHostLinked(self):
+        #strOut = '<a href="%s">%s</a>' % (urlresolvers.reverse('admin:device_host_change',args=(self.username,) ),self.username) + "<BR />"
+        strOut = '<a href="%s">%s</a>' % (urlresolvers.reverse('admin:elizabeth_unixhost_change', args=(self.host.id,)),self.host.name) + "<BR />"
+        return mark_safe(strOut) 
+    adminHostLinked.short_description = "Host"
 
     def __unicode__(self):
         return self.host.name + " " + self.username
@@ -364,6 +370,12 @@ class winuser(models.Model):
         strOut = '<a href="%s">%s</a>' % (urlresolvers.reverse('admin:elizabeth_winuserlist_change', args=(self.user.id,)),self.username) + "<BR />"
         return mark_safe(strOut) 
     adminUserLinked.short_description = "Username"
+    
+    def adminHostLinked(self):
+        #strOut = '<a href="%s">%s</a>' % (urlresolvers.reverse('admin:device_host_change',args=(self.username,) ),self.username) + "<BR />"
+        strOut = '<a href="%s">%s</a>' % (urlresolvers.reverse('admin:elizabeth_winhost_change', args=(self.host.id,)),self.host.name) + "<BR />"
+        return mark_safe(strOut) 
+    adminHostLinked.short_description = "Host"
 
     def __unicode__(self):
         return self.host.name + " " + self.username

@@ -78,13 +78,13 @@ class unixuserAdmin(admin.ModelAdmin):
     list_display = ['host', 'user', 'lastlogin', 'lastscan', 'enabled', 'datedisabled', 'dateremoved']
     search_fields = ['username', 'host__name']
     exclude = ['username']
-    readonly_fields = ['adminUserLinked', 'getApps']
+    readonly_fields = ['adminUserLinked', 'adminHostLinked', 'getApps']
     list_filter = ['enabled', 'user__type', 'lastlogin', 'lastscan', 'host__apps']  
     actions= [exportExcelUnix]
     
     fieldsets = (
                 ("Settings", {
-                        'fields': ('adminUserLinked', 'host', 'getApps', 'lastlogin', 'enabled', ),                    
+                        'fields': ('adminUserLinked', 'adminHostLinked', 'getApps', 'lastlogin', 'enabled', ),                    
                 }),
                 ("Scans", {            
                         'fields': ('lastscan', 'datedisabled', 'dateremoved'),
@@ -106,8 +106,8 @@ class unixuserAdmin(admin.ModelAdmin):
     
     # Show readonly fields for non-super users
     def get_readonly_fields(self, request, obj = None):
-        adminROFields = ['adminUserLinked', 'host', 'user', 'getApps', 'lastlogin', 'lastscan', 'datedisabled', 'dateremoved']
-        userROFields = ['adminUserLinked', 'host', 'user', 'getApps', 'lastlogin', 'lastscan', 'enabled', 'datedisabled', 'dateremoved']
+        adminROFields = ['adminUserLinked', 'adminHostLinked', 'host', 'user', 'getApps', 'lastlogin', 'lastscan', 'datedisabled', 'dateremoved']
+        userROFields = ['adminUserLinked', 'adminHostLinked', 'host', 'user', 'getApps', 'lastlogin', 'lastscan', 'enabled', 'datedisabled', 'dateremoved']
                       
         if obj:
             if not request.user.is_superuser:
@@ -223,13 +223,12 @@ class winuserAdmin(admin.ModelAdmin):
     list_display = ['host', 'user', 'lastlogin', 'lastscan', 'enabled', 'datedisabled', 'dateremoved']
     search_fields = ['username', 'host__name']
     exclude = ['username',]
-    readonly_fields = ['getApps']
     list_filter = ['enabled', 'user__type', 'lastlogin', 'lastscan', 'host__apps']
     actions = [exportExcelWin]
-    readonly_fields = ['adminUserLinked', 'getApps']
+    readonly_fields = ['adminUserLinked', 'adminHostLinked', 'getApps']
     fieldsets = (
                 ("Settings", {
-                        'fields': ('adminUserLinked', 'host', 'getApps', 'lastlogin', 'enabled', ),                    
+                        'fields': ('adminUserLinked', 'adminHostLinked', 'getApps', 'lastlogin', 'enabled', ),                    
                 }),
                 ("Scans", {            
                         'fields': ('lastscan', 'datedisabled', 'dateremoved'),
@@ -251,8 +250,8 @@ class winuserAdmin(admin.ModelAdmin):
            
     # Show readonly fields for non-super users
     def get_readonly_fields(self, request, obj = None):
-        adminROFields = ['adminUserLinked', 'host', 'user', 'getApps', 'lastlogin', 'lastscan', 'datedisabled', 'dateremoved']
-        userROFields = ['adminUserLinked', 'host', 'user', 'getApps', 'lastlogin', 'lastscan', 'enabled', 'datedisabled', 'dateremoved']
+        adminROFields = ['adminUserLinked', 'adminHostLinked', 'host', 'user', 'getApps', 'lastlogin', 'lastscan', 'datedisabled', 'dateremoved']
+        userROFields = ['adminUserLinked', 'adminHostLinked', 'host', 'user', 'getApps', 'lastlogin', 'lastscan', 'enabled', 'datedisabled', 'dateremoved']
                       
         if obj:
             if not request.user.is_superuser:
