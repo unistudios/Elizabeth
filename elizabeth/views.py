@@ -13,7 +13,7 @@ import datetime
 
 from website.elizabeth.models import *
 from elizabeth.delivery import *
-#from elizabeth.reporting import *
+from elizabeth.reporting import *
 
 ##############################################################################################
 # Test view for ExcelView
@@ -832,7 +832,11 @@ def listremovedusers(request, host_name):
     #queryset = unixuser.objects.filter( host__name__icontains = host_name, user__enabled = False, user__type = "U", 
     #                                    datedisabled__lte=datetime.date.today()-timedelta(days=day_delay))
     if not queryset:
-        queryset = winuser.objects.filter(host__name__icontains = host_name, enabled=False, user__enabled = False, user__type = "U")
+        # we're deleting all disabled users on the windows hosts.  no checks.  cross your fingers...
+        queryset = winuser.objects.filter(host__name__icontains = host_name, enabled=False)
+        
+        # , user__enabled = False, user__type = "U")
+        
         #queryset = winuser.objects.filter( host__name__icontains = host_name, user__enabled = False, user__type = "U",
         #                                   datedisabled__lte=datetime.date.today()-timedelta(days=day_delay))
     if not queryset:
