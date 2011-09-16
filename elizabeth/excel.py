@@ -46,6 +46,8 @@ def exportExcelWin(modeladmin, request, queryset):
     entries = list(queryset.values())
     
     for e in entries:
+        app_str = ""
+        
         try:
             the_host = winhost.objects.get(pk=int(e['host_id']))
         except:
