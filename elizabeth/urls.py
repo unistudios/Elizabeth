@@ -21,6 +21,16 @@ urlpatterns = patterns('',
     (r'^host/update/$', 'website.elizabeth.views.hostupdate'), 
     
     # #################
+    # Reporting
+    # #################
+    (r'^reporting/summary/$', 'website.elizabeth.views.user_summary'),
+    (r'^reporting/disableable/$', 'website.elizabeth.excel.disableableUsers'),
+    (r'^reporting/removable/$', 'website.elizabeth.excel.removableUsers'),
+    (r'^reporting/system/$', 'website.elizabeth.excel.systemUsers'),
+    (r'^reporting/application/$', 'website.elizabeth.excel.applicationUsers'),
+    (r'^reporting/unknown/$', 'website.elizabeth.excel.unknownUsers'),
+    
+    # #################
     # Upload OGFS Files
     # #################
     (r'^delivery/$', 'website.elizabeth.views.uploadFile'), 

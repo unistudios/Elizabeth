@@ -9,8 +9,10 @@ def todaystr():
     return datetime.datetime.now().strftime("%A, %d. %B %Y %I:%M%p") 
 
 def index(request):
-        
-    wikiroot="https://wiki.nbcuni.ge.com/plugins/servlet/webdav/Global/"
+    
+    # Changed?    
+    #wikiroot="https://wiki.nbcuni.ge.com/plugins/servlet/webdav/Global/"
+    wikiroot="https://wiki.nbcuni.ge.com/plugins/servlet/confluence/default/Global/"
     
     return object_list(request,
                        queryset=urltowiki.objects.filter(enabled=True),

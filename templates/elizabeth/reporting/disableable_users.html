@@ -1,0 +1,13 @@
+{section}
+
+{table-plus}
+|| Host || User || Type || Enabled || Allowed ||
+| {% for i in all_disableable %}{{i.host.name}}|{{ i.username }} | {{i.user.type}} | {{ i.enabled }} | {{ i.user.enabled }} | {{ i.getApps }}|
+{% endfor %}
+{table-plus}
+
+
+
+
+
+{section}

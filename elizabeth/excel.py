@@ -1,8 +1,13 @@
 from website.elizabeth.models import *
 from excel_response import ExcelResponse
+from itertools import chain
 
-# These methods are used by the admin as Django actions for 
-# exporting data to Excel spreadsheets in various ways.
+##############################################################################################
+##############################################################################################
+#######################       Spreadsheets for Admin Actions           #######################
+##############################################################################################
+##############################################################################################
+
 
 ##############################################################################################
 # Download spreadsheet action for UNIX user to host mappings
@@ -148,3 +153,86 @@ exportExcelAppsToUsers.short_description = "Download Apps Spreadsheet"
 def exportExcelAll(modeladmin, request, queryset):
     return ExcelResponse(queryset)
 exportExcelAll.short_description = "Download spreadsheet"
+
+
+
+##############################################################################################
+##############################################################################################
+#######################       Spreadsheets for WIKI download           #######################
+##############################################################################################
+##############################################################################################
+
+def disableableUsers(request):
+    rows = [ ['Host', 'Application', 'Username', 'Enabled', 'Allowed'], 
+              ]
+    unix_disableable = unixuser.objects.filter(enabled=True, user__type="U", user__enabled=False)
+    win_disableable = winuser.objects.filter(enabled=True, user__type="U", user__enabled=False)
+    return genUserReport(request, unix_disableable, win_disableable, "disableable_users")
+disableableUsers.short_description = "Wiki Spreadsheet, Disable-able Users"
+
+
+def removableUsers(request):
+    rows = [ ['Host', 'Application', 'Username', 'Enabled', 'Allowed'], 
+              ]
+    unix_removable = unixuser.objects.filter(enabled=False, user__type="U", user__enabled=False)
+    win_removable = winuser.objects.filter(enabled=False, user__type="U", user__enabled=False)
+    return genUserReport(request, unix_removable, win_removable, "removable_users")
+removableUsers.short_description = "Wiki Spreadsheet, Removable Users"
+
+
+def systemUsers(request):
+    rows = [ ['Host', 'Application', 'Username', 'Enabled', 'Allowed'], 
+              ]
+    unix_sysaccts = unixuser.objects.filter(user__type="S")
+    win_sysaccts = winuser.objects.filter(user__type="S")
+    return genUserReport(request, unix_sysaccts, win_sysaccts, "system_users")
+systemUsers.short_description = "Wiki Spreadsheet, System Users"
+
+
+def applicationUsers(request):
+    rows = [ ['Host', 'Application', 'Username', 'Enabled', 'Allowed'], 
+              ]
+    unix_appaccts = unixuser.objects.filter(user__type="A")
+    win_appaccts = winuser.objects.filter(user__type="A")
+    return genUserReport(request, unix_appaccts, win_appaccts, "app_users")
+applicationUsers.short_description = "Wiki Spreadsheet, Application Users"
+
+
+def unknownUsers(request):
+    rows = [ ['Host', 'Application', 'Username', 'Enabled', 'Allowed'], 
+              ]
+    unix_unkaccts = unixuser.objects.filter(user__type="X")
+    win_unkaccts = winuser.objects.filter(user__type="X")
+    return genUserReport(request, unix_unkaccts, win_unkaccts, "unknown_users")
+unknownUsers.short_description = "Wiki Spreadsheet, Unknown Users"
+
+
+# Helper function to generate spreadsheets
+def genUserReport(request, unix_accts, win_accts, filename):
+    
+    rows = [ ['Host', 'Application', 'Username', 'Enabled', 'Allowed'], 
+              ]
+    
+    for u in unix_accts:
+        app_list = u.host.apps.values_list("name", flat=True)
+        app_list_str = ""
+        
+        for a in app_list:
+            app_list_str += a + ", "
+        app_list_str = app_list_str.rstrip(", ")
+        
+        rows.append([u.username, u.host.name, app_list_str, u.enabled, u.user.enabled])
+            
+    for w in win_accts:
+        app_list = u.host.apps.values_list("name", flat=True)
+        app_list_str = ""
+        
+        for a in app_list:
+            app_list_str += a + ", "
+            
+        app_list_str = app_list_str.rstrip(", ")
+        
+        rows.append([u.username, u.host.name, app_list_str, u.enabled, u.user.enabled])
+            
+    return ExcelResponse(rows, filename)
+

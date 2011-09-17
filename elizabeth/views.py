@@ -14,6 +14,7 @@ import datetime
 from website.elizabeth.models import *
 from elizabeth.delivery import *
 from elizabeth.reporting import *
+from elizabeth.excel import *
 
 ##############################################################################################
 # Test view for ExcelView

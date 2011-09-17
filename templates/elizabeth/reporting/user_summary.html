@@ -1,0 +1,27 @@
+{section}
+
+{column:width=50%}
+ {align:left}
+ {chart:title=Scanned Accounts |height=450|width=750|pieSectionLabel=%0% %2%|legend=false|pieSectionExplode=Removable}
+|| Total || Disable-able || Removable || System || Application || Unknown ||
+|| {{ total_useraccts_count }} | {{ total_disableable_count }} | {{ total_removable_count }} | {{ total_sysaccts_count }} | {{ total_appaccts_count }} | {{ total_unkaccts_count }} ||
+{chart}
+{align}
+{column}
+
+{column:width=50%}
+{table-plus:width=400|height=400|border=15|highlightColor=#c0c0c0}
+|| h3. Accounts || h3. Number ||
+| h3. [Disable-able|http://likewise.nbcuni.ge.com/elizabeth/reporting/disableable] | h3. {{ total_disableable_count }} |
+| h3. [Removable|http://likewise.nbcuni.ge.com/elizabeth/reporting/removable] | h3. {{ total_removable_count }} |
+| h3. [System|http://likewise.nbcuni.ge.com/elizabeth/reporting/system] | h3. {{ total_sysaccts_count }} |
+| h3. [Application|http://likewise.nbcuni.ge.com/elizabeth/reporting/application] | h3. {{ total_appaccts_count }} |
+| h3. [Unknown|http://likewise.nbcuni.ge.com/elizabeth/reporting/unknown] | h3. {{ total_unkaccts_count }} |
+| h3. Total | h3. {{ total_accts_count }} |
+{table-plus}
+{column}
+
+
+{section}
+
+{align:right}As of {{ date_today }} {align}

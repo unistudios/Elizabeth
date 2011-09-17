@@ -97,6 +97,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
 
     'website.elizabeth',
+    'website.wikiexport',
     'south',
 )
 

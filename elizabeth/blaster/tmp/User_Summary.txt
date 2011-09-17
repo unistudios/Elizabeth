@@ -1,0 +1,106 @@
+{section}
+
+{column:width=25%}
+{center}
+{chart:title=Account Type|3D=true|width=250|height=250}
+|| Total || User || System || Application || Unknown ||
+|| 8274 | 8274 | 6969 | 4153 | 1737 ||
+{chart}
+{center}
+{column}
+
+{column:width=25%}
+{center}
+{chart:title=Account Status|3D=true|width=250|height=250}
+|| Total || Enabled|| Disabled || Removed ||
+|| 75 | 25 | 25 | 25 ||
+{chart}
+{center}
+{column}
+
+{column:width=25%}
+
+usalpdbsd018.nbcuni.ge.com svctag
+
+usalpdbsr019ca.nbcuni.ge.com svctag
+
+usalpdbsr019cb.nbcuni.ge.com svctag
+
+useclpcll068apb.nbcuni.ge.com jbuser1
+
+usushaplp042.nbcuni.ge.com smuser
+
+usushaplp043.nbcuni.ge.com smuser
+
+usushaplp448z.west.dmz-nbcuni.com jbuser1
+
+usushaplp449z.west.dmz-nbcuni.com jbuser1
+
+usushaplp451z.west.dmz-nbcuni.com jbuser1
+
+usushaplp552zla.west.dmz-nbcuni.com jbuser1
+
+usushaplp552zlb.west.dmz-nbcuni.com jbuser1
+
+usushapls045.nbcuni.ge.com smuser
+
+usushapsp569 svctag
+
+usushapspv190 svctag
+
+usushapspv191 svctag
+
+usushapspv192 svctag
+
+usushapspv193 svctag
+
+usushapspv194 svctag
+
+usushapspv195 svctag
+
+usushapspv196 svctag
+
+usushclsp001dba.nbcuni.ge.com svctag
+
+usushclsp001dbb.nbcuni.ge.com svctag
+
+usushdbspv035 svctag
+
+usushdbsq104.nbcuni.ge.com svctag
+
+usushdbss019ca.nbcuni.ge.com svctag
+
+usushdbss019cb.nbcuni.ge.com svctag
+
+usushifsp055 svctag
+
+usushssap072 svctag
+
+usushssap073 svctag
+
+usushwslp101zla.west.dmz-nbcuni.com jbuser1
+
+usushwslp101zlb.west.dmz-nbcuni.com jbuser1
+
+ususodbsr001.nbcuni.ge.com svctag
+
+usushaplp450z.west.dmz-nbcuni.com jbuser1
+
+{column}
+
+{column:width=25%}
+{chart:type=bar|title=Disables By Month|3D=true|width=250|height=250}
+|| Month | Amount ||
+| 2008-12 | 135 |
+| 2009-01 | 0 |
+| 2009-02 | 2800 |
+| 2009-03 | 6342 |
+| 2009-04 | 4600 |
+| 2009-05 | 348 |
+{chart}
+{column}
+
+{section}
+
+
+{align:right}As of Thursday, 02. July 2009 11:44AM{align}
