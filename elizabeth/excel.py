@@ -224,7 +224,7 @@ def genUserReport(request, unix_accts, win_accts, filename):
         rows.append([u.username, u.host.name, app_list_str, u.enabled, u.user.enabled])
             
     for w in win_accts:
-        app_list = u.host.apps.values_list("name", flat=True)
+        app_list = w.host.apps.values_list("name", flat=True)
         app_list_str = ""
         
         for a in app_list:
@@ -232,7 +232,7 @@ def genUserReport(request, unix_accts, win_accts, filename):
             
         app_list_str = app_list_str.rstrip(", ")
         
-        rows.append([u.username, u.host.name, app_list_str, u.enabled, u.user.enabled])
+        rows.append([w.username, w.host.name, app_list_str, w.enabled, w.user.enabled])
             
     return ExcelResponse(rows, filename)
 
