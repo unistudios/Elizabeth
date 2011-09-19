@@ -210,7 +210,7 @@ unknownUsers.short_description = "Wiki Spreadsheet, Unknown Users"
 # Helper function to generate spreadsheets
 def genUserReport(request, unix_accts, win_accts, filename):
     
-    rows = [ ['Host', 'Application', 'Username', 'Enabled', 'Allowed'], 
+    rows = [ ['Username', 'Host', 'Application', 'Enabled', 'Allowed'], 
               ]
     
     for u in unix_accts:
