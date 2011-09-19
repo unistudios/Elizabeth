@@ -564,11 +564,22 @@ def winuserupdate(request):
             
             print "Last Login", lastlogin
             
+            lastlogin = lastlogin.strip()
+            
+            # Get the user lastlogin time
             if lastlogin:
                 if "DNE" not in str(lastlogin):
-                    print "Did not equal DNE", lastlogin[0:4], lastlogin[4:6], lastlogin[6:8],
-                    u.lastlogin = datetime.date(int(lastlogin[0:4]), int(lastlogin[4:6]), int(lastlogin[6:8]))
-                    #u.lastlogin = datetime.date(lastlogin[0:4], lastlogin[4:6], lastlogin[6:8])
+                    try:
+                        print "Did not equal DNE", lastlogin[0:4], lastlogin[4:6], lastlogin[6:8],
+                        u.lastlogin = datetime.date(int(lastlogin[0:4]), int(lastlogin[4:6]), int(lastlogin[6:8]))
+                    except:
+                        try:
+                            print "\nWindows date error, flipping month and day...", lastlogin[0:4], lastlogin[6:8], lastlogin[4:6],
+                            u.lastlogin = datetime.date(int(lastlogin[0:4]), int(lastlogin[6:8]), int(lastlogin[4:6]))
+                        except:
+                            print "\nUnrecognized Windows date.  Setting to \"None\""
+                            u.lastlogin = None
+                    print ""
                 else:
                     print "Equaled DNE"
                     
