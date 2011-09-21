@@ -650,7 +650,11 @@ def readuser(request):
             comments = request.POST['comments']
         else:
             comments = ""
-
+            
+        if 'overwrite' in request.POST:
+            overwrite   = request.POST['overwrite'] == "true"
+        else:
+            overwrite = False
             
         print user, enabled
         
@@ -668,6 +672,9 @@ def readuser(request):
                     ul = winuserlist.objects.get(username=user)
                 except:
                     return HttpResponse("%s does not exist.\n" % (user) )
+                
+            if ul.type != "X" and not overwrite:
+                return HttpResponse("%s already categorized." % (user))                
                     
             # if we get the user...
             ul.name = tam
@@ -817,13 +824,15 @@ def listusers(request, host_name):
 
 
 ##############################################################################################
-# List user accounts that need to be disabled 
+# List user accounts that can be disabled 
 ##############################################################################################
-def listdisabledusers(request, host_name):
-    queryset = unixuser.objects.filter( host__name__icontains = host_name, user__enabled = False, user__type = "U")
+def listdisableableusers(request, host_name):
+    #queryset = unixuser.objects.filter( host__name__icontains = host_name, user__enabled = False, user__type = "U", dateremoved__isnull = True)
+    queryset = unixuser.objects.filter( host__name__icontains = host_name, enabled = True, user__enabled = False, user__type = "U")
     if not queryset:
         print "here"
-        queryset = winuser.objects.filter( host__name__icontains = host_name, user__enabled = False, user__type = "U")
+        #queryset = winuser.objects.filter( host__name__icontains = host_name, user__enabled = False, user__type = "U", dateremoved__isnull = True)
+        queryset = winuser.objects.filter( host__name__icontains = host_name, enabled = True, user__enabled = False, user__type = "U")
     if not queryset:
         return HttpResponse("")
     
@@ -834,22 +843,22 @@ def listdisabledusers(request, host_name):
     return render_to_response('elizabeth/listusers.html', {'userlist': queryset})    
 
 ##############################################################################################
-# List user accounts that need to be removed 
+# List user accounts that can be removed 
 ##############################################################################################
-def listremovedusers(request, host_name):
+def listremovableusers(request, host_name):
     day_delay= 0
     
     # find users accounts that are already disabled on host_name
-    queryset = unixuser.objects.filter(host__name__icontains = host_name, enabled=False, user__enabled = False, user__type = "U")
+    queryset = unixuser.objects.filter(host__name__icontains = host_name, enabled=False, user__enabled = False, user__type = "U", dateremoved__isnull = True)
     #queryset = unixuser.objects.filter( host__name__icontains = host_name, user__enabled = False, user__type = "U", 
     #                                    datedisabled__lte=datetime.date.today()-timedelta(days=day_delay))
     if not queryset:
         # we're deleting all disabled users on the windows hosts.  no checks.  cross your fingers...
-        queryset = winuser.objects.filter(host__name__icontains = host_name, enabled=False)
+        #queryset = winuser.objects.filter(host__name__icontains = host_name, enabled=False)
         
         # , user__enabled = False, user__type = "U")
         
-        #queryset = winuser.objects.filter( host__name__icontains = host_name, user__enabled = False, user__type = "U",
+        queryset = winuser.objects.filter( host__name__icontains = host_name, enabled=False, user__enabled = False, user__type = "U", dateremoved__isnull = True)
         #                                   datedisabled__lte=datetime.date.today()-timedelta(days=day_delay))
     if not queryset:
         return HttpResponse("")
