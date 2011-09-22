@@ -22,11 +22,11 @@ def user_summary(request):
     # Calculate the types of users across scanned environment
     ################################################################
         
-    unix_disableable = unixuser.objects.filter(enabled=True, user__type="U", user__enabled=False)
-    win_disableable = winuser.objects.filter(enabled=True, user__type="U", user__enabled=False)
+    unix_disableable = unixuser.objects.filter(enabled=True, user__type="U", user__enabled=False, dateremoved__isnull=True, datedisabled__isnull=True)
+    win_disableable = winuser.objects.filter(enabled=True, user__type="U", user__enabled=False, dateremoved__isnull=True, datedisabled__isnull=True)
     
-    unix_removable = unixuser.objects.filter(enabled=False, user__type="U", user__enabled=False)
-    win_removable = winuser.objects.filter(enabled=False, user__type="U", user__enabled=False)
+    unix_removable = unixuser.objects.filter(enabled=False, user__type="U", user__enabled=False, dateremoved__isnull=True)
+    win_removable = winuser.objects.filter(enabled=False, user__type="U", user__enabled=False, dateremoved__isnull=True)
     
     unix_sysaccts = unixuser.objects.filter(user__type="S")
     win_sysaccts = winuser.objects.filter(user__type="S")
@@ -64,6 +64,10 @@ def user_summary(request):
     # All Accounts
     total_accts_count = total_disableable_count + total_removable_count + total_sysaccts_count + total_appaccts_count + total_unkaccts_count
     
+    # All Removed Accounts
+    total_removed_count = unixuser.objects.filter(dateremoved__isnull=False).count() + \
+                                 winuser.objects.filter(dateremoved__isnull=False).count()
+    
     
      ################################################################
     # Calculate the account status across scanned accounts
@@ -89,6 +93,7 @@ def user_summary(request):
                                       'total_appaccts_count': total_appaccts_count,
                                       'total_unkaccts_count': total_unkaccts_count,
                                       'total_accts_count': total_accts_count,
+                                      'total_removed_count': total_removed_count,
                                       'date_today': todaystr(),                                
                                      },
                     )
