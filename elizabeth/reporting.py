@@ -61,12 +61,12 @@ def user_summary(request):
     win_unkaccts_count = win_unkaccts.count()
     total_unkaccts_count =  unix_unkaccts_count + win_unkaccts_count
     
-    # All Accounts
-    total_accts_count = total_disableable_count + total_removable_count + total_sysaccts_count + total_appaccts_count + total_unkaccts_count
-    
     # All Removed Accounts
-    total_removed_count = unixuser.objects.filter(dateremoved__isnull=False).count() + \
-                                 winuser.objects.filter(dateremoved__isnull=False).count()
+    total_removed_count = unixuser.objects.filter(user__type="U", dateremoved__isnull=False).count() + \
+                                 winuser.objects.filter(user__type="U", dateremoved__isnull=False).count()
+    
+    # All Accounts
+    total_accts_count = total_removed_count + total_disableable_count + total_removable_count + total_sysaccts_count + total_appaccts_count + total_unkaccts_count
     
     
      ################################################################
