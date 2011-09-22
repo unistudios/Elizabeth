@@ -165,8 +165,8 @@ exportExcelAll.short_description = "Download spreadsheet"
 def disableableUsers(request):
     rows = [ ['Host', 'Application', 'Username', 'Enabled', 'Allowed'], 
               ]
-    unix_disableable = unixuser.objects.filter(enabled=True, user__type="U", user__enabled=False)
-    win_disableable = winuser.objects.filter(enabled=True, user__type="U", user__enabled=False)
+    unix_disableable = unixuser.objects.filter(enabled=True, user__type="U", user__enabled=False, dateremoved__isnull=True, datedisabled__isnull=True)
+    win_disableable = winuser.objects.filter(enabled=True, user__type="U", user__enabled=False, dateremoved__isnull=True, datedisabled__isnull=True)
     return genUserReport(request, unix_disableable, win_disableable, "disableable_users")
 disableableUsers.short_description = "Wiki Spreadsheet, Disable-able Users"
 
@@ -174,8 +174,8 @@ disableableUsers.short_description = "Wiki Spreadsheet, Disable-able Users"
 def removableUsers(request):
     rows = [ ['Host', 'Application', 'Username', 'Enabled', 'Allowed'], 
               ]
-    unix_removable = unixuser.objects.filter(enabled=False, user__type="U", user__enabled=False)
-    win_removable = winuser.objects.filter(enabled=False, user__type="U", user__enabled=False)
+    unix_removable = unixuser.objects.filter(enabled=False, user__type="U", user__enabled=False, dateremoved__isnull=True)
+    win_removable = winuser.objects.filter(enabled=False, user__type="U", user__enabled=False, dateremoved__isnull=True)
     return genUserReport(request, unix_removable, win_removable, "removable_users")
 removableUsers.short_description = "Wiki Spreadsheet, Removable Users"
 
