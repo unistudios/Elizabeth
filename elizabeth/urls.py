@@ -29,6 +29,7 @@ urlpatterns = patterns('',
     (r'^reporting/system/$', 'website.elizabeth.excel.systemUsers'),
     (r'^reporting/application/$', 'website.elizabeth.excel.applicationUsers'),
     (r'^reporting/unknown/$', 'website.elizabeth.excel.unknownUsers'),
+    (r'^reporting/removed/$', 'website.elizabeth.excel.removedUsers'),
     
     # #################
     # Upload OGFS Files

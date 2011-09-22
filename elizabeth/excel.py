@@ -206,6 +206,13 @@ def unknownUsers(request):
     return genUserReport(request, unix_unkaccts, win_unkaccts, "unknown_users")
 unknownUsers.short_description = "Wiki Spreadsheet, Unknown Users"
 
+def removedUsers(request):
+    rows = [ ['Host', 'Application', 'Username', 'Enabled', 'Allowed'], 
+              ]
+    unix_remaccts = unixuser.objects.filter(user__type="U", dateremoved__isnull=False)
+    win_remaccts = winuser.objects.filter(user__type="U", dateremoved__isnull=False)
+    return genUserReport(request, unix_remaccts, win_remaccts, "removed_users")
+removedUsers.short_description = "Wiki Spreadsheet, Removed Users"
 
 # Helper function to generate spreadsheets
 def genUserReport(request, unix_accts, win_accts, filename):
