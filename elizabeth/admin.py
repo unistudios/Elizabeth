@@ -40,6 +40,7 @@ class unixhostAdmin(admin.ModelAdmin):
             return actions
         else:
             return actions
+        
     
 admin.site.register(unixhost, unixhostAdmin)
 
@@ -106,7 +107,7 @@ class unixuserAdmin(admin.ModelAdmin):
     
     # Show readonly fields for non-super users
     def get_readonly_fields(self, request, obj = None):
-        adminROFields = ['adminUserLinked', 'adminHostLinked', 'host', 'user', 'getApps', 'lastlogin', 'lastscan', 'datedisabled', 'dateremoved']
+        adminROFields = ['adminUserLinked', 'adminHostLinked', 'host', 'user', 'getApps', 'lastlogin', 'lastscan',]
         userROFields = ['adminUserLinked', 'adminHostLinked', 'host', 'user', 'getApps', 'lastlogin', 'lastscan', 'enabled', 'datedisabled', 'dateremoved']
                       
         if obj:
@@ -171,16 +172,19 @@ class unixuserlistAdmin(admin.ModelAdmin):
             return actions
         else:
             return actions
-    
+        
     # Show readonly fields for non-super users
-    def get_readonly_fields(self, request, obj = None):              
+    def get_readonly_fields(self, request, obj = None):
+        adminROFields = ['username', 'hostCount', 'getHosts',]
+        userROFields = ['username', 'hostCount', 'getHosts',]
+                      
         if obj:
             if not request.user.is_superuser:
                 #return ['featured',] + self.readonly_fields
-                return ['username', 'name', 'type', 'source', 'hostCount', 'getHosts', 'enabled']
-            return ['username', 'hostCount', 'getHosts']
+                return userROFields
+            return adminROFields
         else:
-            return ['username', 'name', 'type', 'source', 'hostCount', 'getHosts', 'enabled']
+            return userROFields
     
 admin.site.register(unixuserlist, unixuserlistAdmin)
 
@@ -250,7 +254,7 @@ class winuserAdmin(admin.ModelAdmin):
            
     # Show readonly fields for non-super users
     def get_readonly_fields(self, request, obj = None):
-        adminROFields = ['adminUserLinked', 'adminHostLinked', 'host', 'user', 'getApps', 'lastlogin', 'lastscan', 'datedisabled', 'dateremoved']
+        adminROFields = ['adminUserLinked', 'adminHostLinked', 'host', 'user', 'getApps', 'lastlogin', 'lastscan']
         userROFields = ['adminUserLinked', 'adminHostLinked', 'host', 'user', 'getApps', 'lastlogin', 'lastscan', 'enabled', 'datedisabled', 'dateremoved']
                       
         if obj:
@@ -294,15 +298,18 @@ class winuserlistAdmin(admin.ModelAdmin):
             return actions
         else:
             return actions
-    
+        
     # Show readonly fields for non-super users
-    def get_readonly_fields(self, request, obj = None):              
+    def get_readonly_fields(self, request, obj = None):
+        adminROFields = ['username', 'hostCount', 'getHosts']
+        userROFields = ['username', 'hostCount', 'getHosts']
+                      
         if obj:
             if not request.user.is_superuser:
                 #return ['featured',] + self.readonly_fields
-                return ['username', 'name', 'type', 'source', 'hostCount', 'getHosts', 'enabled']
-            return ['username', 'hostCount', 'getHosts']
+                return userROFields
+            return adminROFields
         else:
-            return ['username', 'name', 'type', 'source', 'hostCount', 'getHosts', 'enabled']
+            return userROFields
 
 admin.site.register(winuserlist, winuserlistAdmin)
