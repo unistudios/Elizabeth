@@ -490,8 +490,9 @@ def unixuserupdate(request):
         else:
             dateremoved = ""
         
-            
-        print host_name, user, lastlogin, host_os
+        # Grab the date today and print out some of the relevant values
+        thedate = datetime.date.today()
+        print host_name, user, lastlogin, host_os, thedate
         
         # find this host first, or add a new one.
         try:
@@ -531,7 +532,7 @@ def unixuserupdate(request):
                 u = h.unixuser_set.create(username=request.POST['user'])
 
             u.user = ul
-            u.lastscan = datetime.date.today()
+            u.lastscan = thedate
             
             if lastlogin:
                 if "DNE" not in str(lastlogin):
@@ -542,23 +543,34 @@ def unixuserupdate(request):
             # datedisabled and dateremoved should only be set if the account is actually disabled.  also, these
             # values should not be reset after subsequent executions (ie: save only the first value...)
             if datedisabled:
-                yr, mo, day = datedisabled.split("-")
-                print "Date Disabled:",  yr, mo, day
+                #yr, mo, day = datedisabled.split("-")
+                print "Date Disabled:",  thedate
+                u.enabled = False
+                u.datereenabled = None
+                u.dateremoved = None
                 if u.datedisabled is None:
-                    u.datedisabled = datetime.date(int(yr), int(mo), int(day))
+                    u.datedisabled = thedate
                 
             if dateremoved:
-                yr, mo, day = dateremoved.split("-")
-                print "Date Removed:",  yr, mo, day
+                #yr, mo, day = dateremoved.split("-")
+                print "Date Removed:",  thedate
+                u.enabled = False
+                u.datereenabled = None
                 if u.dateremoved is None:
-                    u.dateremoved = datetime.date(int(yr), int(mo), int(day))
+                    u.dateremoved = thedate
 
-            # check if the enabled field was given
+            # check if the enabled field was given (used by scans only)
             if "enabled" in request.POST:
                 u.enabled = request.POST['enabled'] == "true"
-                if u.enabled:
-                    u.datedisabled = None
-                    u.dateremoved  = None
+                
+                # if the account has been re-enabled after we disabled/removed, flag it
+                if u.enabled and (u.datedisabled or u.dateremoved):                    
+                    if not u.datereenabled:
+                        u.datereenabled = thedate
+                # if the account was removed, and re-added in a disabled state
+                elif not u.enabled and u.dateremoved:
+                    u.datereenabled = thedate
+                
                 #if (u.datedisabled == None) and (u.user.type=="U") :
                 #    u.datedisabled = datetime.date.today()
             
@@ -614,7 +626,9 @@ def winuserupdate(request):
         else:
             dateremoved = ""
             
-        print host_name, user, lastlogin, host_os
+        # Grab the date today and print out some of the relevant values
+        thedate = datetime.date.today()
+        print host_name, user, lastlogin, host_os, thedate
         
         
         # find this host first, or add a new one.
@@ -655,7 +669,7 @@ def winuserupdate(request):
                 u = h.winuser_set.create(username=request.POST['user'])
 
             u.user = ul
-            u.lastscan = datetime.date.today()
+            u.lastscan = thedate
             u.save()
             
             print "Last Login", lastlogin
@@ -678,29 +692,43 @@ def winuserupdate(request):
                     print ""
                 else:
                     print "Equaled DNE"
-                    
+                
             # datedisabled and dateremoved should only be set if the account is actually disabled.  also, these
             # values should not be reset after subsequent executions (ie: save only the first value...)
             if datedisabled:
-                yr, mo, day = datedisabled.split("-")
-                print "Date Disabled:",  yr, mo, day
+                #yr, mo, day = datedisabled.split("-")
+                print "Date Disabled:",  thedate
+                u.enabled = False
+                u.datereenabled = None
+                u.dateremoved = None
                 if u.datedisabled is None:
-                    u.datedisabled = datetime.date(int(yr), int(mo), int(day))
+                    u.datedisabled = thedate
                 
             if dateremoved:
-                yr, mo, day = dateremoved.split("-")
-                print "Date Removed:",  yr, mo, day
+                #yr, mo, day = dateremoved.split("-")
+                print "Date Removed:",  thedate
+                u.enabled = False
+                u.datereenabled = None
                 if u.dateremoved is None:
-                    u.dateremoved = datetime.date(int(yr), int(mo), int(day))
+                    u.dateremoved = thedate
 
-            # check if the enabled field was given
+            # check if the enabled field was given (used by scans only)
             if "enabled" in request.POST:
                 u.enabled = request.POST['enabled'] == "true"
-                if u.enabled:
-                    u.datedisabled = None
-                    u.dateremoved  = None
+                
+                # if the account has been re-enabled after we disabled/removed, flag it
+                if u.enabled and (u.datedisabled or u.dateremoved):                    
+                    if not u.datereenabled:
+                        u.datereenabled = thedate
+                # if the account was removed, and re-added in a disabled state
+                elif not u.enabled and u.dateremoved:
+                    u.datereenabled = thedate
+                
                 #if (u.datedisabled == None) and (u.user.type=="U") :
-                #    u.datedisabled = datetime.date.today()
+                #    u.datedisabled = datetime.date.today()    
+                
+                
+            
             u.save()
 
             return HttpResponse("%s, %s - %s\n" % (h.name, u.username, str(u.enabled) ) )

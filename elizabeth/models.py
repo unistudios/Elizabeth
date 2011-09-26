@@ -229,6 +229,7 @@ class unixuser(models.Model):
     
     datedisabled = models.DateField(null=True, blank=True, verbose_name="Date Disabled")
     dateremoved  = models.DateField(null=True, blank=True, verbose_name="Date Removed")
+    datereenabled = models.DateField(null=True, blank=True, verbose_name="Date Re-enabled")
 
     # default manager
     objects = models.Manager()
@@ -373,6 +374,7 @@ class winuser(models.Model):
     
     datedisabled = models.DateField(null=True, blank=True, verbose_name="Date Disabled")
     dateremoved  = models.DateField(null=True, blank=True, verbose_name="Date Removed")
+    datereenabled = models.DateField(null=True, blank=True, verbose_name="Date Re-enabled")
 
     # default manager
     objects = models.Manager()

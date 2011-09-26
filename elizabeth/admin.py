@@ -106,7 +106,7 @@ admin.site.register(hostapp, hostappAdmin)
 # Display host to user mappings and their last scan state
 ##############################################################################################
 class unixuserAdmin(admin.ModelAdmin):
-    list_display = ['host', 'user', 'lastlogin', 'lastscan', 'enabled', 'datedisabled', 'dateremoved']
+    list_display = ['host', 'user', 'lastlogin', 'lastscan', 'enabled', 'datedisabled', 'dateremoved', 'datereenabled']
     search_fields = ['username', 'host__name']
     exclude = ['username']
     readonly_fields = ['adminUserLinked', 'adminHostLinked', 'getApps']
@@ -118,7 +118,7 @@ class unixuserAdmin(admin.ModelAdmin):
                         'fields': ('adminUserLinked', 'adminHostLinked', 'getApps', 'lastlogin', 'enabled', ),                    
                 }),
                 ("Scans", {            
-                        'fields': ('lastscan', 'datedisabled', 'dateremoved'),
+                        'fields': ('lastscan', 'datedisabled', 'dateremoved', 'datereenabled'),
                 }),
     )
     
@@ -139,8 +139,7 @@ class unixuserAdmin(admin.ModelAdmin):
     def get_readonly_fields(self, request, obj = None):
         
         adminROFields = ['adminUserLinked', 'adminHostLinked', 'host', 'user', 'getApps', 'lastlogin', 'lastscan',]
-        userROFields = ['adminUserLinked', 'adminHostLinked', 'host', 'user', 'getApps', 'lastlogin', 'lastscan', 'enabled', 'datedisabled', 'dateremoved']
-        
+        userROFields = ['adminUserLinked', 'adminHostLinked', 'host', 'user', 'getApps', 'lastlogin', 'lastscan', 'enabled', 'datedisabled', 'dateremoved', 'datereenabled']
         if obj:
             if not request.user.is_superuser:
                 #return ['featured',] + self.readonly_fields
@@ -279,7 +278,7 @@ admin.site.register(winhost, winhostAdmin)
 # Display host to user mappings and their last scan state
 ##############################################################################################
 class winuserAdmin(admin.ModelAdmin):
-    list_display = ['host', 'user', 'lastlogin', 'lastscan', 'enabled', 'datedisabled', 'dateremoved']
+    list_display = ['host', 'user', 'lastlogin', 'lastscan', 'enabled', 'datedisabled', 'dateremoved', 'datereenabled']
     search_fields = ['username', 'host__name']
     exclude = ['username',]
     list_filter = ['enabled', 'user__type', 'lastlogin', 'lastscan', 'host__apps']
@@ -290,7 +289,7 @@ class winuserAdmin(admin.ModelAdmin):
                         'fields': ('adminUserLinked', 'adminHostLinked', 'getApps', 'lastlogin', 'enabled', ),                    
                 }),
                 ("Scans", {            
-                        'fields': ('lastscan', 'datedisabled', 'dateremoved'),
+                        'fields': ('lastscan', 'datedisabled', 'dateremoved', 'datereenabled'),
                 }),
     )
     
@@ -310,10 +309,7 @@ class winuserAdmin(admin.ModelAdmin):
     # Show readonly fields for non-super users
     def get_readonly_fields(self, request, obj = None):
         adminROFields = ['adminUserLinked', 'adminHostLinked', 'host', 'user', 'getApps', 'lastlogin', 'lastscan']
-        userROFields = ['adminUserLinked', 'adminHostLinked', 'host', 'user', 'getApps', 'lastlogin', 'lastscan', 'enabled', 'datedisabled', 'dateremoved']
-        
-        print request.user.has_perm('elizabeth.change_unixuserlist')
-                      
+        userROFields = ['adminUserLinked', 'adminHostLinked', 'host', 'user', 'getApps', 'lastlogin', 'lastscan', 'enabled', 'datedisabled', 'dateremoved', 'datereenabled']
         if obj:
             if not request.user.is_superuser:
                 #return ['featured',] + self.readonly_fields
