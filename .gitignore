@@ -8,3 +8,4 @@ settings.py.*
 migrations
 backup
 sandbox
+elizabeth/blaster/tmp/*
