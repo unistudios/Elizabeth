@@ -51,7 +51,8 @@ admin.site.register(unixhost, unixhostAdmin)
 class hostappAdmin(admin.ModelAdmin):
     fields = ('name', 'importance', 'getHostCount', 'getWinHosts', 'getUnixHosts')
     list_display = ['name', 'getHostCount', 'importance']
-    readonly_fields = ['name', 'importance', 'getHostCount', 'getHosts', 'getWinHosts', 'getUnixHosts']
+    #readonly_fields = ['name', 'importance', 'getHostCount', 'getHosts', 'getWinHosts', 'getUnixHosts']
+    readonly_fields = ['getHostCount', 'getHosts', 'getWinHosts', 'getUnixHosts']
     #inlines = [unixhostInline,]
     actions= [exportExcelAppsToUsers]
     
@@ -67,6 +68,19 @@ class hostappAdmin(admin.ModelAdmin):
             return actions
         else:
             return actions
+        
+    # Show readonly fields for non-super users
+    def get_readonly_fields(self, request, obj = None):
+        adminROFields = ['getHostCount', 'getHosts', 'getWinHosts', 'getUnixHosts']
+        userROFields = ['name', 'importance', 'getHostCount', 'getHosts', 'getWinHosts', 'getUnixHosts']
+                      
+        if obj:
+            if not request.user.is_superuser:
+                #return ['featured',] + self.readonly_fields
+                return userROFields
+            return adminROFields
+        else:
+            return userROFields
     
 admin.site.register(hostapp, hostappAdmin)
 
