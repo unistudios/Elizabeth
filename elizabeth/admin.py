@@ -73,12 +73,15 @@ class hostappAdmin(admin.ModelAdmin):
     def get_readonly_fields(self, request, obj = None):
         adminROFields = ['getHostCount', 'getHosts', 'getWinHosts', 'getUnixHosts']
         userROFields = ['name', 'importance', 'getHostCount', 'getHosts', 'getWinHosts', 'getUnixHosts']
-        
-        if request.user.is_superuser:
-            #return ['featured',] + self.readonly_fields
+                      
+        if obj:
+            if not request.user.is_superuser:
+                #return ['featured',] + self.readonly_fields
+                return userROFields
             return adminROFields
-        return userROFields
-        
+        else:
+            return userROFields
+    
 admin.site.register(hostapp, hostappAdmin)
 
 
