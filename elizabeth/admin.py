@@ -41,16 +41,6 @@ class unixhostAdmin(admin.ModelAdmin):
         else:
             return actions
         
-    # Show readonly fields for non-super users
-    def get_readonly_fields(self, request, obj = None):
-        adminROFields = ['getHostCount', 'getHosts', 'getWinHosts', 'getUnixHosts']
-        userROFields = ['name', 'importance', 'getHostCount', 'getHosts', 'getWinHosts', 'getUnixHosts']
-        
-        if request.user.is_superuser:
-            #return ['featured',] + self.readonly_fields
-            return adminROFields
-        return userROFields
-        
     
 admin.site.register(unixhost, unixhostAdmin)
 
