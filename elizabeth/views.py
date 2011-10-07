@@ -350,6 +350,62 @@ def hostupdate(request):
                 return HttpResponse("Hostname %s not found\n" % host_name)
     except:
         return HttpResponse("Error in hostupdate")
+    
+
+##############################################################################################
+# Update UNIX host
+# update the accessibility status of the unix host
+##############################################################################################
+def unixhostupdate(request):
+    
+    if request.method == 'POST':
+        if 'host_name' in request.POST and 'accessible' in request.POST:
+            host_name = request.POST['host_name']
+            accessible = request.POST['accessible']
+        else:
+            return HttpResponse("Host and/or accessibility data not provided.")
+            
+        try:
+            u = unixhost.objects.get(name=host_name)
+        except Exception, e:
+            print e
+            return HttpResponse("Could not retrieve host %s from DB." % host_name)
+        
+        u.accessible = accessible == "true"
+        u.save()
+        
+        print "Host %s, accessible: %s" % (host_name, accessible)
+        return HttpResponse("Host %s, accessible: %s" % (host_name, accessible))
+                
+    else:
+        return HttpResponse("No data provided.")
+        
+##############################################################################################
+# Update Windows host
+# update the accessibility status of the windows host
+##############################################################################################
+def winhostupdate(request):
+    
+    if request.method == 'POST':
+        if 'host_name' in request.POST and 'accessible' in request.POST:
+            host_name = request.POST['host_name']
+            accessible = request.POST['accessible']
+        else:
+            return HttpResponse("Host and/or accessibility data not provided.")
+        
+        try:
+            w = winhost.objects.get(name=host_name)
+        except Exception, e:
+            print e
+            return HttpResponse("Could not retrieve host %s from DB." % host_name)
+       
+        w.accessible = accessible == "true"
+        w.save()
+        
+        return HttpResponse("Host %s, accessible: %s" % (host_name, accessible))
+                
+    else:
+        return HttpResponse("No data provided.")
 
 ##############################################################################################
 # Update UNIX User

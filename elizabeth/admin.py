@@ -19,12 +19,12 @@ class hostsettingInline(admin.TabularInline):
 # UNIX hosts
 ##############################################################################################
 class unixhostAdmin(admin.ModelAdmin):
-    list_display = ('name', 'os', )
-    fields = ('name', 'os', 'apps', 'comment')
+    list_display = ('name', 'os', 'accessible', 'retired')
+    fields = ('name', 'os', 'accessible', 'retired', 'apps', 'comment',)
     #inlines = [ hostsettingInline,]
     search_fields = ['name', 'fqdn']
     readonly_fields = ['name', 'os', 'comment']
-    list_filter = ('apps',)
+    list_filter = ('accessible', 'retired', 'apps',)
     filter_horizontal = ['apps']
     actions= [exportExcelAll]
     
@@ -40,6 +40,19 @@ class unixhostAdmin(admin.ModelAdmin):
             return actions
         else:
             return actions
+        
+    # Show readonly fields for non-super users
+    def get_readonly_fields(self, request, obj = None):
+        adminROFields = ['apps',]
+        userROFields = ['name', 'os', 'accessible']
+        
+        if obj is None:
+            return adminROFields
+        else:
+            if request.user.is_superuser:
+                #return ['featured',] + self.readonly_fields
+                return adminROFields + ['name', 'os']
+            return userROFields
         
     
 admin.site.register(unixhost, unixhostAdmin)
@@ -204,12 +217,12 @@ admin.site.register(unixuserlist, unixuserlistAdmin)
 # Windows hosts
 ##############################################################################################
 class winhostAdmin(admin.ModelAdmin):
-    list_display = ('name', 'os',)
-    fields = ('name', 'os', 'apps', 'comment')
+    list_display = ('name', 'os', 'accessible', 'retired')
+    fields = ('name', 'os', 'accessible', 'retired', 'apps', 'comment')
     #inlines = [ hostsettingInline,]
     search_fields = ['name', 'fqdn']
-    readonly_fields = ['name', 'os', 'comment']
-    list_filter = ('apps',)
+    readonly_fields = ['name', 'os', 'comment',]
+    list_filter = ('accessible', 'retired', 'apps',)
     filter_horizontal = ['apps']
     actions= [exportExcelAll]
     
@@ -225,6 +238,19 @@ class winhostAdmin(admin.ModelAdmin):
             return actions
         else:
             return actions
+        
+    # Show readonly fields for non-super users
+    def get_readonly_fields(self, request, obj = None):
+        adminROFields = ['apps',]
+        userROFields = ['name', 'os', 'accessible']
+        
+        if obj is None:
+            return adminROFields
+        else:
+            if request.user.is_superuser:
+                #return ['featured',] + self.readonly_fields
+                return adminROFields + ['name', 'os']
+            return userROFields
     
 admin.site.register(winhost, winhostAdmin)
 
