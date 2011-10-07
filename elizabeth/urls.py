@@ -18,7 +18,9 @@ urlpatterns = patterns('',
     # #################
     # Host Functions
     # #################
-    (r'^host/update/$', 'website.elizabeth.views.hostupdate'), 
+    (r'^host/unix/update/$', 'website.elizabeth.views.unixhostupdate'),
+    (r'^host/win/update/$', 'website.elizabeth.views.winhostupdate'),
+    (r'^host/update/$', 'website.elizabeth.views.hostupdate'),    
     
     # #################
     # Reporting

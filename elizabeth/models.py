@@ -113,6 +113,9 @@ class unixhost(models.Model):
     apps     = models.ManyToManyField(hostapp, blank=True, null=True)
     #app     = models.ForeignKey(hostapp, blank=True, null=True)                     # what app goes with this host.
     
+    accessible = models.BooleanField(default=True, blank=True)     # pingable... through opsware
+    retired = models.BooleanField(default=False, blank=True)       # has the host been retired?
+    
     objects     = unixhostManager()                                                 # Using a custom object manager because we can...
         
     def save(self, force_insert=False, force_update=False):
@@ -272,6 +275,9 @@ class winhost(models.Model):
     # Changing app to host relationship from 12M to M2M.
     apps     = models.ManyToManyField(hostapp, blank=True, null=True)
     #app     = models.ForeignKey(hostapp, blank=True, null=True)                     # what app goes with this host.
+    
+    accessible = models.BooleanField(default=True, blank=True)     # pingable... through opsware
+    retired = models.BooleanField(default=False, blank=True)       # has the host been retired?
     
     #objects     = unixhostManager()                                                 # Using a custom object manager because we can...
         
