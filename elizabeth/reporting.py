@@ -21,21 +21,21 @@ def user_summary(request):
     ################################################################
     # Calculate the types of users across scanned environment
     ################################################################
-        
-    unix_disableable = unixuser.objects.filter(enabled=True, user__type="U", user__enabled=False, dateremoved__isnull=True, datedisabled__isnull=True)
-    win_disableable = winuser.objects.filter(enabled=True, user__type="U", user__enabled=False, dateremoved__isnull=True, datedisabled__isnull=True)
     
-    unix_removable = unixuser.objects.filter(enabled=False, user__type="U", user__enabled=False, dateremoved__isnull=True)
-    win_removable = winuser.objects.filter(enabled=False, user__type="U", user__enabled=False, dateremoved__isnull=True)
+    unix_disableable = unixuser.objects.filter(enabled=True, user__type="U", user__enabled=False, dateremoved__isnull=True, datedisabled__isnull=True, host__retired=False)
+    win_disableable = winuser.objects.filter(enabled=True, user__type="U", user__enabled=False, dateremoved__isnull=True, datedisabled__isnull=True, host__retired=False)
     
-    unix_sysaccts = unixuser.objects.filter(user__type="S")
-    win_sysaccts = winuser.objects.filter(user__type="S")
+    unix_removable = unixuser.objects.filter(enabled=False, user__type="U", user__enabled=False, dateremoved__isnull=True, host__retired=False)
+    win_removable = winuser.objects.filter(enabled=False, user__type="U", user__enabled=False, dateremoved__isnull=True, host__retired=False)
     
-    unix_appaccts = unixuser.objects.filter(user__type="A")
-    win_appaccts = winuser.objects.filter(user__type="A")
+    unix_sysaccts = unixuser.objects.filter(user__type="S", host__retired=False)
+    win_sysaccts = winuser.objects.filter(user__type="S", host__retired=False)
     
-    unix_unkaccts = unixuser.objects.filter(user__type="X")
-    win_unkaccts = winuser.objects.filter(user__type="X")
+    unix_appaccts = unixuser.objects.filter(user__type="A", host__retired=False)
+    win_appaccts = winuser.objects.filter(user__type="A", host__retired=False)
+    
+    unix_unkaccts = unixuser.objects.filter(user__type="X", host__retired=False)
+    win_unkaccts = winuser.objects.filter(user__type="X", host__retired=False)
     
     
     unix_disableable_count = unix_disableable.count()
