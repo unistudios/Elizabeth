@@ -44,7 +44,12 @@ class unixhostAdmin(admin.ModelAdmin):
     # Show readonly fields for non-super users
     def get_readonly_fields(self, request, obj = None):
         adminROFields = ['apps',]
-        userROFields = ['name', 'os', 'accessible']
+        userROFields = ['name', 'os', 'accessible', 'apps', 'retired', 'comment',]
+        
+        if request.user.has_perm('elizabeth.changedetails_unixhost'):
+            userROFields.remove("apps")
+            userROFields.remove("retired")
+            userROFields.remove("comment")
         
         if obj is None:
             return adminROFields
@@ -131,9 +136,10 @@ class unixuserAdmin(admin.ModelAdmin):
     
     # Show readonly fields for non-super users
     def get_readonly_fields(self, request, obj = None):
+        
         adminROFields = ['adminUserLinked', 'adminHostLinked', 'host', 'user', 'getApps', 'lastlogin', 'lastscan',]
         userROFields = ['adminUserLinked', 'adminHostLinked', 'host', 'user', 'getApps', 'lastlogin', 'lastscan', 'enabled', 'datedisabled', 'dateremoved']
-                      
+        
         if obj:
             if not request.user.is_superuser:
                 #return ['featured',] + self.readonly_fields
@@ -200,7 +206,13 @@ class unixuserlistAdmin(admin.ModelAdmin):
     # Show readonly fields for non-super users
     def get_readonly_fields(self, request, obj = None):
         adminROFields = ['username', 'hostCount', 'getHosts',]
-        userROFields = ['username', 'hostCount', 'getHosts',]
+        userROFields = ['username', 'hostCount', 'getHosts', 'name', 'type', 'source', 'enabled',]
+        
+        if request.user.has_perm('elizabeth.changedetails_unixuserlist'):
+            userROFields.remove("name")
+            userROFields.remove("type")
+            userROFields.remove("source")
+            userROFields.remove("enabled")
                       
         if obj:
             if not request.user.is_superuser:
@@ -242,7 +254,12 @@ class winhostAdmin(admin.ModelAdmin):
     # Show readonly fields for non-super users
     def get_readonly_fields(self, request, obj = None):
         adminROFields = ['apps',]
-        userROFields = ['name', 'os', 'accessible']
+        userROFields = ['name', 'os', 'accessible', 'apps', 'retired', 'comment',]
+        
+        if request.user.has_perm('elizabeth.changedetails_winhost'):
+            userROFields.remove("apps")
+            userROFields.remove("retired")
+            userROFields.remove("comment")
         
         if obj is None:
             return adminROFields
@@ -293,6 +310,8 @@ class winuserAdmin(admin.ModelAdmin):
     def get_readonly_fields(self, request, obj = None):
         adminROFields = ['adminUserLinked', 'adminHostLinked', 'host', 'user', 'getApps', 'lastlogin', 'lastscan']
         userROFields = ['adminUserLinked', 'adminHostLinked', 'host', 'user', 'getApps', 'lastlogin', 'lastscan', 'enabled', 'datedisabled', 'dateremoved']
+        
+        print request.user.has_perm('elizabeth.change_unixuserlist')
                       
         if obj:
             if not request.user.is_superuser:
@@ -338,8 +357,14 @@ class winuserlistAdmin(admin.ModelAdmin):
         
     # Show readonly fields for non-super users
     def get_readonly_fields(self, request, obj = None):
-        adminROFields = ['username', 'hostCount', 'getHosts']
-        userROFields = ['username', 'hostCount', 'getHosts']
+        adminROFields = ['username', 'hostCount', 'getHosts']        
+        userROFields = ['username', 'hostCount', 'getHosts', 'name', 'type', 'source', 'enabled',]
+        
+        if request.user.has_perm('elizabeth.changedetails_winuserlist'):
+            userROFields.remove("name")
+            userROFields.remove("type")
+            userROFields.remove("source")
+            userROFields.remove("enabled")
                       
         if obj:
             if not request.user.is_superuser:

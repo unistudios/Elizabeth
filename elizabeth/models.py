@@ -94,6 +94,9 @@ class unixhost(models.Model):
     class Meta:
         verbose_name        = "Host (UNIX)"
         verbose_name_plural = "Hosts (UNIX)"
+        permissions = (
+                       ("changedetails_unixhost", "Can change apps the unixhost is associated with"),
+                       )
 
     LEVEL_CHOICE = (
         ("PR", "Production"),
@@ -170,6 +173,9 @@ class unixuserlist(models.Model):
     class Meta:
         verbose_name        = "Local User Account (UNIX)"
         verbose_name_plural = "Local User Accounts (UNIX)"
+        permissions = (
+                       ("changedetails_unixuserlist", "Can change unixuserlist details"),
+                       )
 
     USERLIST_CHOICE = (
         ("U", "User"),
@@ -257,6 +263,9 @@ class winhost(models.Model):
     class Meta:
         verbose_name        = "Host (Windows)"
         verbose_name_plural = "Hosts (Windows)"
+        permissions = (
+                       ("changedetails_winhost", "Can change apps the winhost is associated with"),
+                       )
 
     LEVEL_CHOICE = (
         ("PR", "Production"),
@@ -309,6 +318,9 @@ class winuserlist(models.Model):
     class Meta:
         verbose_name        = "Local User Account (Windows)"
         verbose_name_plural = "Local User Accounts (Windows)"
+        permissions = (
+                       ("changedetails_winuserlist", "Can change winuserlist details"),
+                       )
 
     USERLIST_CHOICE = (
         ("U", "User"),

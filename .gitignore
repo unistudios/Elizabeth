@@ -9,3 +9,4 @@ migrations
 backup
 sandbox
 elizabeth/blaster/tmp/*
+.pydevproject
