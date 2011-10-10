@@ -1,6 +1,7 @@
 from website.elizabeth.models import *
 from excel_response import ExcelResponse
 from itertools import chain
+from django.utils.datastructures import SortedDict
 
 ##############################################################################################
 ##############################################################################################
@@ -15,6 +16,7 @@ from itertools import chain
 def exportExcelUnix(modeladmin, request, queryset):
     #qsHosts = unixuserlist.objects.all()
     entries = list(queryset.values())
+    new_entries = []
     
     for e in entries:
         app_str = ""
@@ -39,9 +41,17 @@ def exportExcelUnix(modeladmin, request, queryset):
             e['apps'] = app_str
             del(e['host_id'])
             del(e['id'])
-            del(e['user_id'])           
+            del(e['user_id'])
+            
+            # hack to put these entries at the end of the dictionary...
+            e = SortedDict(e)
+            e.insert(len(e), "retired", the_host.retired)
+            # this one is probably better just for internal use...
+            # e.insert(len(e), "accessible", the_host.accessible)
+            
+            new_entries.append(e)
 
-    return ExcelResponse(entries)
+    return ExcelResponse(new_entries)
 exportExcelUnix.short_description = "Download UNIX spreadsheet"
 
 ##############################################################################################
@@ -49,6 +59,7 @@ exportExcelUnix.short_description = "Download UNIX spreadsheet"
 ##############################################################################################
 def exportExcelWin(modeladmin, request, queryset):
     entries = list(queryset.values())
+    new_entries = []
     
     for e in entries:
         app_str = ""
@@ -73,9 +84,17 @@ def exportExcelWin(modeladmin, request, queryset):
             e['apps'] = app_str
             del(e['host_id'])
             del(e['id'])
-            del(e['user_id'])   
+            del(e['user_id'])
+            
+            # hack to put these entries at the end of the dictionary...
+            e = SortedDict(e)
+            e.insert(len(e), "retired", the_host.retired)
+            # this one is probably better just for internal use...
+            #e.insert(len(e), "accessible", the_host.accessible)
+            
+            new_entries.append(e)
               
-    return ExcelResponse(entries)
+    return ExcelResponse(new_entries)
 exportExcelWin.short_description = "Download Windows spreadsheet"
 
 ##########################
@@ -165,8 +184,8 @@ exportExcelAll.short_description = "Download spreadsheet"
 def disableableUsers(request):
     rows = [ ['Host', 'Application', 'Username', 'Enabled', 'Allowed'], 
               ]
-    unix_disableable = unixuser.objects.filter(enabled=True, user__type="U", user__enabled=False, dateremoved__isnull=True, datedisabled__isnull=True)
-    win_disableable = winuser.objects.filter(enabled=True, user__type="U", user__enabled=False, dateremoved__isnull=True, datedisabled__isnull=True)
+    unix_disableable = unixuser.objects.filter(enabled=True, user__type="U", user__enabled=False, dateremoved__isnull=True, datedisabled__isnull=True, host__retired=False)
+    win_disableable = winuser.objects.filter(enabled=True, user__type="U", user__enabled=False, dateremoved__isnull=True, datedisabled__isnull=True, host__retired=False)
     return genUserReport(request, unix_disableable, win_disableable, "disableable_users")
 disableableUsers.short_description = "Wiki Spreadsheet, Disable-able Users"
 
@@ -174,8 +193,8 @@ disableableUsers.short_description = "Wiki Spreadsheet, Disable-able Users"
 def removableUsers(request):
     rows = [ ['Host', 'Application', 'Username', 'Enabled', 'Allowed'], 
               ]
-    unix_removable = unixuser.objects.filter(enabled=False, user__type="U", user__enabled=False, dateremoved__isnull=True)
-    win_removable = winuser.objects.filter(enabled=False, user__type="U", user__enabled=False, dateremoved__isnull=True)
+    unix_removable = unixuser.objects.filter(enabled=False, user__type="U", user__enabled=False, dateremoved__isnull=True, host__retired=False)
+    win_removable = winuser.objects.filter(enabled=False, user__type="U", user__enabled=False, dateremoved__isnull=True, host__retired=False)
     return genUserReport(request, unix_removable, win_removable, "removable_users")
 removableUsers.short_description = "Wiki Spreadsheet, Removable Users"
 
@@ -183,8 +202,8 @@ removableUsers.short_description = "Wiki Spreadsheet, Removable Users"
 def systemUsers(request):
     rows = [ ['Host', 'Application', 'Username', 'Enabled', 'Allowed'], 
               ]
-    unix_sysaccts = unixuser.objects.filter(user__type="S")
-    win_sysaccts = winuser.objects.filter(user__type="S")
+    unix_sysaccts = unixuser.objects.filter(user__type="S", host__retired=False)
+    win_sysaccts = winuser.objects.filter(user__type="S", host__retired=False)
     return genUserReport(request, unix_sysaccts, win_sysaccts, "system_users")
 systemUsers.short_description = "Wiki Spreadsheet, System Users"
 
@@ -192,8 +211,8 @@ systemUsers.short_description = "Wiki Spreadsheet, System Users"
 def applicationUsers(request):
     rows = [ ['Host', 'Application', 'Username', 'Enabled', 'Allowed'], 
               ]
-    unix_appaccts = unixuser.objects.filter(user__type="A")
-    win_appaccts = winuser.objects.filter(user__type="A")
+    unix_appaccts = unixuser.objects.filter(user__type="A", host__retired=False)
+    win_appaccts = winuser.objects.filter(user__type="A", host__retired=False)
     return genUserReport(request, unix_appaccts, win_appaccts, "app_users")
 applicationUsers.short_description = "Wiki Spreadsheet, Application Users"
 
@@ -201,8 +220,8 @@ applicationUsers.short_description = "Wiki Spreadsheet, Application Users"
 def unknownUsers(request):
     rows = [ ['Host', 'Application', 'Username', 'Enabled', 'Allowed'], 
               ]
-    unix_unkaccts = unixuser.objects.filter(user__type="X")
-    win_unkaccts = winuser.objects.filter(user__type="X")
+    unix_unkaccts = unixuser.objects.filter(user__type="X", host__retired=False)
+    win_unkaccts = winuser.objects.filter(user__type="X", host__retired=False)
     return genUserReport(request, unix_unkaccts, win_unkaccts, "unknown_users")
 unknownUsers.short_description = "Wiki Spreadsheet, Unknown Users"
 

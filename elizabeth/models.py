@@ -193,13 +193,13 @@ class unixuserlist(models.Model):
         
     # Return a count of the total number of hosts on which the user exists.
     def hostCount(self):
-        return self.unixuser_set.filter(dateremoved__isnull=True).count()
+        return self.unixuser_set.filter(dateremoved__isnull=True, host__retired=False).count()
     hostCount.short_description = "Number of Hosts"
     
     # Return a list of hostnames on which the user exists, in string form.
     def getHosts(self):
         #lines = self.unixuser_set.all()
-        lines = self.unixuser_set.filter(dateremoved__isnull=True)
+        lines = self.unixuser_set.filter(dateremoved__isnull=True, host__retired=False)
         str=""
         for i in lines:
             str=str+i.host.name+"<BR />"
@@ -338,12 +338,12 @@ class winuserlist(models.Model):
         
     # Return a count of the total number of hosts on which the user exists.
     def hostCount(self):
-        return self.unixuser_set.filter(dateremoved__isnull=True).count()
+        return self.winuser_set.filter(dateremoved__isnull=True, host__retired=False).count()
     hostCount.short_description = "Number of Hosts"
     
     # Return a list of hostnames on which the user exists, in string form.
     def getHosts(self):
-        lines = self.winuser_set.filter(dateremoved__isnull=True)
+        lines = self.winuser_set.filter(dateremoved__isnull=True, host__retired=False)
         str=""
         for i in lines:
             str=str+i.host.name+"<BR />"
