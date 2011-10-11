@@ -110,8 +110,8 @@ def user_type_summary(request):
     ################################################################
     
     # local user accounts
-    unix_usraccts_count = unixuser.objects.filter(user__type="U", host__retired=False, dateremoved__isnull=True, datedisabled__isnull=True).count()
-    win_usraccts_count = winuser.objects.filter(user__type="U", host__retired=False, dateremoved__isnull=True, datedisabled__isnull=True).count()
+    unix_usraccts_count = unixuser.objects.filter(enabled=True, user__type="U", host__retired=False, dateremoved__isnull=True, datedisabled__isnull=True).count()
+    win_usraccts_count = winuser.objects.filter(enabled=True, user__type="U", host__retired=False, dateremoved__isnull=True, datedisabled__isnull=True).count()
     total_usraccts_count =  unix_usraccts_count + win_usraccts_count
     
     # local system accounts

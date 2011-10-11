@@ -181,6 +181,10 @@ exportExcelAll.short_description = "Download spreadsheet"
 ##############################################################################################
 ##############################################################################################
 
+#
+# For Local User Metrics Wiki Page
+#
+
 def disableableUsers(request):
     rows = [ ['Host', 'Application', 'Username', 'Enabled', 'Allowed'], 
               ]
@@ -197,14 +201,6 @@ def removableUsers(request):
     win_removable = winuser.objects.filter(enabled=False, user__type="U", user__enabled=False, dateremoved__isnull=True, host__retired=False)
     return genUserReport(request, unix_removable, win_removable, "removable_users")
 removableUsers.short_description = "Wiki Spreadsheet, Removable Users"
-
-def localUsers(request):
-    rows = [ ['Host', 'Application', 'Username', 'Enabled', 'Allowed'], 
-              ]
-    unix_usraccts = unixuser.objects.filter(user__type="U", host__retired=False)
-    win_usraccts = winuser.objects.filter(user__type="U", host__retired=False)
-    return genUserReport(request, unix_usraccts, win_usraccts, "local_users")
-localUsers.short_description = "Wiki Spreadsheet, Local Users"
 
 def systemUsers(request):
     rows = [ ['Host', 'Application', 'Username', 'Enabled', 'Allowed'], 
@@ -240,7 +236,47 @@ def removedUsers(request):
     return genUserReport(request, unix_remaccts, win_remaccts, "removed_users")
 removedUsers.short_description = "Wiki Spreadsheet, Removed Users"
 
+
+#
+# For Local User Metrics Wiki Page
+#
+
+def tUsers(request):
+    rows = [ ['Host', 'Application', 'Username', 'Enabled', 'Allowed'], 
+              ]
+    unix_usraccts = unixuser.objects.filter(enabled=True, user__type="U", host__retired=False, dateremoved__isnull=True, datedisabled__isnull=True)
+    win_usraccts = winuser.objects.filter(enabled=True, user__type="U", host__retired=False, dateremoved__isnull=True, datedisabled__isnull=True)
+    return genUserReport(request, unix_usraccts, win_usraccts, "local_users")
+tUsers.short_description = "Wiki Spreadsheet, Local Users"
+
+def tAppUsers(request):
+    rows = [ ['Host', 'Application', 'Username', 'Enabled', 'Allowed'], 
+              ]
+    unix_appaccts = unixuser.objects.filter(enabled=True, user__type="A", host__retired=False, dateremoved__isnull=True, datedisabled__isnull=True)
+    win_appaccts = winuser.objects.filter(enabled=True, user__type="A", host__retired=False, dateremoved__isnull=True, datedisabled__isnull=True)
+    return genUserReport(request, unix_appaccts, win_appaccts, "app_users")
+tAppUsers.short_description = "Wiki Spreadsheet, Application Users"
+
+def tUnkUsers(request):
+    rows = [ ['Host', 'Application', 'Username', 'Enabled', 'Allowed'], 
+              ]
+    unix_unkaccts = unixuser.objects.filter(enabled=True, user__type="X", host__retired=False, dateremoved__isnull=True, datedisabled__isnull=True)
+    win_unkaccts = winuser.objects.filter(enabled=True, user__type="X", host__retired=False, dateremoved__isnull=True, datedisabled__isnull=True)
+    return genUserReport(request, unix_unkaccts, win_unkaccts, "unknown_users")
+tUnkUsers.short_description = "Wiki Spreadsheet, Unknown Users"
+
+def tSysUsers(request):
+    rows = [ ['Host', 'Application', 'Username', 'Enabled', 'Allowed'], 
+              ]
+    unix_sysaccts = unixuser.objects.filter(enabled=True, user__type="S", host__retired=False, dateremoved__isnull=True, datedisabled__isnull=True)
+    win_sysaccts = winuser.objects.filter(enabled=True, user__type="S", host__retired=False, dateremoved__isnull=True, datedisabled__isnull=True)
+    return genUserReport(request, unix_sysaccts, win_sysaccts, "system_users")
+tSysUsers.short_description = "Wiki Spreadsheet, System Users"
+
+#
 # Helper function to generate spreadsheets
+#
+
 def genUserReport(request, unix_accts, win_accts, filename):
     
     rows = [ ['Username', 'Host', 'Application', 'Enabled', 'Allowed'], 

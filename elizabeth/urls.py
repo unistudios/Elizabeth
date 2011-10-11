@@ -25,15 +25,24 @@ urlpatterns = patterns('',
     # #################
     # Reporting
     # #################
+    
+    # wiki pages
     (r'^reporting/summary/$', 'website.elizabeth.views.user_summary'),
     (r'^reporting/type_summary/$', 'website.elizabeth.views.user_type_summary'),
+    
+    # wiki excel links: Local User Metrics
     (r'^reporting/disableable/$', 'website.elizabeth.excel.disableableUsers'),
     (r'^reporting/removable/$', 'website.elizabeth.excel.removableUsers'),
-    (r'^reporting/user/$', 'website.elizabeth.excel.localUsers'),
     (r'^reporting/system/$', 'website.elizabeth.excel.systemUsers'),
     (r'^reporting/application/$', 'website.elizabeth.excel.applicationUsers'),
     (r'^reporting/unknown/$', 'website.elizabeth.excel.unknownUsers'),
     (r'^reporting/removed/$', 'website.elizabeth.excel.removedUsers'),
+    
+    # wiki excel links: Account Types    
+    (r'^reporting/t_user/$', 'website.elizabeth.excel.tUsers'),
+    (r'^reporting/t_system/$', 'website.elizabeth.excel.tSysUsers'),
+    (r'^reporting/t_application/$', 'website.elizabeth.excel.tAppUsers'),
+    (r'^reporting/t_unknown/$', 'website.elizabeth.excel.tUnkUsers'),
     
     # #################
     # Upload OGFS Files
