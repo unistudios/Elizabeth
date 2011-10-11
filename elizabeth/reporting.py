@@ -109,36 +109,24 @@ def user_type_summary(request):
     # Calculate the types of users across scanned environment
     ################################################################
     
-    unix_sysaccts = unixuser.objects.filter(user__type="S", host__retired=False)
-    win_sysaccts = winuser.objects.filter(user__type="S", host__retired=False)
-    
-    unix_appaccts = unixuser.objects.filter(user__type="A", host__retired=False)
-    win_appaccts = winuser.objects.filter(user__type="A", host__retired=False)
-    
-    unix_unkaccts = unixuser.objects.filter(user__type="X", host__retired=False)
-    win_unkaccts = winuser.objects.filter(user__type="X", host__retired=False)
-    
-    unix_usraccts = unixuser.objects.filter(user__type="U", host__retired=False)
-    win_usraccts = winuser.objects.filter(user__type="U", host__retired=False)
-    
     # local user accounts
-    unix_usraccts_count = unix_usraccts.count()
-    win_usraccts_count = win_usraccts.count()
+    unix_usraccts_count = unixuser.objects.filter(user__type="U", host__retired=False).count()
+    win_usraccts_count = winuser.objects.filter(user__type="U", host__retired=False).count()
     total_usraccts_count =  unix_usraccts_count + win_usraccts_count
     
     # local system accounts
-    unix_sysaccts_count = unix_sysaccts.count()
-    win_sysaccts_count = win_sysaccts.count()
+    unix_sysaccts_count = unixuser.objects.filter(user__type="S", host__retired=False).count()
+    win_sysaccts_count = winuser.objects.filter(user__type="S", host__retired=False).count()
     total_sysaccts_count =  unix_sysaccts_count + win_sysaccts_count
     
     # local app accounts
-    unix_appaccts_count = unix_appaccts.count()
-    win_appaccts_count = win_appaccts.count()
+    unix_appaccts_count = unixuser.objects.filter(user__type="A", host__retired=False).count()
+    win_appaccts_count = winuser.objects.filter(user__type="A", host__retired=False).count()
     total_appaccts_count =  unix_appaccts_count + win_appaccts_count
 
     # local unknown accounts
-    unix_unkaccts_count = unix_unkaccts.count()
-    win_unkaccts_count = win_unkaccts.count()
+    unix_unkaccts_count = unixuser.objects.filter(user__type="X", host__retired=False).count()
+    win_unkaccts_count = winuser.objects.filter(user__type="X", host__retired=False).count()
     total_unkaccts_count =  unix_unkaccts_count + win_unkaccts_count
     
     # All Accounts
