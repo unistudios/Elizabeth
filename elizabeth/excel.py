@@ -198,6 +198,13 @@ def removableUsers(request):
     return genUserReport(request, unix_removable, win_removable, "removable_users")
 removableUsers.short_description = "Wiki Spreadsheet, Removable Users"
 
+def localUsers(request):
+    rows = [ ['Host', 'Application', 'Username', 'Enabled', 'Allowed'], 
+              ]
+    unix_usraccts = unixuser.objects.filter(user__type="U", host__retired=False)
+    win_usraccts = winuser.objects.filter(user__type="U", host__retired=False)
+    return genUserReport(request, unix_usraccts, win_usraccts, "local_users")
+localUsers.short_description = "Wiki Spreadsheet, Local Users"
 
 def systemUsers(request):
     rows = [ ['Host', 'Application', 'Username', 'Enabled', 'Allowed'], 

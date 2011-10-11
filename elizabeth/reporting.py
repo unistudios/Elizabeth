@@ -18,9 +18,9 @@ def todaystr():
 
 
 def user_summary(request):   
-    ################################################################
-    # Calculate the types of users across scanned environment
-    ################################################################
+    """
+    Calculate the types of users across scanned environment
+    """
     
     unix_disableable = unixuser.objects.filter(enabled=True, user__type="U", user__enabled=False, dateremoved__isnull=True, datedisabled__isnull=True, host__retired=False)
     win_disableable = winuser.objects.filter(enabled=True, user__type="U", user__enabled=False, dateremoved__isnull=True, datedisabled__isnull=True, host__retired=False)
@@ -97,3 +97,62 @@ def user_summary(request):
                                       'date_today': todaystr(),                                
                                      },
                     )
+    
+    
+    
+    
+def user_type_summary(request):
+    """
+    Just show the various account types for display on the "Account Types" wiki page.        
+    """
+    ################################################################
+    # Calculate the types of users across scanned environment
+    ################################################################
+    
+    unix_sysaccts = unixuser.objects.filter(user__type="S", host__retired=False)
+    win_sysaccts = winuser.objects.filter(user__type="S", host__retired=False)
+    
+    unix_appaccts = unixuser.objects.filter(user__type="A", host__retired=False)
+    win_appaccts = winuser.objects.filter(user__type="A", host__retired=False)
+    
+    unix_unkaccts = unixuser.objects.filter(user__type="X", host__retired=False)
+    win_unkaccts = winuser.objects.filter(user__type="X", host__retired=False)
+    
+    unix_usraccts = unixuser.objects.filter(user__type="U", host__retired=False)
+    win_usraccts = winuser.objects.filter(user__type="U", host__retired=False)
+    
+    # local user accounts
+    unix_usraccts_count = unix_usraccts.count()
+    win_usraccts_count = win_usraccts.count()
+    total_usraccts_count =  unix_usraccts_count + win_usraccts_count
+    
+    # local system accounts
+    unix_sysaccts_count = unix_sysaccts.count()
+    win_sysaccts_count = win_sysaccts.count()
+    total_sysaccts_count =  unix_sysaccts_count + win_sysaccts_count
+    
+    # local app accounts
+    unix_appaccts_count = unix_appaccts.count()
+    win_appaccts_count = win_appaccts.count()
+    total_appaccts_count =  unix_appaccts_count + win_appaccts_count
+
+    # local unknown accounts
+    unix_unkaccts_count = unix_unkaccts.count()
+    win_unkaccts_count = win_unkaccts.count()
+    total_unkaccts_count =  unix_unkaccts_count + win_unkaccts_count
+    
+    # All Accounts
+    total_accts_count = total_sysaccts_count + total_appaccts_count + total_unkaccts_count + total_usraccts_count
+    
+    return direct_to_template(request,
+                              template="elizabeth/reporting/user_type_summary.html",
+                              extra_context={
+                                      'total_usraccts_count': total_usraccts_count, 
+                                      'total_sysaccts_count': total_sysaccts_count,
+                                      'total_appaccts_count': total_appaccts_count,
+                                      'total_unkaccts_count': total_unkaccts_count,
+                                      'total_accts_count': total_accts_count,
+                                      'date_today': todaystr(),                                
+                                     },
+                    )
+    
