@@ -39,10 +39,10 @@ urlpatterns = patterns('',
     (r'^reporting/removed/$', 'website.elizabeth.excel.removedUsers'),
     
     # wiki excel links: Account Types    
-    (r'^reporting/t_user/$', 'website.elizabeth.excel.tUsers'),
-    (r'^reporting/t_system/$', 'website.elizabeth.excel.tSysUsers'),
-    (r'^reporting/t_application/$', 'website.elizabeth.excel.tAppUsers'),
-    (r'^reporting/t_unknown/$', 'website.elizabeth.excel.tUnkUsers'),
+    (r'^reporting/tuser/$', 'website.elizabeth.excel.tUsers'),
+    (r'^reporting/tsystem/$', 'website.elizabeth.excel.tSysUsers'),
+    (r'^reporting/tapplication/$', 'website.elizabeth.excel.tAppUsers'),
+    (r'^reporting/tunknown/$', 'website.elizabeth.excel.tUnkUsers'),
     
     # #################
     # Upload OGFS Files
