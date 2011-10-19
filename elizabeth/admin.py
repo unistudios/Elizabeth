@@ -1,5 +1,6 @@
 from website.elizabeth.models import *
 from website.elizabeth.excel import *
+from website.elizabeth.actions import *
 #from website.elizabeth.filters import *
 from django.contrib import admin
 from django.contrib.contenttypes import generic
@@ -26,7 +27,7 @@ class unixhostAdmin(admin.ModelAdmin):
     readonly_fields = ['name', 'os', 'comment']
     list_filter = ('accessible', 'retired', 'apps',)
     filter_horizontal = ['apps']
-    actions= [exportExcelAll]
+    actions= [exportExcelUnixHosts]
     
     # Remove the deleted action for non-super users
     def get_actions(self, request):   
@@ -43,7 +44,7 @@ class unixhostAdmin(admin.ModelAdmin):
         
     # Show readonly fields for non-super users
     def get_readonly_fields(self, request, obj = None):
-        adminROFields = ['apps',]
+        adminROFields = []
         userROFields = ['name', 'os', 'accessible', 'apps', 'retired', 'comment',]
         
         if request.user.has_perm('elizabeth.changedetails_unixhost'):
@@ -67,12 +68,12 @@ admin.site.register(unixhost, unixhostAdmin)
 # Shows host to application mappings
 ##############################################################################################
 class hostappAdmin(admin.ModelAdmin):
-    fields = ('name', 'importance', 'getHostCount', 'getWinHosts', 'getUnixHosts')
-    list_display = ['name', 'getHostCount', 'importance']
+    fields = ('name', 'importance', 'getHostCount', 'getWinHosts', 'getUnixHosts', 'enabled')
+    list_display = ['name', 'getHostCount', 'importance', 'enabled']
     #readonly_fields = ['name', 'importance', 'getHostCount', 'getHosts', 'getWinHosts', 'getUnixHosts']
     readonly_fields = ['getHostCount', 'getHosts', 'getWinHosts', 'getUnixHosts']
     #inlines = [unixhostInline,]
-    actions= [exportExcelAppsToUsers]
+    actions= [exportExcelAppsToUsers, enableApp, disableApp]
     
     # Remove the deleted action for non-super users
     def get_actions(self, request):   
@@ -90,7 +91,7 @@ class hostappAdmin(admin.ModelAdmin):
     # Show readonly fields for non-super users
     def get_readonly_fields(self, request, obj = None):
         adminROFields = ['getHostCount', 'getHosts', 'getWinHosts', 'getUnixHosts']
-        userROFields = ['name', 'importance', 'getHostCount', 'getHosts', 'getWinHosts', 'getUnixHosts']
+        userROFields = ['name', 'importance', 'getHostCount', 'getHosts', 'getWinHosts', 'getUnixHosts', 'enabled']
         
         if request.user.is_superuser:
             #return ['featured',] + self.readonly_fields
@@ -236,7 +237,7 @@ class winhostAdmin(admin.ModelAdmin):
     readonly_fields = ['name', 'os', 'comment',]
     list_filter = ('accessible', 'retired', 'apps',)
     filter_horizontal = ['apps']
-    actions= [exportExcelAll]
+    actions= [exportExcelWinHosts]
     
     # Remove the deleted action for non-super users
     def get_actions(self, request):   
@@ -253,7 +254,7 @@ class winhostAdmin(admin.ModelAdmin):
         
     # Show readonly fields for non-super users
     def get_readonly_fields(self, request, obj = None):
-        adminROFields = ['apps',]
+        adminROFields = []
         userROFields = ['name', 'os', 'accessible', 'apps', 'retired', 'comment',]
         
         if request.user.has_perm('elizabeth.changedetails_winhost'):

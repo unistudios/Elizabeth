@@ -166,6 +166,53 @@ def exportExcelAppsToUsers(modeladmin, request, queryset):
     return ExcelResponse(rows)
 exportExcelAppsToUsers.short_description = "Download Apps Spreadsheet"
 
+
+##############################################################################################
+# Create spreadsheet which show unixhosts
+##############################################################################################
+def exportExcelUnixHosts(modeladmin, request, queryset):
+    rows = [ ['Hostname', 'Applications', 'OS', 'Retired'], 
+              ]
+    
+    for host in queryset:    
+        # Grab all apps associated with host
+        apps = host.apps.all()      
+        
+        appstr = ""
+        
+        for a in apps:
+            appstr = appstr + str(a)
+            if len(apps) > 1:
+                appstr += ", "
+    
+        rows.append([host.name, appstr, host.os, host.retired])
+        
+    return ExcelResponse(rows)
+exportExcelUnixHosts.short_description = "Download Unix Hosts Spreadsheet"
+
+##############################################################################################
+# Create spreadsheet which show winhosts
+##############################################################################################
+def exportExcelWinHosts(modeladmin, request, queryset):
+    rows = [ ['Hostname', 'Applications', 'OS', 'Retired'], 
+              ]
+    
+    for host in queryset:    
+        # Grab all apps associated with host
+        apps = host.apps.all()      
+        
+        appstr = ""
+        
+        for a in apps:
+            appstr = appstr + str(a)
+            if len(apps) > 1:
+                appstr += ", "
+    
+        rows.append([host.name, appstr, host.os, host.retired])
+        
+    return ExcelResponse(rows)
+exportExcelWinHosts.short_description = "Download Windows Hosts Spreadsheet"
+
 ##############################################################################################
 # General method to download spreadsheet action for other views.  Exports all fields in model.
 ##############################################################################################

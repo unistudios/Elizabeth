@@ -50,7 +50,7 @@ urlpatterns = patterns('',
     (r'^delivery/$', 'website.elizabeth.views.uploadFile'), 
     
     # ###########################################
-    # Hostlist URL's - Gives back lists of unixhost's
+    # Hostlist URL's - Gives back lists of hosts
     # ###########################################
     (r'^hostlist/newhosts/$', 'website.elizabeth.views.NewHosts'),
     (r'^hostlist/disable/$', 'website.elizabeth.views.DisableHosts'),
@@ -62,6 +62,8 @@ urlpatterns = patterns('',
     (r'^hostlist/listhosts/$', 'website.elizabeth.views.listHosts'),
     (r'^hostlist/listunixhosts/$', 'website.elizabeth.views.listunixUsers'),
     (r'^hostlist/listwinhosts/$', 'website.elizabeth.views.listwinHosts'),
+    (r'^hostlist/appEnabledUnix/$', 'website.elizabeth.views.listEnabledAppUnixHosts'),
+    (r'^hostlist/appEnabledWin/$', 'website.elizabeth.views.listEnabledAppWinHosts'),
     
     # ###########################################
     # Used by OGFS scripts to add applications

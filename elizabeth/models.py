@@ -35,6 +35,7 @@ class hostapp(models.Model):
     
     name    = models.CharField(max_length=50)
     importance = models.CharField(max_length=2, default="OT", choices=IMP_CHOICE)
+    enabled = models.BooleanField(default=True, blank=True)
     
     # Return a list of hostnames on which app resides
     def getHosts(self):

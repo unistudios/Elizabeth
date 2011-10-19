@@ -86,6 +86,44 @@ def listHosts(request):
                                       'qsHosts'     : qsHosts,
                                      },
                     )
+
+# List UNIX hosts for all enabled apps
+def listEnabledAppUnixHosts(request):
+    all_hosts = ""
+    
+    enabledApps = hostapp.objects.filter(enabled=True)
+    
+    for a in enabledApps:  
+        unix_set = a.unixhost_set.all()
+        
+        if all_hosts:
+            all_hosts = all_hosts | unix_set
+        else:
+            all_hosts = unix_set
+    
+    # only distinct hosts, and exclude retired
+    all_hosts = all_hosts.distinct().exclude(retired=True)
+    
+    return render_to_response('elizabeth/listhosts.html', {'qsHosts': all_hosts})   
+
+# List Windows hosts for all enabled apps
+def listEnabledAppWinHosts(request):
+    all_hosts = ""
+    
+    enabledApps = hostapp.objects.filter(enabled=True)
+    
+    for a in enabledApps:  
+        win_set = a.winhost_set.all()
+        
+        if all_hosts:
+            all_hosts = all_hosts | win_set
+        else:
+            all_hosts = win_set
+    
+    # only distinct hosts, and exclude retired
+    all_hosts = all_hosts.distinct().exclude(retired=True)
+    
+    return render_to_response('elizabeth/listhosts.html', {'qsHosts': all_hosts})   
    
 def listunixUsers(request):
     #return object_list(request,
