@@ -102,7 +102,8 @@ def listEnabledAppUnixHosts(request):
             all_hosts = unix_set
     
     # only distinct hosts, and exclude retired
-    all_hosts = all_hosts.distinct().exclude(retired=True)
+    if all_hosts:
+        all_hosts = all_hosts.distinct().exclude(retired=True)
     
     return render_to_response('elizabeth/listhosts.html', {'qsHosts': all_hosts})   
 
@@ -121,7 +122,8 @@ def listEnabledAppWinHosts(request):
             all_hosts = win_set
     
     # only distinct hosts, and exclude retired
-    all_hosts = all_hosts.distinct().exclude(retired=True)
+    if all_hosts:
+        all_hosts = all_hosts.distinct().exclude(retired=True)
     
     return render_to_response('elizabeth/listhosts.html', {'qsHosts': all_hosts})   
    
