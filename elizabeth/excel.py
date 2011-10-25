@@ -138,7 +138,7 @@ exportExcelAppsToHosts.short_description = "Download Apps spreadsheet"
 # Create spreadsheet which shows enabled users linked to Applications
 ##############################################################################################
 def exportExcelAppsToUsers(modeladmin, request, queryset):
-    rows = [ ['Application', 'Level', 'Hostname', 'OS', 'Username', 'Last Login', 'Enabled?'], 
+    rows = [ ['Application', 'Level', 'Hostname', 'OS', 'Username', 'Type', 'Last Login', 'Enabled?'], 
               ]
     
     for app in queryset:    
@@ -152,7 +152,7 @@ def exportExcelAppsToUsers(modeladmin, request, queryset):
             
             for user in unixusers:
                 if user.enabled:
-                    rows.append([app.name, app.importance, user.host.name, user.host.os, user.username, user.lastlogin, user.enabled])
+                    rows.append([app.name, app.importance, user.host.name, user.host.os, user.username, user.user.type, user.lastlogin, user.enabled])
         
         # Repeat for Windows...   
         for u in winhosts:
@@ -160,11 +160,11 @@ def exportExcelAppsToUsers(modeladmin, request, queryset):
             
             for user in winusers:
                 if user.enabled:
-                    rows.append([app.name, app.importance, user.host.name, user.host.os, user.username, user.lastlogin, user.enabled])
+                    rows.append([app.name, app.importance, user.host.name, user.host.os, user.username, user.user.type, user.lastlogin, user.enabled])
                 
         
-    return ExcelResponse(rows)
-exportExcelAppsToUsers.short_description = "Download Apps Spreadsheet"
+    return ExcelResponse(rows, "enabled_users_by_app")
+exportExcelAppsToUsers.short_description = "Download Enabled Users by App"
 
 
 ##############################################################################################
