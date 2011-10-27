@@ -27,7 +27,7 @@ class unixhostAdmin(admin.ModelAdmin):
     readonly_fields = ['name', 'os', 'comment']
     list_filter = ('accessible', 'retired', 'apps',)
     filter_horizontal = ['apps']
-    actions= [exportExcelUnixHosts]
+    actions= [exportExcelUnixHosts, setAccessible, setInAccessible]
     
     # Remove the deleted action for non-super users
     def get_actions(self, request):   
@@ -237,7 +237,7 @@ class winhostAdmin(admin.ModelAdmin):
     readonly_fields = ['name', 'os', 'comment',]
     list_filter = ('accessible', 'retired', 'apps',)
     filter_horizontal = ['apps']
-    actions= [exportExcelWinHosts]
+    actions= [exportExcelWinHosts, setAccessible, setInAccessible]
     
     # Remove the deleted action for non-super users
     def get_actions(self, request):   

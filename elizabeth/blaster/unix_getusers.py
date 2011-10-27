@@ -98,7 +98,7 @@ def disable_usr(status, chk_usr_str, usr_str, user, cmd):
 # Description: If "execute" mode is active, remove user if already
 #              disabled, and not in the exceptions list.
 def remove_usr(status, chk_usr_str, usr_str, user, cmd):
-    if chk_usr_str in usr_str and \
+    if chk_usr_str.lower() in usr_str.lower() and \
     user.lower() not in user_exceptions:
         if debug: logging.debug("Candidate for removing: %s" % (user))
         print user+","+str(datetime.date.today())

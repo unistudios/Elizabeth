@@ -1,7 +1,17 @@
 #!/usr/bin/python
-# Name: windows_sendusers.py
-# Descrip: OGFS method for pushing windows users to the database.  The preferred way to do this
-#          is through the Opsware softare policies, rather than OGFS>
+# Name: windows_users.py
+# Author: Kyle Flavin
+# Descrip: OGFS method for pushing windows users to the database.
+
+# Version 0.9:
+# Added support for host retrieval from database, or from opsware group.
+# Updated the get_user and added get_host/retrieveURL functions.
+# Added -g flag.
+# moved some of the server_list parsing code down lower, b/c it made more sense to do the processing with the main portion of the code
+#
+# Todo: set post_results_to_db to use retrieveURL
+# speed up windows scans by minimizing the number of rosh commands used
+
 
 import subprocess,time,os,sys,re, httplib, urllib, platform
 import threading, signal
@@ -13,16 +23,25 @@ from optparse import OptionParser
 ######################################################
 
 parser = OptionParser()
+#booleans
 parser.add_option("-d", "--debug",   dest="debug",   action="store_true", help="Debug")
+parser.add_option("-q", "--quiet", dest="quiet",   action="store_true", help="Quiet mode")
 parser.add_option("-e", "--execute", dest="execute", action="store_true", help="Execute command")
+parser.add_option("-r", "--refresh-only", dest="refresh", action="store_true", help="Refresh host list.  If -e is specified, this is performed automatically.")
+parser.add_option("-g", "--group", dest="group", action="store_true", help="Use the hardcoded Opsware group, instead of going off the database.")
+#stored values
 parser.add_option("-a", "--action",  dest="action",  help="Execute command (disable|remove|scan).  Program will do a dry run unless this is explicitly passed.")
 parser.add_option("-l", "--user",    dest="user",    help="Username under which commands will be executed.")
 parser.add_option("-p", "--post",    dest="post",    help="Database to post back to.")
+parser.add_option("-o", "--outputfile", dest="outputfile", help="Send output to file.")
 
 (options, args) = parser.parse_args()
 
 debug   = options.debug   == True
+quiet   = options.quiet == True
 execute = options.execute == True
+refresh = options.refresh == True
+group = options.group == True
 
 if options.action == "disable":
     action = "disable"
@@ -31,11 +50,15 @@ elif options.action == "remove":
 else:
     action = "scan"
 
+if options.outputfile: outputfile = options.outputfile
+else: outputfile = ""
+
 if options.user: login = options.user
 else: login = "~206102890"
 
 if options.post: post = options.post
 else: post = "3.156.190.164"
+
 
 if debug: print action, login, "debug:",debug, "execute:",execute, post
 
@@ -46,29 +69,22 @@ if debug: print action, login, "debug:",debug, "execute:",execute, post
 # setup connection to database
 conn    = httplib.HTTPConnection(post)
 headers = {"Content-type": "application/x-www-form-urlencoded","Accept": "text/plain", "Connection": "Keep-Alive"}
-# Select the method for providing the server list (OGFS or list)
-#server_dir = "/opsw/Server/@Group/Private/~206102890/SOX Userlist - Windows DMZ/@/"
-#server_dir = "/opsw/Server/@Group/Private/~206102890/Disable Users WINDOWS/Group1/@"
-#server_dir = "/opsw/Server/@Group/Private/~206102890/Disable Users WINDOWS/Group2/@"
-#server_dir = "/opsw/Server/@Group/Private/~206102890/Disable Users WINDOWS/Group3/@"
-server_dir = "/opsw/Server/@Group/Private/~206102890/SOX Userlist - Windows/@/"
-server_list = os.listdir(server_dir)
-
-#server_list = ['USALPDBWD002CB.nbcuni.ge.com', 'USALPWSWQV128LA.nbcuni.ge.com', 'USUSH2KWS130.nbcuni.ge.com']
-#server_list = ['NLKONPAPW002.nbcuni.ge.com', 'USALPAPWDV015.nbcuni.ge.com',]
-#server_list = ['USANYNETDEV2.nbcuni.ge.com']
-
-
 
 exclude_list = "./win_exclude_list"
 batch_file = "./blaster_win_tmp.bat"
 
-update_url = "/elizabeth/user/win/update/"
+user_update_url = "/elizabeth/user/win/update/"
+host_update_url = "/elizabeth/host/win/update/"
 list_disabled_users_url = "/elizabeth/user/disabled/"
 list_removed_users_url = "/elizabeth/user/removed/"
+active_hosts_url = "/elizabeth/hostlist/appEnabledWin/"
 
-# thread timeout in seconds
-to = 30
+# Select the method for providing the server list (OGFS or list)
+server_dir = "/opsw/Server/@Group/Private/~206102890/SOX Userlist - Windows All/@/"
+server_list = os.listdir(server_dir)
+
+# timeout
+to = 10
 
 #######################################################
 # Helper Functions
@@ -80,6 +96,7 @@ class Command(object):
         self.cmd = cmd
         self.process = None
         self.out = ""
+        self.killed = False
 
     def run(self, timeout):
         def target():
@@ -94,11 +111,27 @@ class Command(object):
         thread.join(timeout)
         if thread.isAlive():
             #print '...Terminating process', str(self.process.pid)
+            self.killed = True
             os.kill(self.process.pid, signal.SIGTERM)
             thread.join()
         #print self.process.returncode
 
+# Writer class for sending output to logfile, in addition to stdout
+class MyWriter:
+    def __init__(self, stdout, filename):
+        self.stdout = stdout
+        self.logfile = open(filename, 'a')
 
+    def write(self, text):
+        self.stdout.write(text)
+        self.logfile.write(text)
+
+    def flush(self):
+        self.stdout.flush()
+
+    def close(self):
+        self.stdout.close()
+        self.stdout.close()
 
 # scan functions... get user details
 # takes output from "net user <user>" and finds if the account is active, and the last login time
@@ -131,6 +164,31 @@ def get_user_details(user_details):
     return (enabled, lastlogin)
 
 
+# if action is True, GET.  If False, POST.
+def retrieveURL(url, action=True, httparams=None, headers={}):
+    global conn, post
+
+    if action:
+        method = "GET"
+    else:
+        method = "POST"
+
+    try:
+        conn.request(method, url, httparams, headers)
+        response = conn.getresponse()
+        data = response.read().strip()
+    except:
+        # one more try
+        try:
+            conn = httplib.HTTPConnection(post)
+            conn.request(method, url, httparams, headers)
+            response = conn.getresponse()
+            data = response.read().strip()
+        except:
+            print "%s to %s: could not connect to database" % (method, url)
+            data = ""
+
+    return data
 
 
 # parse a list of users passed from 'net user' output
@@ -141,28 +199,43 @@ def get_user_list(netuser_out):
     users = users.split()
     return users
 
-# get a list of disabled users from the database
+# get a list of hosts from the database
+def get_hosts(url):
+    servers = retrieveURL(url)
+    if servers:
+        servers = servers.split("<br />")
+
+        server_list = []
+        for s in servers:
+            if s: server_list = server_list + [s.strip()]
+    else:
+        server_list = ""
+    return server_list
+
+# get a list of users to disable/remove from the database
 def get_users(host_name, action):
+    #global conn
     short_name = host_name.split(".")[0]
 
     if action == "disable":  the_url = list_disabled_users_url
     elif action == "remove": the_url = list_removed_users_url
 
-    try:
-        conn.request("GET", the_url+short_name+"/") #, "", headers)  # pull down just the user accounts to disable
-        response = conn.getresponse()
-    except:
-        # one more try
-        try:
-            conn = httplib.HTTPConnection(post)
-            conn.request("GET", the_url+short_name+"/") #, "", headers)  # pull down just the user accounts to disable
-            response = conn.getresponse()
-        except:
-            print "%s: could not connect to database" % (host_name)
-            response = ""
+    userlines = retrieveURL(the_url+short_name+"/")
 
-    if response:
-        userlines = response.read().strip()
+    #try:
+    #    conn.request("GET", the_url+short_name+"/") #, "", headers)  # pull down just the user accounts to disable
+    #    response = conn.getresponse()
+    #except:
+    #    # one more try
+    #    try:
+    #        conn = httplib.HTTPConnection(post)
+    #        conn.request("GET", the_url+short_name+"/") #, "", headers)  # pull down just the user accounts to disable
+    #        response = conn.getresponse()
+    #    except:
+    #        print "%s: could not connect to database" % (host_name)
+    #        response = ""
+
+    if userlines:
         userlines = userlines.split("\r\n")
     else:
         userlines = ""
@@ -244,19 +317,19 @@ def post_results(host_name, candidate_users, action):
     return failed_users
 
 # post values to the database, returning true or false if the post succeeded
-def post_results_to_db(httpparams):
+def post_results_to_db(httpparams, url=user_update_url):
     global post, conn
 
     try:
-        conn.request("POST", update_url, httpparams, headers)
+        conn.request("POST", url, httpparams, headers)
         response = conn.getresponse()
         data = response.read()
         return True
     except:
-        # one more try
+        # re-open connection and one more try...
         try:
             conn = httplib.HTTPConnection(post)
-            conn.request("POST", update_url, httpparams, headers)
+            conn.request("POST", url, httpparams, headers)
             response = conn.getresponse()
         except:
             print "%s: could not connect to database" % (host_name)
@@ -289,20 +362,39 @@ def rosh_it(host_name, file_or_command="", from_file=False):
         if from_file:
             results = Command("/opsw/bin/rosh -n " + host_name + " -l " + login + " -s " + "\"" + file_or_command + "\"")
             results.run(timeout=to)
-            return results.out
         else:
             results = Command("/opsw/bin/rosh -n " + host_name + " -l " + login + " " + "\"" + file_or_command + "\"")
             results.run(timeout=to)
-            return results.out
     else:
         return ""
+
+    # failed to rosh
+    if "Error from remote" in results.out:
+        if not quiet: print "Failed!!  Could not Rosh.\n"
+        return False
+    # host did not exist
+    if "Connection error" in results.out:
+        if not quiet: print "Failed!!  Host not found.\n"
+        return False
+    # thread terminatd
+    if not results.out:
+        if not quiet: print "Failed!!  Thread terminated.\n"
+        return False
+    # if rosh timed out
+    if results.killed:
+        if not quiet: print "Failed!! Timed out rosh.\n"
+        return False
+
+    return results
 
 # Takes host name and timeout as arguments, returns the Windows OS version
 def get_windows_version(host_name, to):
     re_winver = re.compile("Software version.*\r\n")
     output = rosh_it(host_name, "net config server")
-    r=re_winver.search(output)
+    if output:
+        output = output.out
     try: 
+        r=re_winver.search(output)
         win_ver_str=r.group()[r.group().index("version")+7:].strip()
     except:
         win_ver_str="Windows Unknown"
@@ -326,22 +418,14 @@ def process_action(host_name, action="scan", execute=False):
         build_list = gen_build_list(userlines)
 
     # grab list of users on box
-    netuser_output = rosh_it(host_name, "net user")
+    rosh_out = rosh_it(host_name, "net user")
 
-    # failed to rosh
-    if "Error from remote" in netuser_output:
-        print "Failed!!  Could not Rosh.\n"
-        return False
-    # host did not exist
-    if "Connection error" in netuser_output:
-        print "Failed!!  Host not found.\n"
-        return False
-    # thread terminatd
-    elif not netuser_output:
-        print "Failed!!  Thread terminated.\n"
+    # if rosh failed
+    if not rosh_out:
         return False
     # looks like we're good to proceed
     else:
+        netuser_output = rosh_out.out
         list_of_users = get_user_list(netuser_output)
         if disable or remove: 
             candidate_users = create_batch_file(list_of_users, build_list, action)
@@ -353,37 +437,46 @@ def process_action(host_name, action="scan", execute=False):
 
             for u in list_of_users:
                 user_details = rosh_it(host_name, "net user "+"\""+u+"\"")
-                user_details = ''.join(map(str,user_details))
-                user_details = user_details.split("\r\n")
-                (enabled, lastlogin) = get_user_details(user_details)
+                if user_details:
+                    user_details = user_details.out
+                    user_details = ''.join(map(str,user_details))
+                    user_details = user_details.split("\r\n")
+                    (enabled, lastlogin) = get_user_details(user_details)
 
-                print u,lastlogin, enabled
+                    print u,lastlogin, enabled
 
-                if execute:
-                    httpparams = urllib.urlencode({'host_name': host_name, 'user':u.strip(), 'enabled': enabled, 'osinfo': win_ver_str, 'lastlogin': lastlogin})
-                    if not post_results_to_db(httpparams):
-                        if debug: print "Error with hostname:", host_name, "user:", u
-                        fail = 1
+                    if execute:
+                        httpparams = urllib.urlencode({'host_name': host_name, 'user':u.strip(), 'enabled': enabled, 'osinfo': win_ver_str, 'lastlogin': lastlogin})
+                        if not post_results_to_db(httpparams):
+                            if debug: print "Error with hostname:", host_name, "user:", u
+                            fail = 1
+                else:
+                    fail = 1
             print
         # disable/remove specific actions
         elif disable or remove:
             if execute: 
                 for i in candidate_users:
-                    print action, ":", i
 
-                batch_output = rosh_it(host_name, batch_file, True)
+                    batch_output = rosh_it(host_name, batch_file, True)
 
-                if "user name could not be found" in batch_output:
-                    if debug: print "Error locating user(s) on host."
-                    return False
-                else:
-                    failed_users = post_results(host_name, candidate_users, action)
+                    if batch_output:
+                        print action, ":", i
+                        batch_output = batch_output.out
 
-                if failed_users:
-                    if debug: print "Postback failures:", failed_users
-                    return False
+                        if "user name could not be found" in batch_output:
+                            if debug: print "Error locating user(s) on host."
+                            return False
+                        else:
+                            failed_users = post_results(host_name, candidate_users, action)
 
-                print "\n"
+                        if failed_users:
+                            if debug: print "Postback failures:", failed_users
+                            return False
+
+                        print "\n"
+                    else:
+                        fail = 1
 
             else:
                 for i in candidate_users:
@@ -405,6 +498,35 @@ def process_action(host_name, action="scan", execute=False):
 failed=[]
 succeeded=[]
 
+# Prepare hosts: either use an opsware group, or go off the database
+if not group:
+    database_list = get_hosts(active_hosts_url)
+    tmp_list = []
+
+    # we have to do some checking here, because opsware is case-sensitive with host names.
+    for d in database_list:
+        flag = 0
+        for s in server_list:
+            if d.lower().split(".")[0] == s.lower().strip().split(".")[0]:
+                tmp_list = tmp_list + [s]
+                flag = 1
+        # if we can't match it, add it in anyways and let the script mark it as failed.
+        if not flag:
+            print "flagged %s" % d
+            tmp_list = tmp_list + [d]
+
+    server_list = tmp_list
+
+# setup stdout if we're writing to file + stdout
+if outputfile:
+    if not os.path.isfile(outputfile):
+        writer = MyWriter(sys.stdout, outputfile)
+        save_stdout = sys.stdout
+        sys.stdout = writer
+    else:
+        print "File \"%s\" exists!  Will not ovewrite an existing file, please specify a new location." % outputfile
+        sys.exit(1)
+
 # prepare the exclude list if we're disabling or removing users
 if action == "disable" or action == "remove": 
     excl = prep_excl_list()
@@ -417,6 +539,10 @@ if (execute):
 else: 
     print "Action:", action, "(dry run)", "Servers:", total_servers
 print "Database: %s" % post
+if group:
+    print "Servers: Using Opsware group for server list"
+else:
+    print "Servers: Using database for server list"
 print
 
 status = 0
@@ -438,21 +564,38 @@ for host_name in server_list:
     else: 
         failed.append(host_name)
 
-conn.close()
 
 # final status
-print "\nA total of", len(succeeded), "hosts succeeded."
-#print "Succeeded hosts", succeeded
+print "------------------------------------------------"
+print "Run Completed  (" + str(total_servers) + " servers), action:", action
+print "------------------------------------------------"
+print
+print "------------------------------------------------"
+print "A total of", len(succeeded), "hosts succeeded."
+print "------------------------------------------------"
 
 print "Successful hosts:"
 for i in succeeded:
    print i
 print
 
+print "------------------------------------------------"
 
+# printout failed hosts, and possibly update database
 print "A total of", len(failed), "hosts failed."
-#print "Failed hosts", failed
+print "------------------------------------------------"
+print "Failed hosts",
 
-print "Failed hosts:"
+if refresh or execute:
+    print "(postback):"
+else:
+    print "(no postback):"
+
 for i in failed:
-   print i
+    if refresh or execute:
+        httpparams = urllib.urlencode({'host_name': i, 'accessible': 'false'})
+        if not post_results_to_db(httpparams, host_update_url):
+            print "Error posting host update:", i, "accessible:", "false"
+    print i
+
+conn.close()
