@@ -42,6 +42,7 @@ parser.add_option("-a", "--action",  dest="action",  help="Execute command (disa
 parser.add_option("-l", "--user",    dest="user",    help="Username under which commands will be executed.")
 parser.add_option("-p", "--post",    dest="post",    help="Database to post back to.")
 parser.add_option("-o", "--outputfile", dest="outputfile", help="Send output to file.")
+parser.add_option("-s", "--server-db-list", dest="dblist", help="Specify the name of a file to provide db list of servers.")
 
 (options, args) = parser.parse_args()
 debug   = options.debug   == True
@@ -65,6 +66,9 @@ else: login = "root"
 
 if options.post: post = options.post
 else: post = "3.156.190.164"
+
+if options.dblist: dblist = options.dblist
+else: dblist = None
 
 # Set Database to connect to (Elizabeth, or Dev)
 conn = httplib.HTTPConnection(post)
@@ -336,6 +340,20 @@ class MyWriter:
 # Prepare hosts: either use an opsware group, or go off the database
 if not group:
     database_list = get_hosts(active_hosts_url)
+
+    # grab our list of users from the database
+    if dblist:
+        try:
+            f = open(dblist, "r")
+            database_list = f.read()
+            f.close()
+            database_list = database_list.split()
+        except:
+            print "Database file failed to open or is formatted improperly."
+            sys.exit(1)
+    else:
+        database_list = get_hosts(active_hosts_url)
+
     tmp_list = []
 
     # we have to do some checking here, because opsware is case-sensitive with host names.
@@ -529,7 +547,7 @@ print "Run Completed  (" + str(total_servers) + " servers), action:", action
 print "------------------------------------------------"
 print
 print "------------------------------------------------"
-print "A total of", len(succeeded), "hosts succeeded."
+print "A total of", len(succeeded), "UNIX hosts succeeded."
 print "------------------------------------------------"
 
 print "Successful hosts:"

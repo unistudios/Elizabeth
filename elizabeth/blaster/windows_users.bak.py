@@ -18,16 +18,6 @@ import threading, signal
 import datetime
 from optparse import OptionParser
 
-# debugging
-import code
-# code.interact(local=locals())
-import pdb
-#pdb.set_trace()
-import logging
-
-#logging.basicConfig(level=logging.DEBUG)
-logging.basicConfig(level=logging.CRITICAL)
-
 #######################################################
 # Command line parameters
 ######################################################
@@ -150,30 +140,18 @@ class MyWriter:
 # scan functions... get user details
 # takes output from "net user <user>" and finds if the account is active, and the last login time
 def get_user_details(user_details):
-    user = ""
     enabled = True
     lastlogin = "DNE"
 
     for line in user_details:
-        if line.startswith("-SOXUSERNAME-"):
-            try:
-                user = line.strip().split()[1]
-            except:
-                raise Exception("Could not pull username from user_details.")
         if line.startswith("Last logon"):
-            try:
-                lastlogin = line.split()[2]
-            except:
-                lastlogin = "DNE"
+            lastlogin = line.split()[2]
         if line.startswith("Account active"):
-            try: 
-                enabled = line.split()[2]
-                if enabled.lower() == "no":
-                    enabled = "false"
-                else:
-                    enabled = "true"
-            except: 
-                enabled = True
+            enabled = line.split()[2]
+            if enabled.lower() == "no":
+                enabled = "false"
+            else:
+                enabled = "true"
 
     try:
         lastloginmatch = re.search("\d+/\d+/\d+", lastlogin).group()
@@ -187,7 +165,7 @@ def get_user_details(user_details):
             lastlogin = str(lastlogin[2])+str(lastlogin[0]).zfill(2)+str(lastlogin[1]).zfill(2) #"YYYYMMDD"
         else:
             lastlogin = "DNE"
-    return (user, enabled, lastlogin)
+    return (enabled, lastlogin)
 
 
 # if action is True, GET.  If False, POST.
@@ -281,41 +259,33 @@ def gen_build_list(userlines):
 
 # create batch file with commands to push down to host
 # list_of_users: users given by "net user" from server
-# build_list: users given from database (only for removals/disables)
-def create_batch_file(action, list_of_users, build_list=None):
+# build_list: users given from database
+def create_batch_file(list_of_users, build_list, action):
     candidate_users = []
     f=open(batch_file, "w")
     f.write("@echo off\n")
     #for u in list_of_users:
 
 
-    if action == "remove" or action =="disable":
-        # nice job -- this needs to be fixed... :(  Ugly hack for now.
-        new_build_list = []
-        build_list = build_list.split()
-        for b in build_list:
-            if b != "False" and b != "True":
-                new_build_list.append(b)
+    # nice job -- this needs to be fixed... :(  Ugly hack for now.
+    new_build_list = []
+    build_list = build_list.split()
+    for b in build_list:
+        if b != "False" and b != "True":
+            new_build_list.append(b)
 
+    for b in new_build_list:
         # if it exists on the box, removed it, otherwise just append to the candidate list so the db can be updated.
-        for b in new_build_list:
-            if b in list_of_users:
-                if action == "disable":
-                    f.write("net user /active:no "+b+"\n")
-                elif action == "remove":
-                    f.write("net user /delete "+b+"\n")
-                candidate_users.append(b)
-            else:
-                candidate_users.append(b)
-    else:
-        for b in list_of_users:
-            # if it exists on the box, removed it, otherwise just append to the candidate list so the db can be updated.
-            f.write("echo -SOXUSERNAME- "+b+"\n")
-            f.write("net user "+b+"\n")
-            f.write("echo --!ENDNETUOUTPUT!--\n")
+        if b in list_of_users:
+            if action == "disable":
+                f.write("net user /active:no "+b+"\n")
+            elif action == "remove":
+                f.write("net user /delete "+b+"\n")
             candidate_users.append(b)
-
+        else:
+            candidate_users.append(b)
     f.close()
+
     return candidate_users
 
 
@@ -461,29 +431,21 @@ def process_action(host_name, action="scan", execute=False):
     else:
         netuser_output = rosh_out.out
         list_of_users = get_user_list(netuser_output)
-
         if disable or remove: 
-            candidate_users = create_batch_file(action, list_of_users, build_list)
-        else:
-            candidate_users = create_batch_file(action, list_of_users)
-
-        logging.debug(candidate_users)
-            
+            candidate_users = create_batch_file(list_of_users, build_list, action)
 
         # scan specific actions
         if scan:
             # Get Windows version
             win_ver_str = get_windows_version(host_name, to)
 
-            batch_output = rosh_it(host_name, batch_file, True)
-            all_user_details = batch_output.out.strip().split("--!ENDNETUOUTPUT!--")
-
-            # loop through all users and parse details
-            for user_details in all_user_details:
+            for u in list_of_users:
+                user_details = rosh_it(host_name, "net user "+"\""+u+"\"")
                 if user_details:
+                    user_details = user_details.out
                     user_details = ''.join(map(str,user_details))
                     user_details = user_details.split("\r\n")
-                    (u, enabled, lastlogin) = get_user_details(user_details)
+                    (enabled, lastlogin) = get_user_details(user_details)
 
                     print u,lastlogin, enabled
 
