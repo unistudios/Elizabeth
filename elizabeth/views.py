@@ -542,22 +542,27 @@ def unixuserupdate(request):
             
             # datedisabled and dateremoved should only be set if the account is actually disabled.  also, these
             # values should not be reset after subsequent executions (ie: save only the first value...)
+            
+            # run during accounts disables
             if datedisabled:
                 #yr, mo, day = datedisabled.split("-")
                 print "Date Disabled:",  thedate
+                if u.datedisabled is None:
+                    u.datedisabled = thedate
                 u.enabled = False
                 u.datereenabled = None
                 u.dateremoved = None
-                if u.datedisabled is None:
-                    u.datedisabled = thedate
-                
+            
+            # run during account removals
             if dateremoved:
                 #yr, mo, day = dateremoved.split("-")
                 print "Date Removed:",  thedate
+                # set dateremoved if it is not set, or reset it if datereenabled is set
+                if (u.dateremoved is None) or (u.dateremoved is not None and u.datereenabled is not None):
+                    print "setting dateremoved here"
+                    u.dateremoved = thedate
                 u.enabled = False
                 u.datereenabled = None
-                if u.dateremoved is None:
-                    u.dateremoved = thedate
 
             # check if the enabled field was given (used by scans only)
             if "enabled" in request.POST:
@@ -566,10 +571,11 @@ def unixuserupdate(request):
                 # if the account has been re-enabled after we disabled/removed, flag it
                 if u.enabled and (u.datedisabled or u.dateremoved):                    
                     if not u.datereenabled:
-                        u.datereenabled = thedate
+                        u.datereenabled = thedate                        
                 # if the account was removed, and re-added in a disabled state
                 elif not u.enabled and u.dateremoved:
-                    u.datereenabled = thedate
+                    if not u.datereenabled:
+                        u.datereenabled = thedate
                 
                 #if (u.datedisabled == None) and (u.user.type=="U") :
                 #    u.datedisabled = datetime.date.today()
@@ -695,22 +701,27 @@ def winuserupdate(request):
                 
             # datedisabled and dateremoved should only be set if the account is actually disabled.  also, these
             # values should not be reset after subsequent executions (ie: save only the first value...)
+            
+            # run during accounts disables
             if datedisabled:
                 #yr, mo, day = datedisabled.split("-")
                 print "Date Disabled:",  thedate
+                if u.datedisabled is None:
+                    u.datedisabled = thedate
                 u.enabled = False
                 u.datereenabled = None
                 u.dateremoved = None
-                if u.datedisabled is None:
-                    u.datedisabled = thedate
-                
+            
+            # run during accounts removals
             if dateremoved:
                 #yr, mo, day = dateremoved.split("-")
                 print "Date Removed:",  thedate
+                # set dateremoved if it is not set, or reset it if datereenabled is set
+                if (u.dateremoved is None) or (u.dateremoved is not None and u.datereenabled is not None):
+                    u.dateremoved = thedate
                 u.enabled = False
                 u.datereenabled = None
-                if u.dateremoved is None:
-                    u.dateremoved = thedate
+            
 
             # check if the enabled field was given (used by scans only)
             if "enabled" in request.POST:
@@ -722,12 +733,11 @@ def winuserupdate(request):
                         u.datereenabled = thedate
                 # if the account was removed, and re-added in a disabled state
                 elif not u.enabled and u.dateremoved:
-                    u.datereenabled = thedate
+                    if not u.datereenabled:
+                        u.datereenabled = thedate
                 
                 #if (u.datedisabled == None) and (u.user.type=="U") :
-                #    u.datedisabled = datetime.date.today()    
-                
-                
+                #    u.datedisabled = datetime.date.today()
             
             u.save()
 
@@ -973,7 +983,10 @@ def listremovableusers(request, host_name):
     day_delay= 0
     
     # find users accounts that are already disabled on host_name
-    queryset = unixuser.objects.filter(host__name__icontains = host_name, enabled=False, user__enabled = False, user__type = "U", dateremoved__isnull = True)
+    
+    # I removed the "dateremoved__isnull = True" line after running into issues with the new datereenabled field.  If the account is readded in a disabled state, and all 
+        # other timestamps are set, the account will never be removed.
+    queryset = unixuser.objects.filter(Q(dateremoved__isnull=True) | Q(dateremoved__isnull=False, datereenabled__isnull=False), host__name__icontains = host_name, enabled=False, user__enabled = False, user__type = "U")
     #queryset = unixuser.objects.filter( host__name__icontains = host_name, user__enabled = False, user__type = "U", 
     #                                    datedisabled__lte=datetime.date.today()-timedelta(days=day_delay))
     if not queryset:
@@ -982,7 +995,9 @@ def listremovableusers(request, host_name):
         
         # , user__enabled = False, user__type = "U")
         
-        queryset = winuser.objects.filter( host__name__icontains = host_name, enabled=False, user__enabled = False, user__type = "U", dateremoved__isnull = True)
+        # I removed the "dateremoved__isnull = True" line after running into issues with the new datereenabled field.  If the account is readded in a disabled state, and all 
+        # other timestamps are set, the account will never be removed.
+        queryset = winuser.objects.filter(Q(dateremoved__isnull=True) | Q(dateremoved__isnull=False, datereenabled__isnull=False), host__name__icontains = host_name, enabled=False, user__enabled = False, user__type = "U")
         #                                   datedisabled__lte=datetime.date.today()-timedelta(days=day_delay))
     if not queryset:
         return HttpResponse("")

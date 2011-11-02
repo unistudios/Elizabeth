@@ -7,8 +7,8 @@ urlpatterns = patterns('',
     (r'^user/readuser/$', 'website.elizabeth.views.readuser'),  
     (r'^user/unix/update/$', 'website.elizabeth.views.unixuserupdate'),
     (r'^user/win/update/$', 'website.elizabeth.views.winuserupdate'), 
-    (r'^user/removed/(?P<host_name>\w+)/$', 'website.elizabeth.views.listremovableusers'),
-    (r'^user/disabled/(?P<host_name>\w+)/$', 'website.elizabeth.views.listdisableableusers'),
+    (r'^user/removed/(?P<host_name>[0-9A-Za-z.-]+)/$', 'website.elizabeth.views.listremovableusers'),
+    (r'^user/disabled/(?P<host_name>[0-9A-Za-z.-]+)/$', 'website.elizabeth.views.listdisableableusers'),
     (r'^user/(?P<host_name>\w+)/$', 'website.elizabeth.views.listusers'),
 
     # userlist's

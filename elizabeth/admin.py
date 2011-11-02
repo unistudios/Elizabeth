@@ -109,7 +109,7 @@ class unixuserAdmin(admin.ModelAdmin):
     list_display = ['host', 'user', 'lastlogin', 'lastscan', 'enabled', 'datedisabled', 'dateremoved', 'datereenabled']
     search_fields = ['username', 'host__name']
     exclude = ['username']
-    readonly_fields = ['adminUserLinked', 'adminHostLinked', 'getApps']
+    readonly_fields = ['adminUserLinked', 'adminHostLinked', 'getApps', 'datereenabled']
     list_filter = ['enabled', 'user__type', 'lastlogin', 'lastscan', 'host__apps']  
     actions= [exportExcelUnix]
     
