@@ -1,7 +1,3 @@
-
-
-ELIZ_DIR="./elizabeth/blaster"
-
 unset http_proxy
 unset FTP_PROXY
 unset ftp_proxy
@@ -12,12 +8,17 @@ IP=$(/sbin/ifconfig eth0 | grep "inet addr:" | awk '{ print $2 }' | cut -f2 -d":
 if [ $IP == "3.156.190.164" ]
 then
  DJANGOWEB="http://3.156.190.164/wikiexport/"
+ ELIZ_DIR="/opt/website/elizabeth/blaster"
 else
  DJANGOWEB="http://likewise.nbcuni.ge.com/wikiexport/"
+ ELIZ_DIR="/opt/unixmb/website/elizabeth/blaster"
 fi
 
 if [ -d $ELIZ_DIR ]; then
  cd $ELIZ_DIR
+else
+ echo "bad directory"
+ exit 1
 fi
 
 webdavcmd="tmp/cadaver.cmd"
