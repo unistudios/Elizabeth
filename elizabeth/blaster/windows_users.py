@@ -25,9 +25,6 @@ import pdb
 #pdb.set_trace()
 import logging
 
-#logging.basicConfig(level=logging.DEBUG)
-logging.basicConfig(level=logging.CRITICAL)
-
 #######################################################
 # Command line parameters
 ######################################################
@@ -39,6 +36,7 @@ parser.add_option("-q", "--quiet", dest="quiet",   action="store_true", help="Qu
 parser.add_option("-e", "--execute", dest="execute", action="store_true", help="Execute command")
 parser.add_option("-r", "--refresh-only", dest="refresh", action="store_true", help="Refresh host list.  If -e is specified, this is performed automatically.")
 parser.add_option("-g", "--group", dest="group", action="store_true", help="Use the hardcoded Opsware group, instead of going off the database.")
+parser.add_option("-u", "--update-wiki", dest="update_wiki", action="store_true", help="Update the NBCUNI Wiki (default no)")
 #stored values
 parser.add_option("-a", "--action",  dest="action",  help="Execute command (disable|remove|scan).  Program will do a dry run unless this is explicitly passed.")
 parser.add_option("-l", "--user",    dest="user",    help="Username under which commands will be executed.")
@@ -49,10 +47,16 @@ parser.add_option("-s", "--server-db-list", dest="dblist", help="Specify the nam
 (options, args) = parser.parse_args()
 
 debug   = options.debug   == True
+if debug:
+    logging.basicConfig(level=logging.DEBUG)
+else:
+    logging.basicConfig(level=logging.CRITICAL)
+
 quiet   = options.quiet == True
 execute = options.execute == True
 refresh = options.refresh == True
 group = options.group == True
+update_wiki = options.update_wiki == True
 
 if options.action == "disable":
     action = "disable"
@@ -73,8 +77,6 @@ else: post = "3.156.190.164"
 if options.dblist: dblist = options.dblist
 else: dblist = None
 
-if debug: print action, login, "debug:",debug, "execute:",execute, post
-
 ######################################################
 # Configurable parameters
 ######################################################
@@ -88,6 +90,7 @@ batch_file = "./blaster_win_tmp.bat"
 
 user_update_url = "/elizabeth/user/win/update/"
 host_update_url = "/elizabeth/host/win/update/"
+wiki_update_url = "/wikiexport/update/"
 list_disabled_users_url = "/elizabeth/user/disabled/"
 list_removed_users_url = "/elizabeth/user/removed/"
 active_hosts_url = "/elizabeth/hostlist/appEnabledWin/"
@@ -261,6 +264,8 @@ def get_users(host_name, action):
     #        print "%s: could not connect to database" % (host_name)
     #        response = ""
 
+    logging.debug("URL: http://%s%s%s\n" % (post, the_url, short_name))
+
     if userlines:
         userlines = userlines.split("\r\n")
     else:
@@ -341,9 +346,9 @@ def post_results(host_name, candidate_users, action):
         thedate = datetime.date.today()
 
         if action == "disable":
-            httpparams = urllib.urlencode({'host_name': host_name, 'user':u,'enabled':"false", 'datedisabled':thedate}) 
+            httpparams = urllib.urlencode({'host_name': host_name, 'user':u, 'datedisabled':thedate}) 
         elif action == "remove":
-            httpparams = urllib.urlencode({'host_name': host_name, 'user':u,'enabled':"false", 'dateremoved':thedate}) 
+            httpparams = urllib.urlencode({'host_name': host_name, 'user':u, 'dateremoved':thedate}) 
 
         if not post_results_to_db(httpparams):
             failed_users.append(u)
@@ -475,25 +480,28 @@ def process_action(host_name, action="scan", execute=False):
             # Get Windows version
             win_ver_str = get_windows_version(host_name, to)
 
+            # run our command and mark this host as failed if the rosh fails
             batch_output = rosh_it(host_name, batch_file, True)
-            all_user_details = batch_output.out.strip().split("--!ENDNETUOUTPUT!--")
+            if batch_output:
+                all_user_details = batch_output.out.strip().split("--!ENDNETUOUTPUT!--")
 
-            # loop through all users and parse details
-            for user_details in all_user_details:
-                if user_details:
-                    user_details = ''.join(map(str,user_details))
-                    user_details = user_details.split("\r\n")
-                    (u, enabled, lastlogin) = get_user_details(user_details)
+                # loop through all users and parse details
+                for user_details in all_user_details:
+                    if user_details:
+                        user_details = ''.join(map(str,user_details))
+                        user_details = user_details.split("\r\n")
+                        (u, enabled, lastlogin) = get_user_details(user_details)
 
-                    print u,lastlogin, enabled
+                        print u,lastlogin, enabled
 
-                    if execute:
-                        httpparams = urllib.urlencode({'host_name': host_name, 'user':u.strip(), 'enabled': enabled, 'osinfo': win_ver_str, 'lastlogin': lastlogin})
-                        if not post_results_to_db(httpparams):
-                            if debug: print "Error with hostname:", host_name, "user:", u
-                            fail = 1
-                else:
-                    fail = 1
+                        if execute:
+                            httpparams = urllib.urlencode({'host_name': host_name, 'user':u.strip(), 'enabled': enabled, 'osinfo': win_ver_str, 'lastlogin': lastlogin})
+                            if not post_results_to_db(httpparams):
+                                #if debug: print "Error with hostname:", host_name, "user:", u
+                                logging.debug("Error with hostname: %s, user: %s" %(host_name, user))
+                                fail = 1
+            else:
+                fail = 1
             print
         # disable/remove specific actions
         elif disable or remove:
@@ -507,13 +515,15 @@ def process_action(host_name, action="scan", execute=False):
                         batch_output = batch_output.out
 
                         if "user name could not be found" in batch_output:
-                            if debug: print "Error locating user(s) on host."
+                            #if debug: print "Error locating user(s) on host."
+                            logging.debug("Error locating user(s) on host.")
                             return False
                         else:
                             failed_users = post_results(host_name, candidate_users, action)
 
                         if failed_users:
-                            if debug: print "Postback failures:", failed_users
+                            #if debug: print "Postback failures:", failed_users
+                            logging.debug("Postback failures: %s\n" % failed_users)
                             return False
 
                         print "\n"
@@ -656,5 +666,12 @@ for i in failed:
         if not post_results_to_db(httpparams, host_update_url):
             print "Error posting host update:", i, "accessible:", "false"
     print i
+
+if update_wiki:
+    print
+    if "Pushing changes to wiki..." in retrieveURL(wiki_update_url):
+        print "Wiki Updated."
+    else:
+        print "Wiki failed to update."
 
 conn.close()

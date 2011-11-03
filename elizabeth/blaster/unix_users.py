@@ -24,6 +24,13 @@ import time
 import re
 from optparse import OptionParser
 
+# debugging
+import code
+# code.interact(local=locals())
+import pdb
+#pdb.set_trace()
+import logging
+
 #######################################################
 # Configurable parameters
 ######################################################
@@ -37,6 +44,7 @@ parser.add_option("-q", "--quiet", dest="quiet",   action="store_true", help="Qu
 parser.add_option("-e", "--execute", dest="execute", action="store_true", help="Execute given command (by default, will dry run)")
 parser.add_option("-r", "--refresh-only", dest="refresh", action="store_true", help="Refresh host list.  If -e is specified, this is performed automatically.")
 parser.add_option("-g", "--group", dest="group", action="store_true", help="Use the hardcoded Opsware group, instead of going off the database.")
+parser.add_option("-u", "--update-wiki", dest="update_wiki", action="store_true", help="Update the NBCUNI Wiki (default no)")
 # stored values
 parser.add_option("-a", "--action",  dest="action",  help="Execute command (disable, remove, list)")
 parser.add_option("-l", "--user",    dest="user",    help="Username under which commands will be executed.")
@@ -45,11 +53,19 @@ parser.add_option("-o", "--outputfile", dest="outputfile", help="Send output to 
 parser.add_option("-s", "--server-db-list", dest="dblist", help="Specify the name of a file to provide db list of servers.")
 
 (options, args) = parser.parse_args()
+
+# turn on debugging
 debug   = options.debug   == True
+if debug:
+    logging.basicConfig(level=logging.DEBUG)
+else:
+    logging.basicConfig(level=logging.CRITICAL)
+
 quiet   = options.quiet == True
 execute = options.execute == True
 refresh = options.refresh == True
 group = options.group == True
+update_wiki = options.update_wiki == True
 
 if options.action == "disable":
     action = "disable"
@@ -80,6 +96,7 @@ tmpfile      = "/tmp/.tmp_user_file"
 
 user_update_url = "/elizabeth/user/unix/update/"
 host_update_url = "/elizabeth/host/unix/update/"
+wiki_update_url = "/wikiexport/update/"
 list_disabled_users_url = "/elizabeth/user/disabled/"
 list_removed_users_url = "/elizabeth/user/removed/"
 active_hosts_url = "/elizabeth/hostlist/appEnabledUnix/"
@@ -100,7 +117,7 @@ except:
 #]
     
 # timeout
-to = 10
+to = 30
 
 ##########################################################
 # Helper Functions
@@ -236,6 +253,8 @@ def get_users(host_name, action):
     #        print "%s: could not connect to database" % (host_name)
     #        response = ""
 
+    logging.debug("URL: http://%s%s%s\n" % (post, the_url, short_name))
+
     if userlines:
         userlines = userlines.split("\r\n")
     else:
@@ -300,10 +319,10 @@ def post_results_to_db(httpparams, url=user_update_url):
         try: html = matches.groups()[0]
         except: html = ""
         print "Database postback error: %s\nError: %s\n" % (host_name, html)
-        if debug: print data
+        logging.debug(data)
         return False
     else:
-        if debug: print data
+        logging.debug(data)
         return True
 
 # Writer class for sending output to logfile, in addition to stdout
@@ -390,8 +409,11 @@ else:
 print "Database: %s" % post
 if group:
     print "Servers: Using Opsware group for server list"
+elif dblist:
+    print "Servers: Using LOCAL FILE for server list"
 else:
     print "Servers: Using database for server list"
+
 print
 
 
@@ -424,10 +446,10 @@ for host_name in server_list:
     # disable or removal of users
     if action == "disable" or action == "remove":
         userlines = get_users(host_name, action)       # get users from database if we're disabling/removing
-        if debug: print "userlines from database: ", userlines
+        #if debug: print "userlines from database: ", userlines
         if userlines:
             build_list = gen_build_list(userlines)         # remove any users in exclude file
-            if debug: print "build list (minus excluded users):\n", build_list
+            #if debug: print "build list (minus excluded users):\n", build_list
         else:
             build_list = ""
 
@@ -436,7 +458,8 @@ for host_name in server_list:
         build_list_cmd = "echo '"+build_list+"' > "+tmpfile+"; echo 'bogus output'"  # the extra echo is a hack to keep rosh_it from error on empty output
         output = rosh_it(host_name, build_list_cmd, quiet=True)
         if output:
-            if debug: print "Rosh1\nHostname: %s, running: %s,\noutput:\n%s\nError:\n%s\n" % (host_name, build_list_cmd, output.out, output.err)
+            #if debug: print "Rosh1\nHostname: %s, running: %s,\noutput:\n%s\nError:\n%s\n" % (host_name, build_list_cmd, output.out, output.err)
+            pass
         else: fail = 1
 
         # ROSH 2 OF 3
@@ -444,7 +467,8 @@ for host_name in server_list:
         run_cmd = getusers+" -a "+action+(""," -d")[debug]+(""," -e")[execute]+" -f "+tmpfile 
         output = rosh_it(host_name, run_cmd, quiet, from_file=True)
         if output:
-            if debug: print "Rosh 2\nHostname %s, running %s,\nOutput:\n%s\nError:\n%s\n" % (host_name, run_cmd, output.out, output.err)
+            #if debug: print "Rosh 2\nHostname %s, running %s,\nOutput:\n%s\nError:\n%s\n" % (host_name, run_cmd, output.out, output.err)
+            pass
         else: fail = 1
 
         if not fail:
@@ -458,13 +482,16 @@ for host_name in server_list:
                     if execute:
                         print action, ":", user, timestamp
                         if action == "disable":
-                            httpparams = urllib.urlencode({'host_name': host_name, 'user':user,'enabled':"false", 'datedisabled':timestamp})
+                            #httpparams = urllib.urlencode({'host_name': host_name, 'user':user,'enabled':"false", 'datedisabled':timestamp})
+                            httpparams = urllib.urlencode({'host_name': host_name, 'user':user, 'datedisabled':timestamp})
                         elif action == "remove":
-                            httpparams = urllib.urlencode({'host_name': host_name, 'user':user,'enabled':"false", 'dateremoved':timestamp})
+                            #httpparams = urllib.urlencode({'host_name': host_name, 'user':user,'enabled':"false", 'dateremoved':timestamp})
+                            httpparams = urllib.urlencode({'host_name': host_name, 'user':user, 'dateremoved':timestamp})
 
                         # post back to the database
                         if not post_results_to_db(httpparams):
-                            if debug: print "Error with hostname:", host_name, "user:", user
+                            #if debug: print "Error with hostname:", host_name, "user:", user
+                            logging.debug("Error with hostname: %s, user: %s" %(host_name, user))
                             fail = 1
                     else:
                         print "Candidate for", action, ":", user, timestamp
@@ -475,7 +502,8 @@ for host_name in server_list:
             rm_tmpf_cmd = "rm " + tmpfile + "; echo 'bogus output'" # the extra echo is a hack to keep rosh_it from error on empty output
             output = rosh_it(host_name, rm_tmpf_cmd, quiet=True)
             if output:
-                if debug: print "Rosh1\nHostname: %s, running: %s,\noutput:\n%s\nError:\n%s\n" % (host_name, build_list_cmd, output.out, output.err)
+                #if debug: print "Rosh1\nHostname: %s, running: %s,\noutput:\n%s\nError:\n%s\n" % (host_name, build_list_cmd, output.out, output.err)
+                pass
 
     # scanning...
     else:
@@ -484,13 +512,14 @@ for host_name in server_list:
         output = rosh_it(host_name, "uname -s", quiet=True)
         if output:
             host_os = output.out
-            if debug: print "Rosh 1\nHostname %s, running %s,\nOutput:\n%s\nError:\n%s\n" % (host_name, "uname -s", host_os, output.err)
+            #if debug: print "Rosh 1\nHostname %s, running %s,\nOutput:\n%s\nError:\n%s\n" % (host_name, "uname -s", host_os, output.err)
         else: fail = 1
 
         # Get users from server
         output = rosh_it(host_name, getusers, quiet, True)
         if output:
-            if debug: print "Rosh 2\nHostname %s, running %s,\nOutput:\n%s\nError:\n%s\n" % (host_name, getusers, output.out, output.err)
+            #if debug: print "Rosh 2\nHostname %s, running %s,\nOutput:\n%s\nError:\n%s\n" % (host_name, getusers, output.out, output.err)
+            pass
         else: fail = 1
 
         # if we're good so far, prepare to post back to the db
@@ -520,7 +549,8 @@ for host_name in server_list:
                     # if execute is set, do the postback, otherwise just print out the user
                     if execute:
                         if not post_results_to_db(httpparams):
-                            if debug: print "Error with hostname:", host_name, "user:", user
+                            #if debug: print "Error with hostname:", host_name, "user:", user
+                            logging.debug("Error with hostname: %s, user: %s\n" % (host_name, user))
                             fail = 1
                         else:
                             print user, enabled
@@ -573,5 +603,12 @@ for i in failed:
         if not post_results_to_db(httpparams, host_update_url):
             print "Error posting host update:", i, "accessible:", "false"
     print i
+
+if update_wiki:
+    print
+    if "Pushing changes to wiki..." in retrieveURL(wiki_update_url):
+        print "Wiki Updated."
+    else:
+        print "Wiki failed to update."
 
 sys.exit(0)
