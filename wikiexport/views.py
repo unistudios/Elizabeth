@@ -2,6 +2,8 @@ from website.wikiexport.models import *
 
 from django.views.generic.simple import *
 from django.views.generic.list_detail import *
+from django.http import HttpResponse
+import subprocess
 
 import datetime
 
@@ -20,3 +22,7 @@ def index(request):
                                       'dTotay'  : todaystr()
                                       }, 
                     )
+
+def update(request):
+    print subprocess.Popen(['/bin/bash', '-c','./elizabeth/blaster/push_wiki.sh'])
+    return HttpResponse("Pushing changes to wiki...")
