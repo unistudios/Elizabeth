@@ -24,5 +24,5 @@ def index(request):
                     )
 
 def update(request):
-    print subprocess.Popen(['/bin/bash', '-c','./elizabeth/blaster/push_wiki.sh'])
+    print subprocess.Popen(['/bin/bash', '-c','/opt/unixmb/website/elizabeth/blaster/push_wiki.sh'])
     return HttpResponse("Pushing changes to wiki...")
