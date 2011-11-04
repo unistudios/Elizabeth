@@ -34,5 +34,5 @@ def update(request):
     else:
         push_path ='/opt/unixmb/website/elizabeth/blaster/push_wiki.sh' 
     
-    print subprocess.Popen(['/bin/bash', '-c', push_path])
+    out=subprocess.Popen(['/bin/bash', '-c', push_path], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()
     return HttpResponse("Pushing changes to wiki...")
