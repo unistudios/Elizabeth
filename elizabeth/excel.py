@@ -171,10 +171,10 @@ def exportExcelUnixByApp(modeladmin, request, queryset):
               ]
     
     for app in queryset:    
-        # Grab all Unix and Windows hosts associated with the apps in the queryset
+        # Grab all Unix hosts associated with the apps in the queryset
         unixhosts = app.unixhost_set.all()
         
-        # Enumerate all unixusers associated with hosts and add them into rows
+        # Enumerate all unixhosts associated with hosts and add them into rows
         for u in unixhosts:
             rows.append([app.name, app.importance, u.name, u.os])
 
@@ -186,16 +186,35 @@ def exportExcelWinByApp(modeladmin, request, queryset):
               ]
     
     for app in queryset:    
-        # Grab all Unix and Windows hosts associated with the apps in the queryset
+        # Grab Windows hosts associated with the apps in the queryset
         winhosts = app.winhost_set.all()
         
-        # Enumerate all unixusers associated with hosts and add them into rows
+        # Enumerate all winhosts associated with hosts and add them into rows
         for u in winhosts:
             rows.append([app.name, app.importance, u.name, u.os])
 
     return ExcelResponse(rows, "winhosts_by_app")
 exportExcelWinByApp.short_description = "Download Win Hosts by App"
 
+def exportExcelAllByApp(modeladmin, request, queryset):
+    rows = [ ['Application', 'Level', 'Hostname', 'OS',], 
+              ]
+    
+    for app in queryset:    
+        # Grab all Unix and Windows hosts associated with the apps in the queryset
+        unixhosts = app.unixhost_set.all()
+        winhosts  = app.winhost_set.all()
+        
+        # Enumerate all unixhosts associated with hosts and add them into rows
+        for u in unixhosts:
+            rows.append([app.name, app.importance, u.name, u.os])
+            
+        # Enumerate all winhosts associated with hosts and add them into rows
+        for u in winhosts:
+            rows.append([app.name, app.importance, u.name, u.os])
+
+    return ExcelResponse(rows, "allhosts_by_app")
+exportExcelAllByApp.short_description = "Download Hosts (all) by App"
 
 ##############################################################################################
 # Create spreadsheet which show unixhosts

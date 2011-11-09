@@ -73,7 +73,7 @@ class hostappAdmin(admin.ModelAdmin):
     #readonly_fields = ['name', 'importance', 'getHostCount', 'getHosts', 'getWinHosts', 'getUnixHosts']
     readonly_fields = ['getHostCount', 'getHosts', 'getWinHosts', 'getUnixHosts']
     #inlines = [unixhostInline,]
-    actions= [exportExcelAppsToUsers, exportExcelUnixByApp, exportExcelWinByApp, enableApp, disableApp]
+    actions= [exportExcelAppsToUsers, exportExcelUnixByApp, exportExcelAllByApp, exportExcelWinByApp, enableApp, disableApp]
     
     # Remove the deleted action for non-super users
     def get_actions(self, request):   
@@ -81,7 +81,7 @@ class hostappAdmin(admin.ModelAdmin):
         
         if not request.user.is_superuser:        
             try:
-                del actions['delete_selected']
+                del actions['delete_selected', 'enableApp', 'disableApp']
             except KeyError:
                 pass
             return actions
