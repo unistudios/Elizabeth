@@ -166,6 +166,36 @@ def exportExcelAppsToUsers(modeladmin, request, queryset):
     return ExcelResponse(rows, "enabled_users_by_app")
 exportExcelAppsToUsers.short_description = "Download Enabled Users by App"
 
+def exportExcelUnixByApp(modeladmin, request, queryset):
+    rows = [ ['Application', 'Level', 'Hostname', 'OS',], 
+              ]
+    
+    for app in queryset:    
+        # Grab all Unix and Windows hosts associated with the apps in the queryset
+        unixhosts = app.unixhost_set.all()
+        
+        # Enumerate all unixusers associated with hosts and add them into rows
+        for u in unixhosts:
+            rows.append([app.name, app.importance, u.name, u.os])
+
+    return ExcelResponse(rows, "unixhosts_by_app")
+exportExcelUnixByApp.short_description = "Download UNIX Hosts by App"
+
+def exportExcelWinByApp(modeladmin, request, queryset):
+    rows = [ ['Application', 'Level', 'Hostname', 'OS',], 
+              ]
+    
+    for app in queryset:    
+        # Grab all Unix and Windows hosts associated with the apps in the queryset
+        winhosts = app.winhost_set.all()
+        
+        # Enumerate all unixusers associated with hosts and add them into rows
+        for u in winhosts:
+            rows.append([app.name, app.importance, u.name, u.os])
+
+    return ExcelResponse(rows, "winhosts_by_app")
+exportExcelWinByApp.short_description = "Download Win Hosts by App"
+
 
 ##############################################################################################
 # Create spreadsheet which show unixhosts

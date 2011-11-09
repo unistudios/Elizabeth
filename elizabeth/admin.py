@@ -73,7 +73,7 @@ class hostappAdmin(admin.ModelAdmin):
     #readonly_fields = ['name', 'importance', 'getHostCount', 'getHosts', 'getWinHosts', 'getUnixHosts']
     readonly_fields = ['getHostCount', 'getHosts', 'getWinHosts', 'getUnixHosts']
     #inlines = [unixhostInline,]
-    actions= [exportExcelAppsToUsers, enableApp, disableApp]
+    actions= [exportExcelAppsToUsers, exportExcelUnixByApp, exportExcelWinByApp, enableApp, disableApp]
     
     # Remove the deleted action for non-super users
     def get_actions(self, request):   
