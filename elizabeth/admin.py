@@ -75,13 +75,15 @@ class hostappAdmin(admin.ModelAdmin):
     #inlines = [unixhostInline,]
     actions= [exportExcelAppsToUsers, exportExcelUnixByApp, exportExcelAllByApp, exportExcelWinByApp, enableApp, disableApp]
     
-    # Remove the deleted action for non-super users
+    # Remove the deleted action for non-super users, as well as the ability to enable/disable apps
     def get_actions(self, request):   
         actions = super(hostappAdmin, self).get_actions(request)
         
         if not request.user.is_superuser:        
             try:
-                del actions['delete_selected', 'enableApp', 'disableApp']
+                del actions['delete_selected']
+                del actions['enableApp']
+                del actions['disableApp']
             except KeyError:
                 pass
             return actions
