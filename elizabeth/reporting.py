@@ -115,18 +115,18 @@ def user_type_summary(request):
     total_usraccts_count =  unix_usraccts_count + win_usraccts_count
     
     # local system accounts
-    unix_sysaccts_count = unixuser.objects.filter(user__type="S", host__retired=False, dateremoved__isnull=True, datedisabled__isnull=True).count()
-    win_sysaccts_count = winuser.objects.filter(user__type="S", host__retired=False, dateremoved__isnull=True, datedisabled__isnull=True).count()
+    unix_sysaccts_count = unixuser.objects.filter(enabled=True, user__type="S", host__retired=False, dateremoved__isnull=True, datedisabled__isnull=True).count()
+    win_sysaccts_count = winuser.objects.filter(enabled=True, user__type="S", host__retired=False, dateremoved__isnull=True, datedisabled__isnull=True).count()
     total_sysaccts_count =  unix_sysaccts_count + win_sysaccts_count
     
     # local app accounts
-    unix_appaccts_count = unixuser.objects.filter(user__type="A", host__retired=False, dateremoved__isnull=True, datedisabled__isnull=True).count()
-    win_appaccts_count = winuser.objects.filter(user__type="A", host__retired=False, dateremoved__isnull=True, datedisabled__isnull=True).count()
+    unix_appaccts_count = unixuser.objects.filter(enabled=True, user__type="A", host__retired=False, dateremoved__isnull=True, datedisabled__isnull=True).count()
+    win_appaccts_count = winuser.objects.filter(enabled=True, user__type="A", host__retired=False, dateremoved__isnull=True, datedisabled__isnull=True).count()
     total_appaccts_count =  unix_appaccts_count + win_appaccts_count
 
     # local unknown accounts
-    unix_unkaccts_count = unixuser.objects.filter(user__type="X", host__retired=False, dateremoved__isnull=True, datedisabled__isnull=True).count()
-    win_unkaccts_count = winuser.objects.filter(user__type="X", host__retired=False, dateremoved__isnull=True, datedisabled__isnull=True).count()
+    unix_unkaccts_count = unixuser.objects.filter(enabled=True, user__type="X", host__retired=False, dateremoved__isnull=True, datedisabled__isnull=True).count()
+    win_unkaccts_count = winuser.objects.filter(enabled=True, user__type="X", host__retired=False, dateremoved__isnull=True, datedisabled__isnull=True).count()
     total_unkaccts_count =  unix_unkaccts_count + win_unkaccts_count
     
     # All Accounts
