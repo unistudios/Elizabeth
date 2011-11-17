@@ -422,11 +422,12 @@ try:
     f=open(exclude_list, "r")
 except:
     print "No user exclude file found, proceeding without it..."
+    excl = []
 else:
     print "Parsing exclude file..."
     excl = f.read()
     f.close()
-excl = excl.strip().split("\n")
+    excl = excl.strip().split("\n")
 
 # Iterate over each host and pull down the userlist / enabled status for each host.
 server_count = 1

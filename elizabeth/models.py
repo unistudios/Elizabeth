@@ -39,8 +39,8 @@ class hostapp(models.Model):
     
     # Return a list of hostnames on which app resides
     def getHosts(self):
-        u = list(self.unixhost_set.all())
-        w = self.winhost_set.all()
+        u = list(self.unixhost_set.filter(retired=False))
+        w = self.winhost_set.filter(retired=False)
         
         for i in w:
             u.append(i)
@@ -53,36 +53,36 @@ class hostapp(models.Model):
     getHosts.short_description = "Hosts"
     
     # Return a list of hostnames on which app resides
-    def getWinHosts(self):
-        lines = list(self.unixhost_set.all())
+    def getUnixHosts(self):
+        lines = list(self.unixhost_set.filter(retired=False))
         str=""
         for i in lines:
             str=str+i.name+"<BR />"
         return mark_safe(str)
-    getWinHosts.short_description = "UNIX Hosts"
+    getUnixHosts.short_description = "UNIX Hosts"
     
     # Return a list of hostnames on which app resides
-    def getUnixHosts(self):
-        lines = list(self.winhost_set.all())
+    def getWinHosts(self):
+        lines = list(self.winhost_set.filter(retired=False))
         str=""
         for i in lines:
             str=str+i.name+"<BR />"
         return mark_safe(str)
-    getUnixHosts.short_description = "Windows Hosts"
+    getWinHosts.short_description = "Windows Hosts"
     
     # Return a host count for the app
     def getHostCount(self):
-        return self.unixhost_set.all().count() + self.winhost_set.all().count()
+        return self.unixhost_set.filter(retired=False).count() + self.winhost_set.filter(retired=False).count()
     getHostCount.short_description = "Host Count"
     
     # Return a host count for the app
     def getWinHostCount(self):
-        return self.winhost_set.all().count()
+        return self.winhost_set.filter(retired=False).count()
     getWinHostCount.short_description = "Windows Host Count"
     
     # Return a host count for the app
     def getUnixHostCount(self):
-        return self.unixhost_set.all().count()
+        return self.unixhost_set.filter(retired=False).count()
     getUnixHostCount.short_description = "UNIX Host Count"
     
     def __unicode__(self):
