@@ -304,7 +304,7 @@ def localUsers(request):
     unix_sysaccts = unixuser.objects.filter(user__type="U", host__retired=False)
     win_sysaccts = winuser.objects.filter(user__type="U", host__retired=False)
     return genUserReport(request, unix_sysaccts, win_sysaccts, "local_users")
-systemUsers.short_description = "Wiki Spreadsheet, Local Users"
+localUsers.short_description = "Wiki Spreadsheet, Local Users"
 
 def systemUsers(request):
     rows = [ ['Host', 'Application', 'Username', 'Enabled', 'Allowed'], 
