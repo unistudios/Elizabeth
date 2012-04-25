@@ -5,8 +5,8 @@
 {column:width=50%}
  {align:left}
  {chart:height=450|width=750|pieSectionLabel=%0% %2%|legend=false|pieSectionExplode=Removed,Removable}
-|| Total || Removed | Disable-able || Removable || System || Application || Unknown ||
-|| {{ total_useraccts_count }} | {{ total_removed_count }} | {{ total_disableable_count }} | {{ total_removable_count }} | {{ total_sysaccts_count }} | {{ total_appaccts_count }} | {{ total_unkaccts_count }} ||
+|| Total || Removed | Disable-able || Removable || User || System || Application || Unknown ||
+|| {{ total_useraccts_count }} | {{ total_removed_count }} | {{ total_disableable_count }} | {{ total_removable_count }} | {{ total_lclaccts_count }} | {{ total_sysaccts_count }} | {{ total_appaccts_count }} | {{ total_unkaccts_count }} ||
 {chart}
 {align}
 {column}
@@ -16,6 +16,7 @@
 || h3. Accounts || h3. Number ||
 | h3. [Disable-able|http://likewise.nbcuni.ge.com/elizabeth/reporting/disableable] | h3. {{ total_disableable_count }} |
 | h3. [Removable|http://likewise.nbcuni.ge.com/elizabeth/reporting/removable] | h3. {{ total_removable_count }} |
+| h3. [User|http://likewise.nbcuni.ge.com/elizabeth/reporting/user] | h3. {{ total_lclaccts_count }} |
 | h3. [System|http://likewise.nbcuni.ge.com/elizabeth/reporting/system] | h3. {{ total_sysaccts_count }} |
 | h3. [Application|http://likewise.nbcuni.ge.com/elizabeth/reporting/application] | h3. {{ total_appaccts_count }} |
 | h3. [Unknown|http://likewise.nbcuni.ge.com/elizabeth/reporting/unknown] | h3. {{ total_unkaccts_count }} |
