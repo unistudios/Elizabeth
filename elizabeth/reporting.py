@@ -28,8 +28,8 @@ def user_summary(request):
     unix_removable = unixuser.objects.filter(enabled=False, user__type="U", user__enabled=False, dateremoved__isnull=True, host__retired=False)
     win_removable = winuser.objects.filter(enabled=False, user__type="U", user__enabled=False, dateremoved__isnull=True, host__retired=False)
     
-    unix_lclaccts = unixuser.objects.filter(user__type="U", host__retired=False, user__enabled=True)
-    win_lclaccts = winuser.objects.filter(user__type="U", host__retired=False, user__enabled=True)
+    unix_lclaccts = unixuser.objects.filter(user__type="U", host__retired=False, user__enabled=True, enabled=True)
+    win_lclaccts = winuser.objects.filter(user__type="U", host__retired=False, user__enabled=True, enabled=True)
     
     unix_sysaccts = unixuser.objects.filter(user__type="S", host__retired=False)
     win_sysaccts = winuser.objects.filter(user__type="S", host__retired=False)
