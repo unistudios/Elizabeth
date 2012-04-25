@@ -301,8 +301,8 @@ removableUsers.short_description = "Wiki Spreadsheet, Removable Users"
 def localUsers(request):
     rows = [ ['Host', 'Application', 'Username', 'Enabled', 'Allowed'], 
               ]
-    unix_sysaccts = unixuser.objects.filter(user__type="U", host__retired=False)
-    win_sysaccts = winuser.objects.filter(user__type="U", host__retired=False)
+    unix_sysaccts = unixuser.objects.filter(user__type="U", host__retired=False, user__enabled=True)
+    win_sysaccts = winuser.objects.filter(user__type="U", host__retired=False, user__enabled=True)
     return genUserReport(request, unix_sysaccts, win_sysaccts, "local_users")
 localUsers.short_description = "Wiki Spreadsheet, Local Users"
 
