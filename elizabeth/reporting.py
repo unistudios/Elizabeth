@@ -28,6 +28,9 @@ def user_summary(request):
     unix_removable = unixuser.objects.filter(enabled=False, user__type="U", user__enabled=False, dateremoved__isnull=True, host__retired=False)
     win_removable = winuser.objects.filter(enabled=False, user__type="U", user__enabled=False, dateremoved__isnull=True, host__retired=False)
     
+    unix_lclaccts = unixuser.objects.filter(user__type="U", host__retired=False, user__enabled=True)
+    win_lclaccts = winuser.objects.filter(user__type="U", host__retired=False, user__enabled=True)
+    
     unix_sysaccts = unixuser.objects.filter(user__type="S", host__retired=False)
     win_sysaccts = winuser.objects.filter(user__type="S", host__retired=False)
     
@@ -45,6 +48,11 @@ def user_summary(request):
     unix_removable_count = unix_removable.count()
     win_removable_count = win_removable.count()
     total_removable_count = unix_removable_count + win_removable_count
+    
+    # local user accounts
+    unix_lclaccts_count = unix_lclaccts.count()
+    win_lclaccts_count = win_lclaccts.count()
+    total_lclaccts_count =  unix_lclaccts_count + win_lclaccts_count
     
     # local system accounts
     unix_sysaccts_count = unix_sysaccts.count()
@@ -66,7 +74,7 @@ def user_summary(request):
                                  winuser.objects.filter(user__type="U", dateremoved__isnull=False).count()
     
     # All Accounts
-    total_accts_count = total_removed_count + total_disableable_count + total_removable_count + total_sysaccts_count + total_appaccts_count + total_unkaccts_count
+    total_accts_count = total_removed_count + total_disableable_count + total_removable_count + total_lclaccts_count + total_sysaccts_count + total_appaccts_count + total_unkaccts_count
     
     
      ################################################################
@@ -89,6 +97,7 @@ def user_summary(request):
                               template="elizabeth/reporting/user_summary.html",
                               extra_context={'total_disableable_count': total_disableable_count,
                                       'total_removable_count': total_removable_count, 
+                                      'total_lclaccts_count': total_lclaccts_count,
                                       'total_sysaccts_count': total_sysaccts_count,
                                       'total_appaccts_count': total_appaccts_count,
                                       'total_unkaccts_count': total_unkaccts_count,
